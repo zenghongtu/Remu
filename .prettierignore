@@ -1,0 +1,5 @@
+dist/
+.DS_Store
+.idea/
+yarn-error.log
+npm-debug.log
