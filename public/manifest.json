@@ -1,0 +1,29 @@
+{
+  "name": "Remu for GitHub",
+  "short_name": "Remu",
+  "manifest_version": 2,
+  "homepage_url": "https://github.com/zenghongtu/",
+  "icons": {
+    "32": "32x32.png",
+    "64": "64x64.png",
+    "128": "128x128.png",
+    "256": "256x256.png"
+  },
+  "permissions": ["storage", "clipboardWrite"],
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html"
+  },
+  "background": {
+    "page": "background.html"
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "content_scripts": [
+    {
+      "matches": ["https://*/*"],
+      "js": ["js/content.bundle.js"]
+    }
+  ]
+}

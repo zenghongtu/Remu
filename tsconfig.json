@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2015",
+    "noImplicitAny": false,
+    "sourceMap": false,
+    "jsx": "react",
+    "rootDir": "src",
+    "outDir": "dist/js",
+    "lib": ["es2015", "dom"],
+    "noEmitOnError": true,
+    "typeRoots": ["node_modules/@types"]
+  }
+}
