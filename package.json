@@ -9,7 +9,8 @@
     "watch": "webpack --config webpack/webpack.dev.js --watch",
     "build": "webpack --config webpack/webpack.prod.js",
     "clean": "rimraf dist",
-    "lint": "tslint --project ."
+    "lint": "tslint --project .",
+    "lint:fix": "tslint --project . --fix"
   },
   "repository": {
     "type": "git",

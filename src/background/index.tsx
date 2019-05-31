@@ -1,3 +1,4 @@
-import "./index.less";
+import './index.less';
 
-console.log("hello");
+// tslint:disable-next-line:no-console
+console.log('hello');
