@@ -1,17 +1,28 @@
 import * as React from 'react';
-import { Layout } from 'antd';
-import './App.less';
 
-const { Header, Footer, Sider, Content } = Layout;
+import Header from './components/Header';
+import RepoBar from './components/RepoBar';
+import RepoInfo from './components/RepoInfo';
+import Sidebar from './components/Sidebar';
+import './App.less';
 
 const App = () => {
   return (
     <div>
-      <Header>Header</Header>
-      <Layout>
-        <Sider>Sider</Sider>
-        <Content>Content</Content>
-      </Layout>
+      <div className="header">
+        <Header />
+      </div>
+      <div className="main">
+        <div className="col-item">
+          <Sidebar />
+        </div>
+        <div className="col-item">
+          <RepoBar />
+        </div>
+        <div className="col-item">
+          <RepoInfo />
+        </div>
+      </div>
     </div>
   );
 };

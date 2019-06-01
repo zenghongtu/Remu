@@ -1,1 +1,21 @@
 @import "./style/index.less";
+
+.header {
+  height: 66px;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.main {
+  display: flex;
+  height: 100vh;
+  padding-top: 66px;
+  overflow: hidden;
+  .col-item {
+    // flex: 1;
+    min-width: 260px;
+  }
+}
