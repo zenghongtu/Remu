@@ -9,6 +9,8 @@
     "outDir": "dist/js",
     "lib": ["es2015", "dom"],
     "noEmitOnError": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "typeRoots": ["node_modules/@types"]
   }
 }

@@ -1,3 +1,4 @@
+const dotenv = require("dotenv");
 const webpack = require("webpack");
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
@@ -6,9 +7,13 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserJSPlugin = require("terser-webpack-plugin");
 const ExtensionReloader = require("webpack-extension-reloader");
+const Dotenv = require("dotenv-webpack");
 const pkg = require("../package.json");
+
 const rootDir = path.join(__dirname, "../");
 const srcDir = path.join(rootDir, "src");
+
+dotenv.config();
 
 const pages = ["options", "background", "content", "view-tab"];
 const entry = {};
@@ -148,5 +153,6 @@ module.exports = {
         background: "background",
       },
     }),
+    new Dotenv(),
   ],
 };
