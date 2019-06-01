@@ -10,7 +10,7 @@ const pkg = require("../package.json");
 const rootDir = path.join(__dirname, "../");
 const srcDir = path.join(rootDir, "src");
 
-const pages = ["popup", "options", "background", "content"];
+const pages = ["options", "background", "content", "view-tab"];
 const entry = {};
 const plugins = [];
 
@@ -20,16 +20,14 @@ pages.forEach(pageName => {
   plugins.push(
     new HtmlWebpackPlugin({
       title:
-        pageName === "newtab"
-          ? "A Tab with 30 Seconds"
-          : `A Tab with 30 Seconds - ${pageName.replace(/\w/, match =>
-              match.toUpperCase()
-            )}`,
+        pageName === "view-tab"
+          ? "Remu"
+          : `Remu - ${pageName.replace(/\w/, match => match.toUpperCase())}`,
       filename: `${pageName}.html`,
       root: pageName,
       template: path.join(rootDir, "public", "index.html"),
-      chunks: [pageName]
-    })
+      chunks: [pageName],
+    }),
   );
 });
 
@@ -38,11 +36,11 @@ module.exports = {
   entry,
   output: {
     path: path.join(rootDir, "dist/"),
-    filename: "js/[name].bundle.js"
+    filename: "js/[name].bundle.js",
   },
   devtool: "inline-source-map",
   devServer: {
-    contentBase: "./dist"
+    contentBase: "./dist",
   },
   // optimization: {
   //   minimizer: [
@@ -57,12 +55,12 @@ module.exports = {
         parallel: true,
         terserOptions: {
           output: {
-            comments: false
-          }
-        }
+            comments: false,
+          },
+        },
       }),
-      new OptimizeCSSAssetsPlugin({})
-    ]
+      new OptimizeCSSAssetsPlugin({}),
+    ],
   },
 
   module: {
@@ -70,7 +68,7 @@ module.exports = {
       {
         test: /\.tsx?$/,
         use: "ts-loader",
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.less$/,
@@ -78,17 +76,31 @@ module.exports = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              hmr: process.env.NODE_ENV === "development"
-            }
+              hmr: process.env.NODE_ENV === "development",
+            },
           },
           {
-            loader: "css-loader"
+            loader: "css-loader",
           },
           {
-            loader: "less-loader"
-          }
-        ]
-      }
+            loader: "less-loader",
+          },
+        ],
+      },
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: process.env.NODE_ENV === "development",
+            },
+          },
+          {
+            loader: "css-loader",
+          },
+        ],
+      },
       //   {
       //     test: /\.html$/,
       //     loader: "html-loader",
@@ -98,10 +110,10 @@ module.exports = {
       //       collapseWhitespace: false
       //     }
       //   }
-    ]
+    ],
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js"]
+    extensions: [".ts", ".tsx", ".js"],
   },
   plugins: [
     ...plugins,
@@ -114,24 +126,24 @@ module.exports = {
               JSON.stringify({
                 description: pkg.description,
                 version: pkg.version,
-                ...JSON.parse(content.toString())
-              })
+                ...JSON.parse(content.toString()),
+              }),
             );
-          }
+          },
         },
-        { from: ".", to: "." }
+        { from: ".", to: "." },
       ],
-      { context: "public" }
+      { context: "public" },
     ),
     new MiniCssExtractPlugin({
       filename: "style/[name].css",
-      chunkFilename: "[id].css"
+      chunkFilename: "[id].css",
     }),
     new ExtensionReloader({
       entries: {
         contentScript: "content",
-        background: "background"
-      }
-    })
-  ]
+        background: "background",
+      },
+    }),
+  ],
 };

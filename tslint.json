@@ -23,6 +23,7 @@
     "no-empty": false
   },
   "jsRules": {
+    "no-shadowed-variable": false,
     "max-line-length": {
       "options": [120]
     },
