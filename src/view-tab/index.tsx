@@ -1,4 +1,7 @@
-import './index.less';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import App from './App';
 
-// tslint:disable-next-line:no-console
-console.log('hello');
+const root = document.getElementById('view-tab');
+
+ReactDOM.render(<App />, root);

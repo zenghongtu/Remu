@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/zenghongtu/Remu#readme",
   "devDependencies": {
+    "@types/chrome": "^0.0.86",
     "clean-webpack-plugin": "^2.0.2",
     "copy-webpack-plugin": "^5.0.3",
     "css-loader": "^2.1.1",
@@ -46,6 +47,7 @@
     "write-file-webpack-plugin": "^4.5.0"
   },
   "dependencies": {
+    "antd": "^3.19.1",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "react": "^16.8.6",
