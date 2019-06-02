@@ -1,5 +1,5 @@
 export type tagId = string;
-export type repoId = number;
+export type repoId = number | string;
 
 export interface ILanguages {
   name: string;
@@ -16,6 +16,9 @@ export interface IFilterReposAction {
   payload: string;
 }
 
+export const STORAGE_TAGS = 'tags';
+export const STORAGE_REPO = 'repoWithTags';
+
 export const ALL_STARS = 'all stars';
 export const UNTAGGED_STARS = 'untagged stars';
 export const UNKOWN = 'Unkown';
@@ -24,12 +27,18 @@ export type statusKey = typeof ALL_STARS | typeof UNTAGGED_STARS;
 
 export type IStarTaggedStatus = { [key in statusKey]: number };
 
+export interface ITagsAction {
+  type: 'add' | 'delete' | 'create';
+  payload: { repoId: repoId; tag: ITag };
+  selectedTagIds: tagId[];
+}
+
 export interface ITagCountMap {
-  [tagId: number]: number;
+  [tagId: string]: number;
 }
 
 export interface IRepoWithTag {
-  [repoId: number]: tagId[];
+  [repoId: string]: tagId[];
 }
 
 export interface IStarredRepo {
