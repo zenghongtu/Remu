@@ -6,6 +6,7 @@ import 'github-markdown-css';
 import './index.less';
 import { Select } from 'antd';
 import { genUniqueKey } from '../../utils';
+
 const { Option } = Select;
 
 interface IRepoInfo {
@@ -26,12 +27,12 @@ const RepoInfo = ({
     return <div>none</div>;
   }
   const [content, setContent] = useState('');
-  // const [selectedTags, setSelectedTags] = useState(selectedTagIds);
 
   useEffect(() => {
     getReadmeHTML({ full_name }).then((rsp) => {
-      const data = rsp.data;
-      setContent(data);
+      const htmlString = rsp.data;
+      const content = fixRelativeUrl(htmlString, repo);
+      setContent(content);
     });
   }, [repo]);
 
@@ -39,6 +40,22 @@ const RepoInfo = ({
     starred_at,
     repo: { id, full_name, created_at, updated_at, language },
   } = repo;
+
+  const fixRelativeUrl = (htmlString: string, { repo }: IStarredRepo) => {
+    const _site = `https://raw.githubusercontent.com/${repo.full_name}/${
+      repo.default_branch
+    }`;
+    // current abolute url origin
+    const _origin = location.origin;
+    const _container = document.createElement('div');
+    _container.innerHTML = htmlString;
+    // todo fix other tag (e.g. <a>)
+    _container.querySelectorAll('img').forEach((imgEl) => {
+      // replace with correct url
+      imgEl.src = imgEl.src.replace(_origin, _site);
+    });
+    return _container.innerHTML;
+  };
 
   const handleSelectTag = (value: string) => {
     const ids = tags.map((tag) => tag.id);
@@ -92,7 +109,7 @@ const RepoInfo = ({
             value={selectedTagIds}
             mode="tags"
             style={{ width: '100%' }}
-            placeholder="Tags Mode"
+            placeholder="Add a tag"
             onSelect={handleSelectTag}
             onDeselect={handleDeselectTag}
           >
