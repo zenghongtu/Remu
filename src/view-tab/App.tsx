@@ -22,7 +22,6 @@ import {
   ITagsAction,
 } from './typings';
 import { getStarredRepos } from './service';
-import result from './mock.json';
 import './App.less';
 import { localStoragePromise } from './utils';
 
@@ -53,64 +52,66 @@ const App = () => {
     Promise.all([getTags, getRepoWithTags]).then((results) => {
       const [tagsRes, RepoWithTagsRes] = results;
 
-      const isTagsVaild = tagsRes && RepoWithTagsRes;
-
       const tags = (tagsRes as any).tags || [];
       const repoWithTags = (RepoWithTagsRes as any).repoWithTags;
 
+      const isTagsVaild = tags && repoWithTags;
+
       const _tags = tags;
 
-      result.forEach((repo) => {
-        const {
-          repo: { language, id },
-        } = repo;
-        _repoIds.push(id.toString());
-        const lang = language || UNKOWN;
-        _langMap[lang] ? _langMap[lang]++ : (_langMap[lang] = 1);
-      });
+      getStarredRepos({}).then((result) => {
+        result.forEach((repo) => {
+          const {
+            repo: { language, id },
+          } = repo;
+          _repoIds.push(id.toString());
+          const lang = language || UNKOWN;
+          _langMap[lang] ? _langMap[lang]++ : (_langMap[lang] = 1);
+        });
 
-      const _tagCountMap = { ...tagCountMap };
-      const _repoIdLen = _repoIds.length;
-      const _starTaggedStatus: IStarTaggedStatus = {
-        [ALL_STARS]: _repoIdLen,
-        [UNTAGGED_STARS]: _repoIdLen,
-      };
+        const _tagCountMap = { ...tagCountMap };
+        const _repoIdLen = _repoIds.length;
+        const _starTaggedStatus: IStarTaggedStatus = {
+          [ALL_STARS]: _repoIdLen,
+          [UNTAGGED_STARS]: _repoIdLen,
+        };
 
-      const _repoWithTags = {};
-      if (isTagsVaild) {
-        const _repoWithTagIds = Object.keys(repoWithTags);
-        for (const _repoId of _repoWithTagIds) {
-          if (_repoIds.includes(_repoId)) {
-            _starTaggedStatus[UNTAGGED_STARS]--;
-            // filter invaild repo
-            const _curTags = repoWithTags[_repoId];
-            _repoWithTags[_repoId] = _curTags;
+        const _repoWithTags = {};
+        if (isTagsVaild) {
+          const _repoWithTagIds = Object.keys(repoWithTags);
+          for (const _repoId of _repoWithTagIds) {
+            if (_repoIds.includes(_repoId)) {
+              _starTaggedStatus[UNTAGGED_STARS]--;
+              // filter invaild repo
+              const _curTags = repoWithTags[_repoId];
+              _repoWithTags[_repoId] = _curTags;
 
-            for (const _tagId of _curTags) {
-              _tagCountMap[_tagId]
-                ? _tagCountMap[_tagId]++
-                : (_tagCountMap[_tagId] = 1);
+              for (const _tagId of _curTags) {
+                _tagCountMap[_tagId]
+                  ? _tagCountMap[_tagId]++
+                  : (_tagCountMap[_tagId] = 1);
+              }
             }
           }
         }
-      }
 
-      const _langs = Object.keys(_langMap)
-        .sort((a, b) => {
-          return _langMap[b] - _langMap[a];
-        })
-        .map((lang) => {
-          return { name: lang, count: _langMap[lang] };
-        });
+        const _langs = Object.keys(_langMap)
+          .sort((a, b) => {
+            return _langMap[b] - _langMap[a];
+          })
+          .map((lang) => {
+            return { name: lang, count: _langMap[lang] };
+          });
 
-      setStarredRepos(result);
-      setCurRepos(result);
-      setLanguages(_langs);
-      setRepoIds(_repoIds);
-      setTags(_tags);
-      setTagCountMap(_tagCountMap);
-      setRepoWithTags(_repoWithTags);
-      setStarTaggedStatus(_starTaggedStatus);
+        setStarredRepos(result);
+        setCurRepos(result);
+        setLanguages(_langs);
+        setRepoIds(_repoIds);
+        setTags(_tags);
+        setTagCountMap(_tagCountMap);
+        setRepoWithTags(_repoWithTags);
+        setStarTaggedStatus(_starTaggedStatus);
+      });
     });
   }, []);
 
