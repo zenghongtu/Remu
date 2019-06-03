@@ -125,7 +125,10 @@ const App = () => {
         });
       }
     } else if (type === 'tag') {
-      // todo
+      _repos = starredRepos.filter(({ repo: { id } }) => {
+        const tags = repoWithTags[id.toString()];
+        return tags && tags.includes(payload);
+      });
     } else if (type === 'language') {
       _repos = starredRepos.filter(({ repo }) => {
         if (payload === UNKOWN) {
