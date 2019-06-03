@@ -8,7 +8,7 @@
     "rootDir": "src",
     "outDir": "dist/js",
     "lib": ["es2015", "dom"],
-    "noEmitOnError": true,
+    "noEmitOnError": false,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "typeRoots": ["node_modules/@types"]

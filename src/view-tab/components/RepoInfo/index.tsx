@@ -106,6 +106,7 @@ const RepoInfo = ({
         </div>
         <div>
           <Select
+            // @ts-ignore
             value={selectedTagIds}
             mode="tags"
             style={{ width: '100%' }}
