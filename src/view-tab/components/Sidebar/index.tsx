@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Menu, Icon, Button } from 'antd';
+import { Menu, Icon, Button, Select, Input } from 'antd';
 import './index.less';
 import {
   IStarredRepo,
@@ -10,13 +10,18 @@ import {
   ALL_STARS,
   IFilterReposAction,
 } from '../../typings';
+import { SyntheticEvent } from 'react';
+import { genUniqueKey, localStoragePromise } from '../../utils';
 
 const { SubMenu } = Menu;
+const Search = Input.Search;
+
 interface ISidebar {
   tags: ITag[];
   languages: ILanguages[];
   tagCountMap: ITagCountMap;
   starTaggedStatus: IStarTaggedStatus;
+  onAddTag: (tags: ITag[]) => void;
   onSelect: (action: IFilterReposAction) => void;
 }
 
@@ -25,12 +30,20 @@ const Sidebar = ({
   languages,
   tagCountMap,
   starTaggedStatus,
+  onAddTag,
   onSelect,
 }: ISidebar) => {
   const handleLanguageSelect = ({ item, key }) => {
     const [type, payload] = key.split('-');
     onSelect({ type, payload });
   };
+
+  const handleAddTag = async (name: string) => {
+    const newTags: ITag[] = [...tags, { id: genUniqueKey(), name }];
+    await localStoragePromise.set({ tags: newTags });
+    onAddTag(newTags);
+  };
+
   return (
     <div className="sidebar-wrap">
       <Menu
@@ -64,12 +77,22 @@ const Sidebar = ({
             </span>
           }
         >
+          <div>
+            <Search
+              placeholder="Add a tag"
+              onSearch={handleAddTag}
+              enterButton={<Icon type="plus" />}
+              onPressEnter={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                handleAddTag((e.target as HTMLInputElement).value);
+              }}
+            />
+          </div>
           {tags &&
             tags.map(({ id, name }) => {
               return (
                 <Menu.Item key={`tag-${id}`}>
                   {name}
-                  {tagCountMap[id]}
+                  {tagCountMap[id] || 0}
                 </Menu.Item>
               );
             })}
