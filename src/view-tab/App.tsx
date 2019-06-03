@@ -117,13 +117,11 @@ const App = () => {
   const handleFilterRepos = ({ type, payload }: IFilterReposAction) => {
     let _repos = null;
     if (type === 'star') {
-      if (!repoWithTags) {
+      if (!repoWithTags || payload === ALL_STARS) {
         _repos = starredRepos;
       } else {
-        const _repoWithTagIds = Object.keys(repoWithTags);
-        _repos = starredRepos.filter(({ repo }) => {
-          // todo fix type
-          return (_repoWithTagIds as any).includes(repo.id);
+        _repos = starredRepos.filter(({ repo: { id } }) => {
+          return !repoWithTags[id.toString()];
         });
       }
     } else if (type === 'tag') {
