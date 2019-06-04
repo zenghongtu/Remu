@@ -20,10 +20,10 @@ import {
   STORAGE_TAGS,
   STORAGE_REPO,
   ITagsAction,
-} from './typings';
+} from '../typings';
 import { getStarredRepos } from './service';
+import { localStoragePromise } from '../utils';
 import './App.less';
-import { localStoragePromise } from './utils';
 
 const App = () => {
   const [starredRepos, setStarredRepos] = useState<IStarredRepo[]>(null);

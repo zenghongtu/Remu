@@ -1,4 +1,4 @@
-import { request } from './utils';
+import { request } from '../utils';
 
 const default_token = process.env.GH_TOKEN || '';
 

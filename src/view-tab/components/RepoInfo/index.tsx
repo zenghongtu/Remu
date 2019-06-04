@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { IStarredRepo, ITag, tagId, ITagsAction } from '../../typings';
+import { IStarredRepo, ITag, tagId, ITagsAction } from '../../../typings';
 import { useState, useEffect } from 'react';
 import { getReadmeHTML } from '../../service';
 import 'github-markdown-css';
 import './index.less';
 import { Select } from 'antd';
-import { genUniqueKey } from '../../utils';
+import { genUniqueKey } from '../../../utils';
 
 const { Option } = Select;
 

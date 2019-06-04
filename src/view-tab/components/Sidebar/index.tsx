@@ -9,9 +9,9 @@ import {
   IStarTaggedStatus,
   ALL_STARS,
   IFilterReposAction,
-} from '../../typings';
+} from '../../../typings';
 import { SyntheticEvent } from 'react';
-import { genUniqueKey, localStoragePromise } from '../../utils';
+import { genUniqueKey, localStoragePromise } from '../../../utils';
 
 const { SubMenu } = Menu;
 const Search = Input.Search;

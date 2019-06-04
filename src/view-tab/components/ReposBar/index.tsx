@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IStarredRepo } from '../../typings';
+import { IStarredRepo } from '../../../typings';
 import { List } from 'antd';
 import RepoCard from './RepoCard';
 import './index.less';
