@@ -40,7 +40,6 @@ const App = () => {
   const [curRepos, setCurRepos] = useState<IStarredRepo[]>(null);
   const [curRepo, setCurRepo] = useState<IStarredRepo>(null);
   const [languages, setLanguages] = useState<ILanguages[]>(null);
-  const [repoIds, setRepoIds] = useState<repoId[]>(null);
 
   useEffect(() => {
     // todo handle rate limit
@@ -106,7 +105,6 @@ const App = () => {
         setStarredRepos(result);
         setCurRepos(result);
         setLanguages(_langs);
-        setRepoIds(_repoIds);
         setTags(_tags);
         setTagCountMap(_tagCountMap);
         setRepoWithTags(_repoWithTags);
