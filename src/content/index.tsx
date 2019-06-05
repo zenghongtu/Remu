@@ -2,9 +2,30 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import RepoTags from './RepoTags';
 import { localStoragePromise } from '../utils';
-import { STORAGE_TAGS, STORAGE_REPO } from '../typings';
+import { STORAGE_TAGS, STORAGE_REPO, STORAGE_TOKEN } from '../typings';
+
+const NEW_TOKEN_URL = 'https://github.com/settings/tokens/new';
+const TOKENS_URL = 'https://github.com/settings/tokens';
 
 document.addEventListener('DOMContentLoaded', () => {
+  const href = location.href;
+  if (href.startsWith(TOKENS_URL)) {
+    localStoragePromise.get(STORAGE_TOKEN).then((result) => {
+      if (!result[STORAGE_TOKEN]) {
+        if (href === NEW_TOKEN_URL) {
+          // @ts-ignore
+          import('./createToken');
+        } else {
+          // import('./getToken');
+        }
+      } else {
+        // tslint:disable-next-line:no-console
+        console.log('have token for Remu, no need to create new token.');
+      }
+    });
+    return;
+  }
+
   const userId = document
     .querySelector('meta[name="user-login"]')
     .getAttribute('content');
