@@ -4,7 +4,7 @@ import Header from './components/Header';
 import ReposBar from './components/ReposBar';
 import RepoInfo from './components/RepoInfo';
 import Sidebar from './components/Sidebar';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   IStarredRepo,
   IRepoWithTag,
@@ -20,10 +20,12 @@ import {
   STORAGE_TAGS,
   STORAGE_REPO,
   ITagsAction,
+  STORAGE_TOKEN,
 } from '../typings';
 import { getStarredRepos } from './service';
 import { localStoragePromise } from '../utils';
 import './App.less';
+import { Modal, Input } from 'antd';
 
 const App = () => {
   const [starredRepos, setStarredRepos] = useState<IStarredRepo[]>(null);
@@ -40,16 +42,52 @@ const App = () => {
   const [curRepos, setCurRepos] = useState<IStarredRepo[]>(null);
   const [curRepo, setCurRepo] = useState<IStarredRepo>(null);
   const [languages, setLanguages] = useState<ILanguages[]>(null);
+  const [refresh, setRefresh] = useState(false);
+  const tokenInputRef = useRef(null);
 
   useEffect(() => {
     // todo handle rate limit
     const _langMap = {};
     const _repoIds = [];
-
+    const getToken = localStoragePromise.get(STORAGE_TOKEN);
     const getTags = localStoragePromise.get(STORAGE_TAGS);
     const getRepoWithTags = localStoragePromise.get(STORAGE_REPO);
-    Promise.all([getTags, getRepoWithTags]).then((results) => {
-      const [tagsRes, RepoWithTagsRes] = results;
+    Promise.all([getTags, getRepoWithTags, getToken]).then((results) => {
+      const [tagsRes, RepoWithTagsRes, token] = results;
+
+      const remuToken = (token as any).token;
+      if (remuToken) {
+        window.REMU_TOKEN = remuToken;
+      } else {
+        if (!refresh) {
+          Modal.info({
+            icon: null,
+            title: ' Github Personal Access Token',
+            content: (
+              <div>
+                <a
+                  target="_blank"
+                  href="https://github.com/settings/tokens/new"
+                >
+                  One-click generation token
+                </a>
+                <Input required placeholder="Enter Token" ref={tokenInputRef} />
+              </div>
+            ),
+            okText: 'Confirm',
+            onOk() {
+              const token = tokenInputRef.current.state.value;
+              // todo check token
+              if (token) {
+                localStoragePromise.set({ [STORAGE_TOKEN]: token }).then(() => {
+                  setRefresh(true);
+                });
+              }
+            },
+          });
+          return;
+        }
+      }
 
       const tags = (tagsRes as any).tags || [];
       const repoWithTags = (RepoWithTagsRes as any).repoWithTags;
@@ -111,7 +149,7 @@ const App = () => {
         setStarTaggedStatus(_starTaggedStatus);
       });
     });
-  }, []);
+  }, [refresh]);
 
   const handleFilterRepos = ({ type, payload }: IFilterReposAction) => {
     let _repos = null;

@@ -1,10 +1,12 @@
 import { request } from '../utils';
 
-const default_token = process.env.GH_TOKEN || '';
+const default_token = process.env.GH_TOKEN;
 
 const starredReposUrl = '/user/starred';
 
-export const getStarredRepos = ({ token = default_token }) => {
+export const getStarredRepos = ({
+  token = window.REMU_TOKEN || default_token,
+}) => {
   const options = {
     params: {
       sort: 'created',
@@ -21,13 +23,13 @@ export const getStarredRepos = ({ token = default_token }) => {
   return (
     request
       .get(starredReposUrl, options)
-      // 获取总页数
+      // get all page count
       .then((response) => {
         const links = response.headers.link.split(',');
         const starredCount = links[1].match(/&page=(\d+)/)[1];
         lastPage = Math.ceil(starredCount / 100);
       })
-      // 获取后续页码的数据
+      // get remaining page count
       .then(async () => {
         const requestQueue = [];
         for (let i = 1; i <= lastPage; i++) {
@@ -48,7 +50,10 @@ export const getStarredRepos = ({ token = default_token }) => {
   );
 };
 
-export const getReadmeHTML = ({ full_name, token = default_token }) => {
+export const getReadmeHTML = ({
+  full_name,
+  token = window.REMU_TOKEN || default_token,
+}) => {
   const ulr = `/repos/${full_name}/readme`;
   return request.get(ulr, {
     headers: {
