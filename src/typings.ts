@@ -30,7 +30,7 @@ export type IStarTaggedStatus = { [key in statusKey]: number };
 export interface ITagsAction {
   type: 'add' | 'delete' | 'create';
   payload: { repoId: repoId; tag: ITag };
-  selectedTagIds: tagId[];
+  selectedTagIds?: tagId[];
 }
 
 export interface ITagCountMap {
