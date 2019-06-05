@@ -5,9 +5,6 @@ const default_token = process.env.GH_TOKEN || '';
 const starredReposUrl = '/user/starred';
 
 export const getStarredRepos = ({ token = default_token }) => {
-  if (process.env.NODE_ENV === 'development') {
-    return import('./mock/starred.json').then((data) => data.default);
-  }
   const options = {
     params: {
       sort: 'created',
