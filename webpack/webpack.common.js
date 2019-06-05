@@ -7,6 +7,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserJSPlugin = require("terser-webpack-plugin");
 const ExtensionReloader = require("webpack-extension-reloader");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
 const pkg = require("../package.json");
 
@@ -15,9 +16,34 @@ const srcDir = path.join(rootDir, "src");
 
 dotenv.config();
 
-const pages = ["options", "background", "content", "view-tab"];
 const entry = {};
 const plugins = [];
+
+const page = process.env.PAGE;
+const isUseExLoader = process.env.EX_LOADER;
+let pages;
+
+if (page) {
+  if (isUseExLoader) {
+    pages = ["background", "content"];
+  } else {
+    pages = [page];
+  }
+} else {
+  pages = ["options", "background", "content", "view-tab"];
+}
+
+if (isUseExLoader) {
+  plugins.push(
+    new ExtensionReloader({
+      entries: {
+        manifest: path.resolve(__dirname, "../public/manifest.json"),
+        contentScript: "content",
+        background: "background",
+      },
+    }),
+  );
+}
 
 pages.forEach(pageName => {
   entry[pageName] = path.join(srcDir, pageName, "index");
@@ -37,23 +63,11 @@ pages.forEach(pageName => {
 });
 
 module.exports = {
-  mode: "development",
   entry,
   output: {
     path: path.join(rootDir, "dist/"),
     filename: "js/[name].bundle.js",
   },
-  devtool: "inline-source-map",
-  devServer: {
-    contentBase: "./dist",
-  },
-  // optimization: {
-  //   minimizer: [
-  //     new UglifyJsPlugin({
-  //       cache: true,
-  //     }),
-  //   ],
-  // },
   optimization: {
     minimizer: [
       new TerserJSPlugin({
@@ -72,17 +86,19 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        use: "ts-loader",
+        loader: "ts-loader",
         exclude: /node_modules/,
+        options: {
+          happyPackMode: true,
+          transpileOnly: true,
+          experimentalWatchApi: true,
+        },
       },
       {
         test: /\.less$/,
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: process.env.NODE_ENV === "development",
-            },
           },
           {
             loader: "css-loader",
@@ -125,6 +141,7 @@ module.exports = {
   },
   plugins: [
     ...plugins,
+    new ForkTsCheckerWebpackPlugin(),
     new CopyWebpackPlugin(
       [
         {
@@ -146,12 +163,6 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: "style/[name].css",
       chunkFilename: "[id].css",
-    }),
-    new ExtensionReloader({
-      entries: {
-        contentScript: "content",
-        background: "background",
-      },
     }),
     new Dotenv(),
   ],
