@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import RepoTags from './RepoTags';
 import { localStoragePromise, syncStoragePromise } from '../utils';
 import { STORAGE_TAGS, STORAGE_REPO, STORAGE_TOKEN } from '../typings';
+import './index.less';
 
 const NEW_TOKEN_URL = 'https://github.com/settings/tokens/new';
 const TOKENS_URL = 'https://github.com/settings/tokens';
