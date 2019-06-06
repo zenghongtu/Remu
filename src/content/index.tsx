@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import RepoTags from './RepoTags';
-import { localStoragePromise } from '../utils';
+import { localStoragePromise, syncStoragePromise } from '../utils';
 import { STORAGE_TAGS, STORAGE_REPO, STORAGE_TOKEN } from '../typings';
 
 const NEW_TOKEN_URL = 'https://github.com/settings/tokens/new';
@@ -10,7 +10,7 @@ const TOKENS_URL = 'https://github.com/settings/tokens';
 document.addEventListener('DOMContentLoaded', () => {
   const href = location.href;
   if (href.startsWith(TOKENS_URL)) {
-    localStoragePromise.get(STORAGE_TOKEN).then((result) => {
+    syncStoragePromise.get(STORAGE_TOKEN).then((result) => {
       if (!result[STORAGE_TOKEN]) {
         if (href === NEW_TOKEN_URL) {
           // @ts-ignore

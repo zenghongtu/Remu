@@ -26,6 +26,7 @@ import { getStarredRepos } from './service';
 import { localStoragePromise } from '../utils';
 import './App.less';
 import { Modal, Input } from 'antd';
+import { syncStoragePromise } from './utils';
 
 const App = () => {
   const [starredRepos, setStarredRepos] = useState<IStarredRepo[]>(null);
@@ -49,7 +50,7 @@ const App = () => {
     // todo handle rate limit
     const _langMap = {};
     const _repoIds = [];
-    const getToken = localStoragePromise.get(STORAGE_TOKEN);
+    const getToken = syncStoragePromise.get(STORAGE_TOKEN);
     const getTags = localStoragePromise.get(STORAGE_TAGS);
     const getRepoWithTags = localStoragePromise.get(STORAGE_REPO);
     Promise.all([getTags, getRepoWithTags, getToken]).then((results) => {
@@ -79,8 +80,9 @@ const App = () => {
               const token = tokenInputRef.current.state.value;
               // todo check token
               if (token) {
-                localStoragePromise.set({ [STORAGE_TOKEN]: token }).then(() => {
+                syncStoragePromise.set({ [STORAGE_TOKEN]: token }).then(() => {
                   setRefresh(true);
+                  window.REMU_TOKEN = remuToken;
                 });
               }
             },
