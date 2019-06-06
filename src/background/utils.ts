@@ -74,7 +74,21 @@ export const checkSyncGist = () => {
   });
 };
 
-export const updateGist = ({ token, gistId, updateAt }: ISyncInfo) => {
+const DEFAULT_TIMEOUT = 10000; // 10s
+
+const debounce = (fn: Function, timeout = DEFAULT_TIMEOUT) => {
+  let timer: any;
+  return function(...args) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, timeout);
+  };
+};
+
+const _updateGist = ({ token, gistId, updateAt }: ISyncInfo) => {
   return localStoragePromise.get([STORAGE_TAGS, STORAGE_REPO]).then((results) => {
     const { tags, repoWithTags } = results as any;
 
@@ -97,6 +111,8 @@ export const updateGist = ({ token, gistId, updateAt }: ISyncInfo) => {
     return null;
   });
 };
+
+export const updateGist = debounce(_updateGist);
 
 const updateLocal = (data: GistData) => {
   const content = data.files[REMU_SYNC_FILENAME].content;
