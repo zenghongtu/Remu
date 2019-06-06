@@ -37,17 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const isPublic = !!repoTitleEl;
 
     if (isPublic) {
-      const getTags = localStoragePromise.get(STORAGE_TAGS);
-      const getRepoWithTags = localStoragePromise.get(STORAGE_REPO);
+      localStoragePromise.get([STORAGE_TAGS, STORAGE_REPO]).then((results) => {
+        const { tags = [], repoWithTags = {} } = results as any;
 
-      Promise.all([getTags, getRepoWithTags]).then((results) => {
-        const [tagsRes, RepoWithTagsRes] = results;
         const repoId = document
           .querySelector('meta[name="octolytics-dimension-repository_id"]')
           .getAttribute('content');
-
-        const tags = (tagsRes as any).tags || [];
-        const repoWithTags = (RepoWithTagsRes as any).repoWithTags || {};
 
         const root = document.createElement('div');
         root.id = '-remu-root';

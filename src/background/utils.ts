@@ -22,13 +22,10 @@ export const initGist = () => {
       createGist('init gist', token).then(({ data }: GistDataRsp) => {
         const gistId = data.id;
         const updateTime = data.updated_at;
-        const setUpdateAt = syncStoragePromise.set({
+        return syncStoragePromise.set({
           [STORAGE_GIST_UPDATE_TIME]: updateTime,
-        });
-        const setGistId = syncStoragePromise.set({
           [STORAGE_GIST_ID]: gistId,
         });
-        return Promise.all([setGistId, setUpdateAt]);
       });
     }
   });
@@ -41,22 +38,16 @@ export interface ISyncInfo {
 }
 
 export const refreshSyncInfo = () => {
-  const getToken = syncStoragePromise.get(STORAGE_TOKEN);
-  const getGistId = syncStoragePromise.get(STORAGE_GIST_ID);
-  const getUpdateAt = syncStoragePromise.get(STORAGE_GIST_UPDATE_TIME);
+  return syncStoragePromise
+    .get([STORAGE_TOKEN, STORAGE_GIST_ID, STORAGE_GIST_UPDATE_TIME])
+    .then<ISyncInfo>((results) => {
+      const { token, gistId, updateAt } = results as any;
 
-  return Promise.all([getToken, getGistId, getUpdateAt]).then<ISyncInfo>(
-    (results) => {
-      const [tokenRes, gistIdRes, updateAtRes] = results;
-      const token = (tokenRes as any)[STORAGE_TOKEN];
-      const gistId = (gistIdRes as any)[STORAGE_GIST_ID];
-      const updateAt = (updateAtRes as any)[STORAGE_GIST_UPDATE_TIME];
       window.REMU_GIST_ID = gistId;
       window.REMU_TOKEN = token;
       window.REMU_GIST_UPDATE_AT = updateAt;
       return { token, gistId, updateAt };
-    },
-  );
+    });
 };
 
 export const checkSyncGist = () => {
@@ -83,14 +74,9 @@ export const checkSyncGist = () => {
 };
 
 export const updateGist = ({ token, gistId, updateAt }: ISyncInfo) => {
-  const getTags = localStoragePromise.get(STORAGE_TAGS);
-  const getRepoWithTags = localStoragePromise.get(STORAGE_REPO);
+  return localStoragePromise.get([STORAGE_TAGS, STORAGE_REPO]).then((results) => {
+    const { tags, repoWithTags } = results as any;
 
-  return Promise.all([getTags, getRepoWithTags]).then((results) => {
-    const [tagsRes, RepoWithTagsRes] = results;
-
-    const tags = (tagsRes as any).tags;
-    const repoWithTags = (RepoWithTagsRes as any).repoWithTags;
     if (tags && repoWithTags) {
       const data = { tags, repoWithTags };
       const content = JSON.stringify(data);
@@ -115,13 +101,14 @@ const updateLocal = (data: GistData) => {
   const content = data.files[REMU_SYNC_FILENAME].content;
   const { tags, repoWithTags } = JSON.parse(content);
 
-  const setNewTags = localStoragePromise.set({ [STORAGE_TAGS]: tags });
-  const setNewRepoWithTags = localStoragePromise.set({
+  const setNewTagsAndRepoWithTags = localStoragePromise.set({
     [STORAGE_REPO]: repoWithTags,
+    [STORAGE_TAGS]: tags,
   });
+
   const setUpdateAt = syncStoragePromise.set({
     [STORAGE_GIST_UPDATE_TIME]: data.updated_at,
   });
   // todo fix
-  return Promise.all([setNewTags, setNewRepoWithTags, setUpdateAt]);
+  return Promise.all([setNewTagsAndRepoWithTags, setUpdateAt]);
 };

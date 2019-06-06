@@ -23,10 +23,9 @@ import {
   STORAGE_TOKEN,
 } from '../typings';
 import { getStarredRepos } from './service';
-import { localStoragePromise } from '../utils';
-import './App.less';
+import { localStoragePromise, syncStoragePromise } from '../utils';
 import { Modal, Input } from 'antd';
-import { syncStoragePromise } from './utils';
+import './App.less';
 
 const App = () => {
   const [starredRepos, setStarredRepos] = useState<IStarredRepo[]>(null);
@@ -51,10 +50,13 @@ const App = () => {
     const _langMap = {};
     const _repoIds = [];
     const getToken = syncStoragePromise.get(STORAGE_TOKEN);
-    const getTags = localStoragePromise.get(STORAGE_TAGS);
-    const getRepoWithTags = localStoragePromise.get(STORAGE_REPO);
-    Promise.all([getTags, getRepoWithTags, getToken]).then((results) => {
-      const [tagsRes, RepoWithTagsRes, token] = results;
+
+    const getTagsAndRepoWithTags = localStoragePromise.get([
+      STORAGE_TAGS,
+      STORAGE_REPO,
+    ]);
+    Promise.all([getTagsAndRepoWithTags, getToken]).then((results) => {
+      const [tagsAndRepoWithTagsRes, token] = results;
 
       const remuToken = (token as any).token;
       if (remuToken) {
@@ -91,8 +93,7 @@ const App = () => {
         }
       }
 
-      const tags = (tagsRes as any).tags || [];
-      const repoWithTags = (RepoWithTagsRes as any).repoWithTags;
+      const { tags = [], repoWithTags = {} } = tagsAndRepoWithTagsRes as any;
 
       const isTagsVaild = tags && repoWithTags;
 
@@ -191,57 +192,47 @@ const App = () => {
         [repoId.toString()]: [...selectedTagIds, tag.id],
       };
       const newTagCountMap = { ...tagCountMap, [tag.id]: 1 };
-      const setNewTags = localStoragePromise.set({ [STORAGE_TAGS]: newTags });
-      const setNewRepoWithTags = localStoragePromise.set({
-        [STORAGE_REPO]: newRepoWithTags,
-      });
-
-      setTags(newTags);
-      setRepoWithTags(newRepoWithTags);
-      setTagCountMap(newTagCountMap);
-      Promise.all([setNewTags, setNewRepoWithTags]).catch((errors) => {
-        // todo
-        // tslint:disable-next-line:no-console
-        console.error('errors: ', errors);
-      });
+      localStoragePromise
+        .set({ [STORAGE_TAGS]: newTags, [STORAGE_REPO]: newRepoWithTags })
+        .then(() => {
+          setTags(newTags);
+          setRepoWithTags(newRepoWithTags);
+          setTagCountMap(newTagCountMap);
+        });
     } else if (type === 'add') {
       const newRepoWithTags = {
         ...repoWithTags,
         [repoId.toString()]: [...selectedTagIds, tag.id],
       };
-      const setNewRepoWithTags = localStoragePromise.set({
-        [STORAGE_REPO]: newRepoWithTags,
-      });
-      const tagId = tag.id;
-      const curCount = tagCountMap[tagId] || 0;
-      const newTagCountMap = { ...tagCountMap, [tagId]: curCount + 1 };
+      localStoragePromise
+        .set({
+          [STORAGE_REPO]: newRepoWithTags,
+        })
+        .then(() => {
+          const tagId = tag.id;
+          const curCount = tagCountMap[tagId] || 0;
+          const newTagCountMap = { ...tagCountMap, [tagId]: curCount + 1 };
 
-      setRepoWithTags(newRepoWithTags);
-      setTagCountMap(newTagCountMap);
-      Promise.all([setNewRepoWithTags]).catch((errors) => {
-        // todo
-        // tslint:disable-next-line:no-console
-        console.error('errors: ', errors);
-      });
+          setRepoWithTags(newRepoWithTags);
+          setTagCountMap(newTagCountMap);
+        });
     } else if (type === 'delete') {
       const newRepoWithTags = {
         ...repoWithTags,
         [repoId.toString()]: selectedTagIds.filter((tagId) => tagId !== tag.id),
       };
-      const setNewRepoWithTags = localStoragePromise.set({
-        [STORAGE_REPO]: newRepoWithTags,
-      });
-      const tagId = tag.id;
-      const curCount = tagCountMap[tagId] || 1;
-      const newTagCountMap = { ...tagCountMap, [tagId]: curCount - 1 };
+      localStoragePromise
+        .set({
+          [STORAGE_REPO]: newRepoWithTags,
+        })
+        .then(() => {
+          const tagId = tag.id;
+          const curCount = tagCountMap[tagId] || 1;
+          const newTagCountMap = { ...tagCountMap, [tagId]: curCount - 1 };
 
-      setRepoWithTags(newRepoWithTags);
-      setTagCountMap(newTagCountMap);
-      Promise.all([setNewRepoWithTags]).catch((errors) => {
-        // todo
-        // tslint:disable-next-line:no-console
-        console.error('errors: ', errors);
-      });
+          setRepoWithTags(newRepoWithTags);
+          setTagCountMap(newTagCountMap);
+        });
     }
   };
 

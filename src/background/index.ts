@@ -45,23 +45,22 @@ chrome.storage.onChanged.addListener(function(changes, areaName) {
       createGist('create gist', token).then(({ data }) => {
         const gistId = data.id;
         const updateTime = data.updated_at;
-        const setGistId = syncStoragePromise.set({
-          [STORAGE_GIST_ID]: gistId,
-        });
-        const setUpdateAt = syncStoragePromise.set({
-          [STORAGE_GIST_UPDATE_TIME]: updateTime,
-        });
-
-        return Promise.all([setGistId, setUpdateAt]).then(() => {
-          window.REMU_GIST_ID = gistId;
-          window.REMU_TOKEN = token;
-          window.REMU_GIST_UPDATE_AT = updateTime;
-        });
+        return syncStoragePromise
+          .set({
+            [STORAGE_GIST_ID]: gistId,
+            [STORAGE_GIST_UPDATE_TIME]: updateTime,
+          })
+          .then(() => {
+            window.REMU_GIST_ID = gistId;
+            window.REMU_TOKEN = token;
+            window.REMU_GIST_UPDATE_AT = updateTime;
+          });
       });
     }
   }
 
   if (areaName === 'local') {
+    // todo fix update local gist
     if (changes[STORAGE_REPO]) {
       const info: ISyncInfo = {
         token: window.REMU_TOKEN,

@@ -46,11 +46,11 @@ const SelectTags = ({
         ...repoWithTags,
         [repoId.toString()]: newSelectedTagIds,
       };
-      const setNewRepoWithTags = localStoragePromise.set({
-        [STORAGE_REPO]: newRepoWithTags,
-      });
 
-      Promise.all([setNewRepoWithTags])
+      localStoragePromise
+        .set({
+          [STORAGE_REPO]: newRepoWithTags,
+        })
         .then(() => {
           if (onTagsChange) {
             const action: ITagsAction = {
@@ -81,12 +81,8 @@ const SelectTags = ({
         [repoId.toString()]: newSelectedTagIds,
       };
 
-      const setNewTags = localStoragePromise.set({ [STORAGE_TAGS]: newTags });
-      const setNewRepoWithTags = localStoragePromise.set({
-        [STORAGE_REPO]: newRepoWithTags,
-      });
-
-      Promise.all([setNewTags, setNewRepoWithTags])
+      localStoragePromise
+        .set({ [STORAGE_REPO]: newRepoWithTags, [STORAGE_TAGS]: newTags })
         .then(() => {
           if (onTagsChange) {
             const action: ITagsAction = {
@@ -115,11 +111,11 @@ const SelectTags = ({
       ...repoWithTags,
       [repoId.toString()]: newSelectedTagIds,
     };
-    const setNewRepoWithTags = localStoragePromise.set({
-      [STORAGE_REPO]: newRepoWithTags,
-    });
 
-    Promise.all([setNewRepoWithTags])
+    localStoragePromise
+      .set({
+        [STORAGE_REPO]: newRepoWithTags,
+      })
       .then(() => {
         if (onTagsChange) {
           const action: ITagsAction = {
