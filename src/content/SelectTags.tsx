@@ -148,8 +148,11 @@ const SelectTags = ({
       // @ts-ignore
       value={selectedTagIds}
       mode="tags"
+      filterOption={(inputValue, { props: { children } }) => {
+        return (children as string).includes(inputValue);
+      }}
       style={{ width: '100%' }}
-      placeholder="Add a tag"
+      placeholder="Add tags"
       onSelect={handleSelectTag}
       onDeselect={handleDeselectTag}
       ref={selectRef}

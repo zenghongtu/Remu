@@ -8,7 +8,7 @@ import {
   repoId,
   ITagsAction,
 } from '../typings';
-import SelectTags, { ISelectTagsProps } from '../components/SelectTags';
+import SelectTags, { ISelectTagsProps } from './SelectTags';
 import { useEffect, useState } from 'react';
 import { localStoragePromise } from '../utils';
 
