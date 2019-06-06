@@ -1,4 +1,6 @@
-import { request } from '../utils';
+import { request, syncStoragePromise } from '../utils';
+import { Modal } from 'antd';
+import { STORAGE_TOKEN } from '../typings';
 
 const default_token = process.env.GH_TOKEN;
 
@@ -46,6 +48,20 @@ export const getStarredRepos = ({
           );
           return result;
         });
+      })
+      .catch((errors) => {
+        if (errors.response.status === 401 && window.REMU_TOKEN) {
+          Modal.error({
+            title: 'Invalid Token',
+            content: 'Click ok to refresh the page and enter token.',
+            okText: 'ok',
+            onOk() {
+              syncStoragePromise.clear().then(() => {
+                location.reload();
+              });
+            },
+          });
+        }
       })
   );
 };
