@@ -19,6 +19,8 @@ export interface IFilterReposAction {
 export const STORAGE_TAGS = 'tags';
 export const STORAGE_REPO = 'repoWithTags';
 export const STORAGE_TOKEN = 'token';
+export const STORAGE_GIST_ID = 'gistId';
+export const STORAGE_GIST_UPDATE_TIME = 'updateAt';
 
 export const ALL_STARS = 'all stars';
 export const UNTAGGED_STARS = 'untagged stars';

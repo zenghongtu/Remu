@@ -1,5 +1,22 @@
+import { createGist } from './syncService';
+import { localStoragePromise, syncStoragePromise } from '../utils';
+import {
+  STORAGE_TOKEN,
+  STORAGE_GIST_ID,
+  STORAGE_GIST_UPDATE_TIME,
+  STORAGE_TAGS,
+  STORAGE_REPO,
+} from '../typings';
+import { refreshSyncInfo, updateGist, ISyncInfo, checkSyncGist } from './utils';
+
 // record tab id
 window.tabId = null;
+
+window.REMU_GIST_ID = '';
+window.REMU_TOKEN = '';
+window.REMU_GIST_UPDATE_AT = '';
+
+refreshSyncInfo();
 
 chrome.browserAction.onClicked.addListener(function() {
   const index = chrome.extension.getURL('view-tab.html');
@@ -20,14 +37,39 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
   }
 });
 
-// todo sync token / gistId ?
-// chrome.storage.onChanged.addListener(function(changes, areaName) {
-//   if (areaName === 'local') {
-//     if (changes.token) {
-//       chrome.storage.sync.set({ token: changes.token.newValue });
-//     }
-//     if (changes.gistId) {
-//       chrome.storage.sync.set({ gistId: changes.gistId.newValue });
-//     }
-//   }
-// });
+chrome.storage.onChanged.addListener(function(changes, areaName) {
+  if (areaName === 'sync') {
+    // only add token
+    if (changes[STORAGE_TOKEN]) {
+      const token = changes[STORAGE_TOKEN].newValue;
+      createGist('create gist', token).then(({ data }) => {
+        const gistId = data.id;
+        const updateTime = data.updated_at;
+        const setGistId = syncStoragePromise.set({
+          [STORAGE_GIST_ID]: gistId,
+        });
+        const setUpdateAt = syncStoragePromise.set({
+          [STORAGE_GIST_UPDATE_TIME]: updateTime,
+        });
+
+        return Promise.all([setGistId, setUpdateAt]).then(() => {
+          window.REMU_GIST_ID = gistId;
+          window.REMU_TOKEN = token;
+          window.REMU_GIST_UPDATE_AT = updateTime;
+        });
+      });
+    }
+  }
+
+  if (areaName === 'local') {
+    if (changes[STORAGE_REPO]) {
+      const info: ISyncInfo = {
+        token: window.REMU_TOKEN,
+        gistId: window.REMU_GIST_ID,
+      };
+      updateGist(info);
+    }
+  }
+});
+
+checkSyncGist();
