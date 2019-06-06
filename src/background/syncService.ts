@@ -84,7 +84,7 @@ export const createGist = (
   return request.post(
     '/gists',
     {
-      description: '',
+      description: `create by Remu(https://github.com/zenghongtu/Remu) at ${new Date().toLocaleDateString()}`,
       public: false,
       files: {
         [REMU_SYNC_FILENAME]: {
@@ -119,7 +119,6 @@ export const editGist = (
   return request.patch(
     `/gists/${gistId}`,
     {
-      description: '',
       files: {
         [REMU_SYNC_FILENAME]: {
           content,
