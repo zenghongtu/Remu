@@ -60,11 +60,13 @@ chrome.storage.onChanged.addListener(function(changes, areaName) {
 
   if (areaName === 'local') {
     if (changes[STORAGE_REPO] && !changes[IS_UPDATE_LOCAL]) {
-      const info: ISyncInfo = {
-        token: window.REMU_TOKEN,
-        gistId: window.REMU_GIST_ID,
-      };
-      updateGist(info);
+      if (window.REMU_GIST_ID) {
+        const info: ISyncInfo = {
+          token: window.REMU_TOKEN,
+          gistId: window.REMU_GIST_ID,
+        };
+        updateGist(info);
+      }
     }
   }
 });
