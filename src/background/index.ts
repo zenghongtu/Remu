@@ -16,8 +16,6 @@ window.REMU_GIST_ID = '';
 window.REMU_TOKEN = '';
 window.REMU_GIST_UPDATE_AT = '';
 
-refreshSyncInfo();
-
 chrome.browserAction.onClicked.addListener(function() {
   const index = chrome.extension.getURL('view-tab.html');
 
