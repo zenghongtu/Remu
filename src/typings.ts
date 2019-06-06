@@ -26,6 +26,8 @@ export const ALL_STARS = 'all stars';
 export const UNTAGGED_STARS = 'untagged stars';
 export const UNKOWN = 'Unkown';
 
+export const IS_UPDATE_LOCAL = 'is_update_local';
+
 export type statusKey = typeof ALL_STARS | typeof UNTAGGED_STARS;
 
 export type IStarTaggedStatus = { [key in statusKey]: number };

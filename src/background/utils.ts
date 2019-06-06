@@ -13,6 +13,7 @@ import {
   STORAGE_GIST_UPDATE_TIME,
   STORAGE_TAGS,
   STORAGE_REPO,
+  IS_UPDATE_LOCAL,
 } from '../typings';
 
 export const initGist = () => {
@@ -104,6 +105,7 @@ const updateLocal = (data: GistData) => {
   const setNewTagsAndRepoWithTags = localStoragePromise.set({
     [STORAGE_REPO]: repoWithTags,
     [STORAGE_TAGS]: tags,
+    [IS_UPDATE_LOCAL]: true,
   });
 
   const setUpdateAt = syncStoragePromise.set({

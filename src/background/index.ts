@@ -6,6 +6,7 @@ import {
   STORAGE_GIST_UPDATE_TIME,
   STORAGE_TAGS,
   STORAGE_REPO,
+  IS_UPDATE_LOCAL,
 } from '../typings';
 import { refreshSyncInfo, updateGist, ISyncInfo, checkSyncGist } from './utils';
 
@@ -58,8 +59,7 @@ chrome.storage.onChanged.addListener(function(changes, areaName) {
   }
 
   if (areaName === 'local') {
-    // todo fix update local gist
-    if (changes[STORAGE_REPO]) {
+    if (changes[STORAGE_REPO] && !changes[IS_UPDATE_LOCAL]) {
       const info: ISyncInfo = {
         token: window.REMU_TOKEN,
         gistId: window.REMU_GIST_ID,
