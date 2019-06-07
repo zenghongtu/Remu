@@ -253,11 +253,8 @@ interface Plan {
 
 const USER_PROFILE_URL = '/user';
 
-export const getUserProfile = (
-  url = USER_PROFILE_URL,
-  token = DEFAULT_TOKEN,
-) => {
-  return request.get<IUserProfile>(url, {
+export const getUserProfile = ({ token = DEFAULT_TOKEN }) => {
+  return request.get<IUserProfile>(USER_PROFILE_URL, {
     headers: {
       Authorization: 'token ' + token,
     },

@@ -237,7 +237,7 @@ const App = (props: IAppProps) => {
   return (
     <div>
       <div className="header">
-        <Header />
+        <Header token={token} />
       </div>
       <div className="main">
         <div className="side-bar">

@@ -125,6 +125,19 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /\.(png|jpg|gif)$/i,
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              limit: 8192,
+              fallback: "file-loader",
+              name: "assets/[name].[ext]",
+            },
+          },
+        ],
+      },
       //   {
       //     test: /\.html$/,
       //     loader: "html-loader",
