@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { List } from 'antd';
+import { List, Input, Icon, Empty } from 'antd';
 import RepoCard from './RepoCard';
 import './index.less';
 import { IStarredRepo } from '../../service';
@@ -26,7 +26,7 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
           )}
         />
       ) : (
-        'none'
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
       )}
     </div>
   );
