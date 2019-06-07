@@ -96,39 +96,38 @@ const RepoInfo = ({
   };
   return (
     // todo fix scroll position
-    <div className="info_wrap">
-      <div>
-        <h2>{full_name}</h2>
+    <div className="info-wrap">
+      <div className="info-meta">
         <div>
           {created_at} {updated_at} {starred_at}
         </div>
-        <div>
-          <Select
-            // @ts-ignore
-            value={selectedTagIds}
-            mode="tags"
-            filterOption={(inputValue, { props: { children } }) => {
-              return (children as string).includes(inputValue);
-            }}
-            style={{ width: '100%' }}
-            placeholder="Add tags"
-            onSelect={handleSelectTag}
-            onDeselect={handleDeselectTag}
-          >
-            {tags &&
-              tags.map(({ id, name }) => {
-                return <Option key={id}>{name}</Option>;
-              })}
-          </Select>
-        </div>
+        <Select
+          // @ts-ignore
+          value={selectedTagIds}
+          mode="tags"
+          filterOption={(inputValue, { props: { children } }) => {
+            return (children as string).includes(inputValue);
+          }}
+          style={{ width: '50%' }}
+          placeholder="Add tags"
+          onSelect={handleSelectTag}
+          onDeselect={handleDeselectTag}
+        >
+          {tags &&
+            tags.map(({ id, name }) => {
+              return <Option key={id}>{name}</Option>;
+            })}
+        </Select>
       </div>
-      {content && (
-        <article
-          className="markdown-body"
-          // todo fix relavtive path (e.g. /dist/logo.icon)
-          dangerouslySetInnerHTML={{ __html: content }}
-        />
-      )}
+      <div className="info-content">
+        {content && (
+          <article
+            className="markdown"
+            // todo fix relavtive path (e.g. /dist/logo.icon)
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
+        )}
+      </div>
     </div>
   );
 };

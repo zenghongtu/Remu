@@ -1,7 +1,32 @@
 @import "../../../style/index.less";
 
-.info_wrap {
+.info-wrap {
+  width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.info-meta {
+  height: 52px;
+}
+
+.info-content {
+  width: 100%;
   overflow-x: hidden;
   overflow-y: scroll;
+}
+
+.markdown {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.markdown-body {
+  padding: 16px 16px 16px 24px;
+  box-shadow: @box-shadow-base;
+  border-radius: @border-radius-base;
 }

@@ -14,8 +14,29 @@
   height: 100vh;
   padding-top: 66px;
   overflow: hidden;
-  .col-item {
-    // flex: 1;
-    min-width: 260px;
-  }
+}
+
+.side-bar {
+  width: 275px;
+  min-width: 275px;
+  box-sizing: border-box;
+}
+
+.repos-bar {
+  width: 400px;
+  min-width: 400px;
+  box-sizing: border-box;
+}
+
+.repo-info {
+  // use flex will overflow
+  width: calc(100% - 275px - 400px);
+  border-left: 1px solid #ccc;
+}
+
+.repo-no-selected {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
