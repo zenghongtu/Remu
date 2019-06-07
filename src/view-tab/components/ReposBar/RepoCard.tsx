@@ -1,5 +1,10 @@
 import * as React from 'react';
 import { IStarredRepo } from '../../service';
+import './RepoCard.less';
+import logo from '../../assets/logo.png';
+import { UNKOWN } from '../Sidebar/index';
+import { Icon } from 'antd';
+
 interface IRepoCard {
   repo: IStarredRepo;
 }
@@ -23,15 +28,38 @@ const RepoCard = ({ repo }: IRepoCard) => {
     starred_at,
   } = repo;
   return (
-    <div>
-      <div>{full_name}</div>
+    <div className="repo-card-wrap">
+      <h3 className="repo-card-title">{full_name}</h3>
       <div>{description}</div>
-      <div>{language}</div>
       <div>
-        <span>{stargazers_count}</span>
-        <span>{forks_count}</span>
-        <span>{starred_at}</span>
-        {/* <a href={html_url}>View on GitHub</a> */}
+        <span className="repo-meta-left">
+          <img
+            width="20"
+            src={
+              language ? `/language-icons/${language.toLowerCase()}.png` : logo
+            }
+            alt={language || UNKOWN}
+            title={language || UNKOWN}
+          />
+        </span>
+        <div className="repo-meta-right">
+          <span>
+            <Icon type="star" />
+            &nbsp;
+            {stargazers_count}
+          </span>
+          <span>
+            <Icon type="fork" />
+            &nbsp;
+            {forks_count}
+          </span>
+          <span>
+            <Icon type="history" />
+            &nbsp;
+            {// todo correct datetime
+            starred_at.slice(0, 10)}
+          </span>
+        </div>
       </div>
     </div>
   );
