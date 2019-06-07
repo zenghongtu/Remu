@@ -2,6 +2,8 @@
 
 .reposbar-wrap {
   height: 100%;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
@@ -23,10 +25,11 @@
   color: #dae1e7;
   border: 1px solid #ccc;
   border-radius: 4px;
+  user-select: none;
 }
 
 .reposbar-list {
-  height: calc(100% - 52px);
+  flex: 1;
   border-top: 1px solid #ccc;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -43,4 +46,11 @@
   > span {
     margin: 0 5px;
   }
+}
+
+.reposbar-empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

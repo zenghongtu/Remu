@@ -87,7 +87,9 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
             )}
           />
         ) : (
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          <div className="reposbar-empty">
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          </div>
         )}
       </div>
     </div>
