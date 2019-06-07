@@ -26,22 +26,26 @@ export interface ITagCountMap {
 
 interface ISidebar {
   tags: ITag[];
+  loading: boolean;
   languages: ILanguages[];
   tagCountMap: ITagCountMap;
   starTaggedStatus: IStarTaggedStatus;
   onAddTag: (tags: ITag[]) => void;
+  onRefresh: () => void;
   onSelect: (action: IFilterReposAction) => void;
 }
 
 const Sidebar = ({
   tags,
+  loading,
   languages,
   tagCountMap,
   starTaggedStatus,
   onAddTag,
+  onRefresh,
   onSelect,
 }: ISidebar) => {
-  const [showAddTag, setShowAddTag] = useState<Boolean>(false);
+  const [showAddTag, setShowAddTag] = useState<boolean>(false);
   const addTagInputRef = useRef(null);
 
   const handleLanguageSelect = ({ item, key }) => {
@@ -72,8 +76,8 @@ const Sidebar = ({
               <Icon type="star" />
               &nbsp;&nbsp;&nbsp;
               <span className="sidebar-menu-label">stars</span>
-              <span className="sidebar-sync-btn">
-                <Icon type="sync" />
+              <span className="sidebar-sync-btn" onClick={onRefresh}>
+                <Icon type="sync" spin={loading} />
               </span>
             </div>
           }
@@ -124,6 +128,7 @@ const Sidebar = ({
           </div>
           {tags &&
             tags.map(({ id, name }) => {
+              // todo edit tag (rename / delete)
               return (
                 <Menu.Item key={`tag-${id}`}>
                   {name}

@@ -49,9 +49,12 @@ const App = (props: IAppProps) => {
   const [curRepos, setCurRepos] = useState<IStarredRepo[]>(null);
   const [curRepo, setCurRepo] = useState<IStarredRepo>(null);
   const [languages, setLanguages] = useState<ILanguages[]>(null);
+  const [refreshCount, setRefreshCount] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
   const tokenInputRef = useRef(null);
 
   useEffect(() => {
+    setLoading(true);
     // todo handle rate limit
     const _langMap = {};
     const _repoIds = [];
@@ -95,7 +98,7 @@ const App = (props: IAppProps) => {
         _langMap[lang] ? _langMap[lang]++ : (_langMap[lang] = 1);
       });
 
-      const _tagCountMap = { ...tagCountMap };
+      const _tagCountMap = {};
       const _repoIdLen = _repoIds.length;
       const _starTaggedStatus: IStarTaggedStatus = {
         [ALL_STARS]: _repoIdLen,
@@ -136,8 +139,9 @@ const App = (props: IAppProps) => {
       setTagCountMap(_tagCountMap);
       setRepoWithTags(_repoWithTags);
       setStarTaggedStatus(_starTaggedStatus);
+      setLoading(false);
     });
-  }, []);
+  }, [refreshCount]);
 
   const handleFilterRepos = ({ type, payload }: IFilterReposAction) => {
     let _repos = null;
@@ -226,6 +230,10 @@ const App = (props: IAppProps) => {
     languages,
     tagCountMap,
     starTaggedStatus,
+    loading,
+    onRefresh() {
+      setRefreshCount(refreshCount + 1);
+    },
     onAddTag(tags: ITag[]) {
       setTags(tags);
     },
