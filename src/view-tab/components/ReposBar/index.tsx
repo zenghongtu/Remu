@@ -12,6 +12,7 @@ interface IReposBar<S> {
 const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
   const [filteredRepos, setFilteredRepos] = useState<IStarredRepo[]>(repos);
   const [searchFocus, setSearchFocus] = useState<boolean>(false);
+  const [curRepoId, setCurRepoId] = useState<number>(null);
   const searchInputRef = useRef(null);
 
   useEffect(() => {
@@ -33,8 +34,10 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
     }
   };
 
-  const handleReposItemClick = (index) => () => {
-    onSelect(repos[index]);
+  const handleReposItemClick = (index: number) => () => {
+    const repo = repos[index];
+    onSelect(repo);
+    setCurRepoId(repo.repo.id as number);
   };
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -76,7 +79,10 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
             dataSource={filteredRepos}
             renderItem={(repo: IStarredRepo, index) => (
               <List.Item onClick={handleReposItemClick(index)}>
-                <RepoCard repo={repo} />
+                <RepoCard
+                  repo={repo}
+                  isCurrentRepo={repo.repo.id === curRepoId}
+                />
               </List.Item>
             )}
           />

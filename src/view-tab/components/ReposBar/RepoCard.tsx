@@ -7,9 +7,10 @@ import { Icon } from 'antd';
 
 interface IRepoCard {
   repo: IStarredRepo;
+  isCurrentRepo: boolean;
 }
 
-const RepoCard = ({ repo }: IRepoCard) => {
+const RepoCard = ({ repo, isCurrentRepo }: IRepoCard) => {
   const {
     repo: {
       id,
@@ -28,7 +29,7 @@ const RepoCard = ({ repo }: IRepoCard) => {
     starred_at,
   } = repo;
   return (
-    <div className="repo-card-wrap">
+    <div className={`repo-card-wrap ${isCurrentRepo ? 'current-repo' : ''}`}>
       <h3 className="repo-card-title">{full_name}</h3>
       <div>{description}</div>
       <div>
