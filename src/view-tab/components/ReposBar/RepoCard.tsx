@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IStarredRepo } from '../../../typings';
+import { IStarredRepo } from '../../service';
 interface IRepoCard {
   repo: IStarredRepo;
 }

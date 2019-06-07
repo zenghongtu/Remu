@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { IStarredRepo } from '../../../typings';
 import { List } from 'antd';
 import RepoCard from './RepoCard';
 import './index.less';
+import { IStarredRepo } from '../../service';
 
 interface IReposBar<S> {
   repos: S[];

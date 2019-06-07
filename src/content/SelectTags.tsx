@@ -3,8 +3,8 @@ import { Select } from 'antd';
 import {
   ITag,
   ITagsAction,
-  tagId,
-  repoId,
+  TagId,
+  RepoId,
   STORAGE_TAGS,
   STORAGE_REPO,
   IRepoWithTag,
@@ -14,7 +14,7 @@ import { genUniqueKey, localStoragePromise } from '../utils';
 const { Option } = Select;
 
 export interface ISelectTagsProps {
-  repoId: repoId;
+  repoId: RepoId;
   tags: ITag[];
   repoWithTags: IRepoWithTag;
   isFocus?: boolean;
@@ -29,7 +29,7 @@ const SelectTags = ({
   isFocus = false,
 }: ISelectTagsProps) => {
   const initSelectedTagIds = repoWithTags[repoId] || [];
-  const [selectedTagIds, setSelectedTagIds] = useState<tagId[]>(
+  const [selectedTagIds, setSelectedTagIds] = useState<TagId[]>(
     initSelectedTagIds,
   );
   const [tags, setTags] = useState<ITag[]>(initTags);

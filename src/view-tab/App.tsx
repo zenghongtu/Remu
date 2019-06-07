@@ -1,31 +1,31 @@
 import * as React from 'react';
 
+import { Modal, Input } from 'antd';
 import Header from './components/Header';
 import ReposBar from './components/ReposBar';
 import RepoInfo from './components/RepoInfo';
-import Sidebar from './components/Sidebar';
-import { useState, useEffect, useRef } from 'react';
-import {
-  IStarredRepo,
-  IRepoWithTag,
-  ITag,
-  ILanguages,
-  repoId,
-  ITagCountMap,
+import Sidebar, {
   IStarTaggedStatus,
   ALL_STARS,
   UNTAGGED_STARS,
-  IFilterReposAction,
   UNKOWN,
+  ITagCountMap,
+  IFilterReposAction,
+} from './components/Sidebar';
+import { useState, useEffect, useRef } from 'react';
+import {
+  IRepoWithTag,
+  ITag,
+  ILanguages,
+  RepoId,
   STORAGE_TAGS,
   STORAGE_REPO,
   ITagsAction,
   STORAGE_TOKEN,
   Token,
 } from '../typings';
-import { getStarredRepos } from './service';
+import { getStarredRepos, IStarredRepo } from './service';
 import { localStoragePromise, syncStoragePromise } from '../utils';
-import { Modal, Input } from 'antd';
 import './App.less';
 
 interface IAppProps {
@@ -83,6 +83,9 @@ const App = (props: IAppProps) => {
     }
 
     getStarredRepos({ token }).then((result) => {
+      if (result.length < 1) {
+        return;
+      }
       result.forEach((repo) => {
         const {
           repo: { language, id },

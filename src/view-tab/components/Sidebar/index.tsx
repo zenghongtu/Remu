@@ -1,20 +1,27 @@
 import * as React from 'react';
 import { Menu, Icon, Button, Select, Input } from 'antd';
 import './index.less';
-import {
-  IStarredRepo,
-  ILanguages,
-  ITag,
-  ITagCountMap,
-  IStarTaggedStatus,
-  ALL_STARS,
-  IFilterReposAction,
-} from '../../../typings';
-import { SyntheticEvent } from 'react';
+import { ILanguages, ITag } from '../../../typings';
 import { genUniqueKey, localStoragePromise } from '../../../utils';
 
 const { SubMenu } = Menu;
 const Search = Input.Search;
+
+export const ALL_STARS = 'all stars';
+export const UNTAGGED_STARS = 'untagged stars';
+export const UNKOWN = 'Unkown';
+export type statusKey = typeof ALL_STARS | typeof UNTAGGED_STARS;
+
+export type IStarTaggedStatus = { [key in statusKey]: number };
+
+export interface IFilterReposAction {
+  type: 'star' | 'tag' | 'language';
+  payload: string;
+}
+
+export interface ITagCountMap {
+  [tagId: string]: number;
+}
 
 interface ISidebar {
   tags: ITag[];

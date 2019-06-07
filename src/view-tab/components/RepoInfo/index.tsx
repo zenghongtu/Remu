@@ -1,13 +1,7 @@
 import * as React from 'react';
-import {
-  IStarredRepo,
-  ITag,
-  tagId,
-  ITagsAction,
-  Token,
-} from '../../../typings';
+import { ITag, TagId, ITagsAction, Token } from '../../../typings';
 import { useState, useEffect } from 'react';
-import { getReadmeHTML } from '../../service';
+import { getReadmeHTML, IStarredRepo } from '../../service';
 import 'github-markdown-css';
 import './index.less';
 import { Select } from 'antd';
@@ -19,7 +13,7 @@ interface IRepoInfo {
   token: Token;
   repo: IStarredRepo;
   tags: ITag[];
-  selectedTagIds: tagId[];
+  selectedTagIds: TagId[];
   onTagsChange: (action: ITagsAction) => void;
 }
 

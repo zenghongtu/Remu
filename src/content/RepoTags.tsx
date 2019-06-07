@@ -4,8 +4,8 @@ import {
   STORAGE_TAGS,
   STORAGE_REPO,
   IRepoWithTag,
-  tagId,
-  repoId,
+  TagId,
+  RepoId,
   ITagsAction,
 } from '../typings';
 import SelectTags, { ISelectTagsProps } from './SelectTags';
@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { localStoragePromise } from '../utils';
 
 export interface IRepoTagsProps {
-  repoId: repoId;
+  repoId: RepoId;
   tags: ITag[];
   repoWithTags: IRepoWithTag;
 }
