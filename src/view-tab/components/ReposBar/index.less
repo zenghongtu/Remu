@@ -1,6 +1,33 @@
 @import "../../../style/index.less";
 
-.repos_bar_wrap {
+.reposbar-wrap {
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
+}
+
+.reposbar-search {
+  position: relative;
+  padding: 10px 15px;
+}
+
+.search-slash {
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  text-align: center;
+  font-size: 15px;
+  line-height: 20px;
+  color: #dae1e7;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.reposbar-list {
+  height: 100%;
+  border-top: 1px solid #ccc;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
