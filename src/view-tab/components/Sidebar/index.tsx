@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Menu, Icon, Button, Select, Input } from 'antd';
+import { Menu, Icon, Button, Select, Input, Tag } from 'antd';
 import './index.less';
 import { ILanguages, ITag } from '../../../typings';
 import { genUniqueKey, localStoragePromise } from '../../../utils';
+import { useState, useRef } from 'react';
 
 const { SubMenu } = Menu;
 const Search = Input.Search;
@@ -40,6 +41,9 @@ const Sidebar = ({
   onAddTag,
   onSelect,
 }: ISidebar) => {
+  const [showAddTag, setShowAddTag] = useState<Boolean>(false);
+  const addTagInputRef = useRef(null);
+
   const handleLanguageSelect = ({ item, key }) => {
     const [type, payload] = key.split('-');
     onSelect({ type, payload });
@@ -49,6 +53,8 @@ const Sidebar = ({
     const newTags: ITag[] = [...tags, { id: genUniqueKey(), name }];
     await localStoragePromise.set({ tags: newTags });
     onAddTag(newTags);
+    addTagInputRef.current.input.input.value = '';
+    addTagInputRef.current.focus();
   };
 
   return (
@@ -63,7 +69,12 @@ const Sidebar = ({
           key="stars"
           title={
             <div>
-              <span>stars</span>
+              <Icon type="star" />
+              &nbsp;&nbsp;&nbsp;
+              <span className="sidebar-menu-label">stars</span>
+              <span className="sidebar-sync-btn">
+                <Icon type="sync" />
+              </span>
             </div>
           }
         >
@@ -71,7 +82,9 @@ const Sidebar = ({
             return (
               <Menu.Item key={`star-${status}`}>
                 {status}
-                {starTaggedStatus[status]}
+                <span className="sidebar-count-tag">
+                  <Tag>{starTaggedStatus[status]}</Tag>
+                </span>
               </Menu.Item>
             );
           })}
@@ -79,27 +92,44 @@ const Sidebar = ({
         <SubMenu
           key="tags"
           title={
-            <span>
-              <span>tags</span>
-            </span>
+            <div>
+              <Icon type="tags" />
+              <span className="sidebar-menu-label">tags</span>
+            </div>
           }
         >
-          <div>
-            <Search
-              placeholder="Add a tag"
-              onSearch={handleAddTag}
-              enterButton={<Icon type="plus" />}
-              onPressEnter={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                handleAddTag((e.target as HTMLInputElement).value);
-              }}
-            />
+          <div className="sidebar-input-tag-wrap">
+            {showAddTag ? (
+              <Search
+                autoFocus
+                ref={addTagInputRef}
+                placeholder="Enter a tag name"
+                onSearch={handleAddTag}
+                enterButton={'Add'}
+                onPressEnter={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                  handleAddTag((e.target as HTMLInputElement).value);
+                }}
+              />
+            ) : (
+              <span
+                className="sidebar-input-tag-btn"
+                onClick={() => {
+                  setShowAddTag(true);
+                }}
+              >
+                <Icon type="plus-circle" />
+                &nbsp;&nbsp; Add a Tag
+              </span>
+            )}
           </div>
           {tags &&
             tags.map(({ id, name }) => {
               return (
                 <Menu.Item key={`tag-${id}`}>
                   {name}
-                  {tagCountMap[id] || 0}
+                  <span className="sidebar-count-tag">
+                    <Tag>{tagCountMap[id] || 0}</Tag>
+                  </span>
                 </Menu.Item>
               );
             })}
@@ -107,16 +137,21 @@ const Sidebar = ({
         <SubMenu
           key="languages"
           title={
-            <span>
-              <span>languages</span>
-            </span>
+            <div>
+              <Icon type="global" />
+              <span className="sidebar-menu-label">languages</span>
+            </div>
           }
         >
           {languages &&
             languages.map((lang) => {
               return (
                 <Menu.Item key={`language-${lang.name}`}>
-                  {lang.name} {lang.count}
+                  {lang.name}
+
+                  <span className="sidebar-count-tag">
+                    <Tag>{lang.count}</Tag>
+                  </span>
                 </Menu.Item>
               );
             })}
