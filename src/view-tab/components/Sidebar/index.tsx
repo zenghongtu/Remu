@@ -64,7 +64,7 @@ const Sidebar = ({
   return (
     <div className="sidebar-wrap">
       <Menu
-        defaultSelectedKeys={[ALL_STARS]}
+        defaultSelectedKeys={[`star-${ALL_STARS}`]}
         defaultOpenKeys={['tags', 'languages']}
         mode="inline"
         onSelect={handleLanguageSelect}
