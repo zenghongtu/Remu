@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Modal, Input } from 'antd';
+import { Modal, Input, Empty } from 'antd';
 import Header from './components/Header';
 import ReposBar from './components/ReposBar';
 import RepoInfo from './components/RepoInfo';
@@ -264,7 +264,9 @@ const App = (props: IAppProps) => {
               onTagsChange={handleChangeTagsWithRepo}
             />
           ) : (
-            'select'
+            <div className="repo-no-selected">
+              <Empty description="No Repo Selected" />
+            </div>
           )}
         </div>
       </div>

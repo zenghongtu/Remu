@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { getReadmeHTML, IStarredRepo } from '../../service';
 import 'github-markdown-css';
 import './index.less';
-import { Select } from 'antd';
+import { Select, Empty } from 'antd';
 import { genUniqueKey } from '../../../utils';
 
 const { Option } = Select;
@@ -24,11 +24,7 @@ const RepoInfo = ({
   onTagsChange,
   selectedTagIds = [],
 }: IRepoInfo) => {
-  if (!repo) {
-    // todo use image
-    return <div>none</div>;
-  }
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState(null);
 
   useEffect(() => {
     getReadmeHTML({ full_name, token }).then((rsp) => {
@@ -126,11 +122,13 @@ const RepoInfo = ({
           </Select>
         </div>
       </div>
-      <article
-        className="markdown-body"
-        // todo fix relavtive path (e.g. /dist/logo.icon)
-        dangerouslySetInnerHTML={{ __html: content }}
-      />
+      {content && (
+        <article
+          className="markdown-body"
+          // todo fix relavtive path (e.g. /dist/logo.icon)
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
+      )}
     </div>
   );
 };
