@@ -21,138 +21,120 @@ import {
   STORAGE_REPO,
   ITagsAction,
   STORAGE_TOKEN,
+  Token,
 } from '../typings';
 import { getStarredRepos } from './service';
 import { localStoragePromise, syncStoragePromise } from '../utils';
 import { Modal, Input } from 'antd';
 import './App.less';
 
-const App = () => {
+interface IAppProps {
+  tags: ITag[];
+  repoWithTags: IRepoWithTag;
+  token: Token;
+}
+
+const App = (props: IAppProps) => {
   const [starredRepos, setStarredRepos] = useState<IStarredRepo[]>(null);
-  const [repoWithTags, setRepoWithTags] = useState<IRepoWithTag>(null);
-  const [tags, setTags] = useState<ITag[]>(null);
-  const initStarTaggedStatus = {
+  const [repoWithTags, setRepoWithTags] = useState<IRepoWithTag>(
+    props.repoWithTags,
+  );
+  const [token, setToken] = useState<Token>(props.token);
+  const [tags, setTags] = useState<ITag[]>(props.tags);
+  const [starTaggedStatus, setStarTaggedStatus] = useState<IStarTaggedStatus>({
     [ALL_STARS]: 0,
     [UNTAGGED_STARS]: 0,
-  };
-  const [starTaggedStatus, setStarTaggedStatus] = useState<IStarTaggedStatus>(
-    initStarTaggedStatus,
-  );
+  });
   const [tagCountMap, setTagCountMap] = useState<ITagCountMap>({});
   const [curRepos, setCurRepos] = useState<IStarredRepo[]>(null);
   const [curRepo, setCurRepo] = useState<IStarredRepo>(null);
   const [languages, setLanguages] = useState<ILanguages[]>(null);
-  const [refresh, setRefresh] = useState(false);
   const tokenInputRef = useRef(null);
 
   useEffect(() => {
     // todo handle rate limit
     const _langMap = {};
     const _repoIds = [];
-    const getToken = syncStoragePromise.get(STORAGE_TOKEN);
 
-    const getTagsAndRepoWithTags = localStoragePromise.get([
-      STORAGE_TAGS,
-      STORAGE_REPO,
-    ]);
-    Promise.all([getTagsAndRepoWithTags, getToken]).then((results) => {
-      const [tagsAndRepoWithTagsRes, token] = results;
+    if (!token) {
+      Modal.info({
+        icon: null,
+        title: ' Github Personal Access Token',
+        content: (
+          <div>
+            <a target="_blank" href="https://github.com/settings/tokens/new">
+              One-click generation token
+            </a>
+            <Input required placeholder="Enter Token" ref={tokenInputRef} />
+          </div>
+        ),
+        okText: 'Confirm',
+        onOk() {
+          const token = tokenInputRef.current.state.value;
+          // todo check token
+          if (token) {
+            syncStoragePromise.set({ [STORAGE_TOKEN]: token }).then(() => {
+              setToken(token);
+            });
+          }
+        },
+      });
+      return;
+    }
 
-      const remuToken = (token as any).token;
-      if (remuToken) {
-        window.REMU_TOKEN = remuToken;
-      } else {
-        if (!refresh) {
-          Modal.info({
-            icon: null,
-            title: ' Github Personal Access Token',
-            content: (
-              <div>
-                <a
-                  target="_blank"
-                  href="https://github.com/settings/tokens/new"
-                >
-                  One-click generation token
-                </a>
-                <Input required placeholder="Enter Token" ref={tokenInputRef} />
-              </div>
-            ),
-            okText: 'Confirm',
-            onOk() {
-              const token = tokenInputRef.current.state.value;
-              // todo check token
-              if (token) {
-                syncStoragePromise.set({ [STORAGE_TOKEN]: token }).then(() => {
-                  setRefresh(true);
-                  window.REMU_TOKEN = remuToken;
-                });
-              }
-            },
-          });
-          return;
-        }
-      }
+    getStarredRepos({ token }).then((result) => {
+      result.forEach((repo) => {
+        const {
+          repo: { language, id },
+        } = repo;
+        _repoIds.push(id.toString());
+        const lang = language || UNKOWN;
+        _langMap[lang] ? _langMap[lang]++ : (_langMap[lang] = 1);
+      });
 
-      const { tags = [], repoWithTags = {} } = tagsAndRepoWithTagsRes as any;
+      const _tagCountMap = { ...tagCountMap };
+      const _repoIdLen = _repoIds.length;
+      const _starTaggedStatus: IStarTaggedStatus = {
+        [ALL_STARS]: _repoIdLen,
+        [UNTAGGED_STARS]: _repoIdLen,
+      };
 
-      const isTagsVaild = tags && repoWithTags;
+      const _repoWithTags = {};
 
-      const _tags = tags;
+      if (tags.length > 0) {
+        const _repoWithTagIds = Object.keys(repoWithTags);
+        for (const _repoId of _repoWithTagIds) {
+          if (_repoIds.includes(_repoId)) {
+            _starTaggedStatus[UNTAGGED_STARS]--;
+            // filter invalid repo
+            const _curTags = repoWithTags[_repoId];
+            _repoWithTags[_repoId] = _curTags;
 
-      getStarredRepos({}).then((result) => {
-        result.forEach((repo) => {
-          const {
-            repo: { language, id },
-          } = repo;
-          _repoIds.push(id.toString());
-          const lang = language || UNKOWN;
-          _langMap[lang] ? _langMap[lang]++ : (_langMap[lang] = 1);
-        });
-
-        const _tagCountMap = { ...tagCountMap };
-        const _repoIdLen = _repoIds.length;
-        const _starTaggedStatus: IStarTaggedStatus = {
-          [ALL_STARS]: _repoIdLen,
-          [UNTAGGED_STARS]: _repoIdLen,
-        };
-
-        const _repoWithTags = {};
-        if (isTagsVaild) {
-          const _repoWithTagIds = Object.keys(repoWithTags);
-          for (const _repoId of _repoWithTagIds) {
-            if (_repoIds.includes(_repoId)) {
-              _starTaggedStatus[UNTAGGED_STARS]--;
-              // filter invaild repo
-              const _curTags = repoWithTags[_repoId];
-              _repoWithTags[_repoId] = _curTags;
-
-              for (const _tagId of _curTags) {
-                _tagCountMap[_tagId]
-                  ? _tagCountMap[_tagId]++
-                  : (_tagCountMap[_tagId] = 1);
-              }
+            for (const _tagId of _curTags) {
+              _tagCountMap[_tagId]
+                ? _tagCountMap[_tagId]++
+                : (_tagCountMap[_tagId] = 1);
             }
           }
         }
+      }
 
-        const _langs = Object.keys(_langMap)
-          .sort((a, b) => {
-            return _langMap[b] - _langMap[a];
-          })
-          .map((lang) => {
-            return { name: lang, count: _langMap[lang] };
-          });
+      const _langs = Object.keys(_langMap)
+        .sort((a, b) => {
+          return _langMap[b] - _langMap[a];
+        })
+        .map((lang) => {
+          return { name: lang, count: _langMap[lang] };
+        });
 
-        setStarredRepos(result);
-        setCurRepos(result);
-        setLanguages(_langs);
-        setTags(_tags);
-        setTagCountMap(_tagCountMap);
-        setRepoWithTags(_repoWithTags);
-        setStarTaggedStatus(_starTaggedStatus);
-      });
+      setStarredRepos(result);
+      setCurRepos(result);
+      setLanguages(_langs);
+      setTagCountMap(_tagCountMap);
+      setRepoWithTags(_repoWithTags);
+      setStarTaggedStatus(_starTaggedStatus);
     });
-  }, [refresh]);
+  }, []);
 
   const handleFilterRepos = ({ type, payload }: IFilterReposAction) => {
     let _repos = null;
@@ -255,15 +237,16 @@ const App = () => {
         <Header />
       </div>
       <div className="main">
-        <div className="col-item">
+        <div className="side-bar">
           <Sidebar {...sidebarProps} />
         </div>
-        <div className="col-item">
+        <div className="repos-bar">
           <ReposBar repos={curRepos} onSelect={setCurRepo} />
         </div>
-        <div className="col-item">
+        <div className="repo-info">
           {curRepo ? (
             <RepoInfo
+              token={token}
               repo={curRepo}
               tags={tags}
               selectedTagIds={repoWithTags[curRepo.repo.id]}

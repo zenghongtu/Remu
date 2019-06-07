@@ -2,13 +2,11 @@ import { request, syncStoragePromise } from '../utils';
 import { Modal } from 'antd';
 import { STORAGE_TOKEN } from '../typings';
 
-const default_token = process.env.GH_TOKEN;
+const DEFAULT_TOKEN = process.env.GH_TOKEN;
 
 const starredReposUrl = '/user/starred';
 
-export const getStarredRepos = ({
-  token = window.REMU_TOKEN || default_token,
-}) => {
+export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
   const options = {
     params: {
       sort: 'created',
@@ -66,10 +64,7 @@ export const getStarredRepos = ({
   );
 };
 
-export const getReadmeHTML = ({
-  full_name,
-  token = window.REMU_TOKEN || default_token,
-}) => {
+export const getReadmeHTML = ({ full_name, token = DEFAULT_TOKEN }) => {
   const ulr = `/repos/${full_name}/readme`;
   return request.get(ulr, {
     headers: {

@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { IStarredRepo, ITag, tagId, ITagsAction } from '../../../typings';
+import {
+  IStarredRepo,
+  ITag,
+  tagId,
+  ITagsAction,
+  Token,
+} from '../../../typings';
 import { useState, useEffect } from 'react';
 import { getReadmeHTML } from '../../service';
 import 'github-markdown-css';
@@ -10,6 +16,7 @@ import { genUniqueKey } from '../../../utils';
 const { Option } = Select;
 
 interface IRepoInfo {
+  token: Token;
   repo: IStarredRepo;
   tags: ITag[];
   selectedTagIds: tagId[];
@@ -17,6 +24,7 @@ interface IRepoInfo {
 }
 
 const RepoInfo = ({
+  token,
   repo,
   tags,
   onTagsChange,
@@ -29,7 +37,7 @@ const RepoInfo = ({
   const [content, setContent] = useState('');
 
   useEffect(() => {
-    getReadmeHTML({ full_name }).then((rsp) => {
+    getReadmeHTML({ full_name, token }).then((rsp) => {
       const htmlString = rsp.data;
       const content = fixRelativeUrl(htmlString, repo);
       setContent(content);

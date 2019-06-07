@@ -1,5 +1,6 @@
 export type tagId = string;
 export type repoId = number | string;
+export type Token = string;
 
 export interface ILanguages {
   name: string;
