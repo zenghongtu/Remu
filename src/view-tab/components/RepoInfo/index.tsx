@@ -15,6 +15,7 @@ import {
   message,
   Tooltip,
   Modal,
+  Spin,
 } from 'antd';
 import prettyHtml from 'json-pretty-html';
 import { genUniqueKey } from '../../../utils';
@@ -40,6 +41,7 @@ const RepoInfo = ({
 }: IRepoInfo) => {
   const [content, setContent] = useState(null);
   const [starred, setStarred] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const {
     starred_at,
@@ -56,11 +58,16 @@ const RepoInfo = ({
   } = repo;
 
   useEffect(() => {
-    getReadmeHTML({ full_name, token }).then((rsp) => {
-      const htmlString = rsp.data;
-      const content = fixRelativeUrl(htmlString, repo);
-      setContent(content);
-    });
+    setLoading(true);
+    getReadmeHTML({ full_name, token })
+      .then((rsp) => {
+        const htmlString = rsp.data;
+        const content = fixRelativeUrl(htmlString, repo);
+        setContent(content);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
 
     if (!unStarredRepos.includes(id)) {
       setStarred(true);
@@ -195,7 +202,7 @@ const RepoInfo = ({
               placeholder="Add tags"
               onSelect={handleSelectTag}
               onDeselect={handleDeselectTag}
-              loading={false}
+              loading={loading}
               maxTagCount={5}
               maxTagTextLength={5}
               maxTagPlaceholder={`other ${selectedTagIds.length - 5} tags...`}
@@ -223,13 +230,23 @@ const RepoInfo = ({
         </div>
       </div>
       <div className="info-content">
-        {content && (
+        {loading ? (
+          <div className="spin-wrap">
+            <Spin
+              tip={`Loading...`}
+              delay={100}
+              indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />}
+            />
+          </div>
+        ) : content ? (
           <article
             className="markdown"
             // todo fix relavtive path (e.g. /dist/logo.icon)
             // todo fix a tag open
             dangerouslySetInnerHTML={{ __html: content }}
           />
+        ) : (
+          <Empty />
         )}
       </div>
     </div>
