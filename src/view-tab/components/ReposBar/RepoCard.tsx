@@ -28,20 +28,35 @@ const RepoCard = ({ repo, isCurrentRepo }: IRepoCard) => {
     },
     starred_at,
   } = repo;
+
+  const handleGithubLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.stopPropagation();
+  };
+
   return (
     <div className={`repo-card-wrap ${isCurrentRepo ? 'current-repo' : ''}`}>
-      <h3 className="repo-card-title">{full_name}</h3>
+      <h3 className="repo-card-title">
+        <a
+          className="repo-github-link"
+          href={html_url}
+          target="_blank"
+          onClick={handleGithubLinkClick}
+        >
+          {full_name}
+        </a>
+      </h3>
       <div>{description}</div>
       <div>
         <span className="repo-meta-left">
           <img
-            width="20"
+            width="22"
             src={
               language ? `/language-icons/${language.toLowerCase()}.png` : logo
             }
             alt={language || UNKOWN}
             title={language || UNKOWN}
           />
+          <span>{language || UNKOWN}</span>
         </span>
         <div className="repo-meta-right">
           <span>

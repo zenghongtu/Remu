@@ -12,13 +12,34 @@
 
 .current-repo {
   background: @menu-item-active-bg;
-  transition: all 1s ease-out;
+  transition: @transition-base;
 }
 
 .repo-card-title {
   margin: 0;
 }
 
+.repo-github-link {
+  transition: @transition-base;
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .ant-list-item {
   padding: 0 !important;
+}
+
+.repo-meta-left {
+  > img {
+    margin: -2px 1px 0;
+  }
+}
+
+.repo-meta-right {
+  float: right;
+  > span {
+    margin: 0 5px;
+  }
 }
