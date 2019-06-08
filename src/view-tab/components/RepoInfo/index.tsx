@@ -215,7 +215,7 @@ const RepoInfo = ({
               onSelect={handleSelectTag}
               onDeselect={handleDeselectTag}
               loading={loading}
-              maxTagCount={5}
+              maxTagCount={4}
               maxTagTextLength={5}
               maxTagPlaceholder={`other ${selectedTagIds.length - 5} tags...`}
             >
