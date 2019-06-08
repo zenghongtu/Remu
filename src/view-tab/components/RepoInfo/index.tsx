@@ -14,7 +14,9 @@ import {
   Popover,
   message,
   Tooltip,
+  Modal,
 } from 'antd';
+import prettyHtml from 'json-pretty-html';
 import { genUniqueKey } from '../../../utils';
 
 const { Option } = Select;
@@ -147,6 +149,17 @@ const RepoInfo = ({
     a.click();
   };
 
+  const handleMoreInfoBtnClick = () => {
+    Modal.info({
+      icon: null,
+      title: full_name,
+      width: 800,
+      content: (
+        <div dangerouslySetInnerHTML={{ __html: prettyHtml(repo.repo) }} />
+      ),
+    });
+  };
+
   return (
     // todo fix scroll position
     <div className="info-wrap">
@@ -155,7 +168,6 @@ const RepoInfo = ({
           <span className="info-star-icon" onClick={handleStarIconClick}>
             <Icon type="star" theme={starred ? 'filled' : 'outlined'} />
           </span>
-          &nbsp;
           <span className="info-repo-title" title={full_name}>
             <a
               className="info-repo-github-link"
@@ -165,7 +177,7 @@ const RepoInfo = ({
               {full_name}
             </a>
           </span>
-          <Button size="small" ghost>
+          <Button size="small" ghost onClick={handleMoreInfoBtnClick}>
             More Info
           </Button>
         </h2>
@@ -186,7 +198,7 @@ const RepoInfo = ({
               loading={false}
               maxTagCount={5}
               maxTagTextLength={5}
-              maxTagPlaceholder={`and ${selectedTagIds.length - 5} tags...`}
+              maxTagPlaceholder={`other ${selectedTagIds.length - 5} tags...`}
             >
               {tags &&
                 tags.map(({ id, name }) => {

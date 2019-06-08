@@ -3453,6 +3453,11 @@ json-parse-better-errors@^1.0.1, json-parse-better-errors@^1.0.2:
   resolved "https://registry.npm.taobao.org/json-parse-better-errors/download/json-parse-better-errors-1.0.2.tgz#bb867cfb3450e69107c131d1c514bab3dc8bcaa9"
   integrity sha1-u4Z8+zRQ5pEHwTHRxRS6s9yLyqk=
 
+json-pretty-html@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.npm.taobao.org/json-pretty-html/download/json-pretty-html-1.1.6.tgz#21b8283ea3c20d331bc218704d09cfebffa3bdab"
+  integrity sha1-IbgoPqPCDTMbwhhwTQnP6/+jvas=
+
 json-schema-traverse@^0.4.1:
   version "0.4.1"
   resolved "https://registry.npm.taobao.org/json-schema-traverse/download/json-schema-traverse-0.4.1.tgz#69f6a87d9513ab8bb8fe63bdb0979c448e684660"
