@@ -7,7 +7,11 @@
   border-bottom: 1px solid #ccc;
 }
 
-.logo {
+.header-left {
+  flex: 1;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 .profile {
@@ -27,9 +31,16 @@
   margin: 0 8px;
 }
 
-.header-search-input-wrap {
-  width: 50%;
+.header-search-github-wrap {
+  width: 35%;
+  max-width: 484px;
+  margin: 0 4px 0 12px;
   position: relative;
+}
+
+.header-search-npm-wrap {
+  width: 25%;
+  max-width: 384px;
 }
 
 .search-hotkey-slash {
@@ -37,7 +48,7 @@
   height: 25px;
   position: absolute;
   top: 50%;
-  right: 20px;
+  right: 10px;
   transform: translateY(-50%);
   text-align: center;
   font-size: 15px;
