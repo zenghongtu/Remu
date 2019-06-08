@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { ITag, TagId, ITagsAction, Token } from '../../../typings';
 import { useState, useEffect } from 'react';
-import { getReadmeHTML, IStarredRepo } from '../../service';
+import { getReadmeHTML, IStarredRepo, updateUnStarRepo } from '../../service';
 import 'github-markdown-css';
 import './index.less';
-import { Select, Empty, Icon, Dropdown, Button, Popover } from 'antd';
+import { Select, Empty, Icon, Dropdown, Button, Popover, message } from 'antd';
 import { genUniqueKey } from '../../../utils';
 
 const { Option } = Select;
@@ -17,6 +17,8 @@ interface IRepoInfo {
   onTagsChange: (action: ITagsAction) => void;
 }
 
+const unStarredRepos = [];
+
 const RepoInfo = ({
   token,
   repo,
@@ -25,6 +27,12 @@ const RepoInfo = ({
   selectedTagIds = [],
 }: IRepoInfo) => {
   const [content, setContent] = useState(null);
+  const [starred, setStarred] = useState<boolean>(true);
+
+  const {
+    starred_at,
+    repo: { id, full_name, created_at, updated_at, language, html_url },
+  } = repo;
 
   useEffect(() => {
     getReadmeHTML({ full_name, token }).then((rsp) => {
@@ -32,12 +40,13 @@ const RepoInfo = ({
       const content = fixRelativeUrl(htmlString, repo);
       setContent(content);
     });
-  }, [repo]);
 
-  const {
-    starred_at,
-    repo: { id, full_name, created_at, updated_at, language, html_url },
-  } = repo;
+    if (!unStarredRepos.includes(id)) {
+      setStarred(true);
+    } else {
+      setStarred(false);
+    }
+  }, [repo]);
 
   const fixRelativeUrl = (htmlString: string, { repo }: IStarredRepo) => {
     const _site = `https://raw.githubusercontent.com/${repo.full_name}/${
@@ -94,15 +103,28 @@ const RepoInfo = ({
     };
     onTagsChange(action);
   };
+  const handleStarIconClick = async (e: React.MouseEvent<HTMLSpanElement>) => {
+    if (starred) {
+      await updateUnStarRepo({ full_name, token });
+      setStarred(false);
+      unStarredRepos.push(id);
+      message.success(
+        'Unstar success, it will update after refreshing the data.',
+      );
+    } else {
+      message.warn('You can star only on the repository page!');
+    }
+  };
+
   return (
     // todo fix scroll position
     <div className="info-wrap">
       <div className="info-meta">
         <h2 className="info-top">
-          <span>
-            <Icon type="star" />
+          <span className="info-star-icon" onClick={handleStarIconClick}>
+            <Icon type="star" theme={starred ? 'filled' : 'outlined'} />
           </span>
-          &nbsp; &nbsp;
+          &nbsp;
           <span className="info-repo-title" title={full_name}>
             <a
               className="info-repo-github-link"
@@ -118,7 +140,7 @@ const RepoInfo = ({
         </h2>
 
         <div className="info-bottom">
-          <span>
+          <span className="info-tags-input">
             <Select
               // @ts-ignore
               value={selectedTagIds}
@@ -141,7 +163,6 @@ const RepoInfo = ({
                 })}
             </Select>
           </span>
-          &nbsp;
           <span>
             <Popover
               // todo

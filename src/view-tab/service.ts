@@ -260,3 +260,21 @@ export const getUserProfile = ({ token = DEFAULT_TOKEN }) => {
     },
   });
 };
+
+const STAR_URL = '/user/starred';
+
+// export const updateStarRepo = ({ full_name, token }) => {
+//   return request.put<null>(`${STAR_URL}/${full_name}`, {
+//     headers: {
+//       Authorization: 'token ' + token,
+//     },
+//   });
+// };
+
+export const updateUnStarRepo = ({ full_name, token }) => {
+  return request.delete<null>(`${STAR_URL}/${full_name}`, {
+    headers: {
+      Authorization: 'token ' + token,
+    },
+  });
+};
