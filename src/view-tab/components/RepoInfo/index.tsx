@@ -4,7 +4,17 @@ import { useState, useEffect } from 'react';
 import { getReadmeHTML, IStarredRepo, updateUnStarRepo } from '../../service';
 import 'github-markdown-css';
 import './index.less';
-import { Select, Empty, Icon, Dropdown, Button, Popover, message } from 'antd';
+import copy from 'copy-to-clipboard';
+import {
+  Select,
+  Empty,
+  Icon,
+  Dropdown,
+  Button,
+  Popover,
+  message,
+  Tooltip,
+} from 'antd';
 import { genUniqueKey } from '../../../utils';
 
 const { Option } = Select;
@@ -31,7 +41,15 @@ const RepoInfo = ({
 
   const {
     starred_at,
-    repo: { id, full_name, created_at, updated_at, language, html_url },
+    repo: {
+      id,
+      full_name,
+      created_at,
+      updated_at,
+      language,
+      html_url,
+      clone_url,
+    },
   } = repo;
 
   useEffect(() => {
@@ -116,6 +134,11 @@ const RepoInfo = ({
     }
   };
 
+  const handleCopyGitUrl = () => {
+    copy(clone_url);
+    message.success('copy success.');
+  };
+
   return (
     // todo fix scroll position
     <div className="info-wrap">
@@ -164,26 +187,10 @@ const RepoInfo = ({
             </Select>
           </span>
           <span>
-            <Popover
-              // todo
-              content={
-                <div>
-                  <span>
-                    <Icon type="download" />
-                  </span>
-                  <span>
-                    <Icon type="copy" />
-                  </span>
-                </div>
-              }
-              placement="bottomLeft"
-              title="Clone with HTTPS"
-              trigger="click"
-            >
-              <Button>
-                Clone or download <Icon type="down" />
-              </Button>
-            </Popover>
+            <Button shape="circle" icon="download" />
+            <Tooltip placement="topLeft" title="Clone with HTTPS">
+              <Button shape="circle" icon="copy" onClick={handleCopyGitUrl} />
+            </Tooltip>
           </span>
         </div>
       </div>
