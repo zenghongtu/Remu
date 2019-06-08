@@ -3861,6 +3861,11 @@ mem@^4.0.0:
     mimic-fn "^2.0.0"
     p-is-promise "^2.0.0"
 
+"memoize-one@>=3.1.1 <6":
+  version "5.0.4"
+  resolved "https://registry.npm.taobao.org/memoize-one/download/memoize-one-5.0.4.tgz#005928aced5c43d890a4dfab18ca908b0ec92cbc"
+  integrity sha1-AFkorO1cQ9iQpN+rGMqQiw7JLLw=
+
 memory-fs@^0.4.0, memory-fs@^0.4.1, memory-fs@~0.4.1:
   version "0.4.1"
   resolved "https://registry.npm.taobao.org/memory-fs/download/memory-fs-0.4.1.tgz#3a9a20b8462523e447cfbc7e8bb80ed667bfc552"
@@ -5708,6 +5713,14 @@ react-slick@~0.24.0:
     json2mq "^0.2.0"
     lodash.debounce "^4.0.8"
     resize-observer-polyfill "^1.5.0"
+
+react-window@^1.8.2:
+  version "1.8.2"
+  resolved "https://registry.npm.taobao.org/react-window/download/react-window-1.8.2.tgz#edd0effe302196263ac3eac20a14c041acd4c17d"
+  integrity sha1-7dDv/jAhliY6w+rCChTAQazUwX0=
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    memoize-one ">=3.1.1 <6"
 
 react@^16.8.6:
   version "16.8.6"
