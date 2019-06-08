@@ -142,12 +142,19 @@ export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
       .get(STARRED_REPOS_URL, options)
       // get all page count
       .then((response) => {
-        const links = response.headers.link.split(',');
+        const link = response.headers.link;
+        if (!link) {
+          return response;
+        }
+        const links = link.split(',');
         const starredCount = links[1].match(/&page=(\d+)/)[1];
         lastPage = Math.ceil(starredCount / 100);
       })
       // get remaining page count
-      .then(async () => {
+      .then(async (rsp) => {
+        if (rsp) {
+          return rsp.data;
+        }
         const requestQueue = [];
         for (let i = 1; i <= lastPage; i++) {
           options.params.page = await i;
