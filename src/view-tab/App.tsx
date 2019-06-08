@@ -55,7 +55,6 @@ const App = (props: IAppProps) => {
 
   useEffect(() => {
     setLoading(true);
-    // todo handle rate limit
     const _langMap = {};
     const _repoIds = [];
 
@@ -78,6 +77,7 @@ const App = (props: IAppProps) => {
           if (token) {
             syncStoragePromise.set({ [STORAGE_TOKEN]: token }).then(() => {
               setToken(token);
+              setRefreshCount(refreshCount + 1);
             });
           }
         },
