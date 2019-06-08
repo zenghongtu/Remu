@@ -45,7 +45,7 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
   };
 
   const handleKeydown = (e: KeyboardEvent) => {
-    if (e.keyCode === 191) {
+    if (e.keyCode === 83) {
       e.preventDefault();
       e.stopPropagation();
       searchInputRef.current.focus();
@@ -93,7 +93,7 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
           onBlur={handleSearchBlur}
           ref={searchInputRef}
         />
-        {!searchFocus && <div className="search-slash">/</div>}
+        {!searchFocus && <div className="search-hotkey-icon">g</div>}
       </div>
       <div className="reposbar-list-wrap" ref={listWrapRef}>
         {filteredRepos ? (
