@@ -45,7 +45,7 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
   };
 
   const handleKeydown = (e: KeyboardEvent) => {
-    if (e.keyCode === 83) {
+    if (e.keyCode === 71) {
       e.preventDefault();
       e.stopPropagation();
       searchInputRef.current.focus();
