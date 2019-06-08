@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { getReadmeHTML, IStarredRepo } from '../../service';
 import 'github-markdown-css';
 import './index.less';
-import { Select, Empty } from 'antd';
+import { Select, Empty, Icon, Dropdown, Button, Popover } from 'antd';
 import { genUniqueKey } from '../../../utils';
 
 const { Option } = Select;
@@ -36,7 +36,7 @@ const RepoInfo = ({
 
   const {
     starred_at,
-    repo: { id, full_name, created_at, updated_at, language },
+    repo: { id, full_name, created_at, updated_at, language, html_url },
   } = repo;
 
   const fixRelativeUrl = (htmlString: string, { repo }: IStarredRepo) => {
@@ -98,32 +98,80 @@ const RepoInfo = ({
     // todo fix scroll position
     <div className="info-wrap">
       <div className="info-meta">
-        <div>
-          {created_at} {updated_at} {starred_at}
+        <h2 className="info-top">
+          <span>
+            <Icon type="star" />
+          </span>
+          &nbsp; &nbsp;
+          <span className="info-repo-title" title={full_name}>
+            <a
+              className="info-repo-github-link"
+              href={html_url}
+              target="_blank"
+            >
+              {full_name}
+            </a>
+          </span>
+          <Button size="small" ghost>
+            More Info
+          </Button>
+        </h2>
+
+        <div className="info-bottom">
+          <span>
+            <Select
+              // @ts-ignore
+              value={selectedTagIds}
+              mode="tags"
+              filterOption={(inputValue, { props: { children } }) => {
+                return (children as string).includes(inputValue);
+              }}
+              style={{ width: '100%' }}
+              placeholder="Add tags"
+              onSelect={handleSelectTag}
+              onDeselect={handleDeselectTag}
+              loading={false}
+              maxTagCount={4}
+              maxTagTextLength={4}
+              maxTagPlaceholder={`and ${selectedTagIds.length - 4} tags`}
+            >
+              {tags &&
+                tags.map(({ id, name }) => {
+                  return <Option key={id}>{name}</Option>;
+                })}
+            </Select>
+          </span>
+          &nbsp;
+          <span>
+            <Popover
+              // todo
+              content={
+                <div>
+                  <span>
+                    <Icon type="download" />
+                  </span>
+                  <span>
+                    <Icon type="copy" />
+                  </span>
+                </div>
+              }
+              placement="bottomLeft"
+              title="Clone with HTTPS"
+              trigger="click"
+            >
+              <Button>
+                Clone or download <Icon type="down" />
+              </Button>
+            </Popover>
+          </span>
         </div>
-        <Select
-          // @ts-ignore
-          value={selectedTagIds}
-          mode="tags"
-          filterOption={(inputValue, { props: { children } }) => {
-            return (children as string).includes(inputValue);
-          }}
-          style={{ width: '50%' }}
-          placeholder="Add tags"
-          onSelect={handleSelectTag}
-          onDeselect={handleDeselectTag}
-        >
-          {tags &&
-            tags.map(({ id, name }) => {
-              return <Option key={id}>{name}</Option>;
-            })}
-        </Select>
       </div>
       <div className="info-content">
         {content && (
           <article
             className="markdown"
             // todo fix relavtive path (e.g. /dist/logo.icon)
+            // todo fix a tag open
             dangerouslySetInnerHTML={{ __html: content }}
           />
         )}

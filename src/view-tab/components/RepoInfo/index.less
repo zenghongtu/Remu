@@ -10,7 +10,39 @@
 }
 
 .info-meta {
-  height: 52px;
+  min-height: 64px;
+  padding: 0 16px;
+  border-bottom: 1px solid #ccc;
+  overflow: hidden;
+}
+
+.info-top {
+  width: 100%;
+  height: 30px;
+  display: flex;
+  justify-content: space-around;
+  margin: 0;
+}
+
+.info-repo-title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow: hidden;
+}
+
+.info-repo-github-link {
+  transition: @transition-base;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.info-bottom {
+  display: flex;
+  justify-content: space-between;
 }
 
 .info-content {
