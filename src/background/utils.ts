@@ -5,7 +5,7 @@ import {
   GistData,
   REMU_SYNC_FILENAME,
 } from './syncService';
-import { syncStoragePromise, localStoragePromise } from '../utils';
+import { syncStoragePromise, localStoragePromise, debounce } from '../utils';
 import { GistDataRsp } from './syncService';
 import {
   STORAGE_TOKEN,
@@ -72,20 +72,6 @@ export const checkSyncGist = () => {
       });
     }
   });
-};
-
-const DEFAULT_TIMEOUT = 10000; // 10s
-
-const debounce = (fn: Function, timeout = DEFAULT_TIMEOUT) => {
-  let timer: any;
-  return function(...args) {
-    if (timer) {
-      clearTimeout(timer);
-    }
-    timer = setTimeout(() => {
-      fn.apply(this, args);
-    }, timeout);
-  };
 };
 
 const _updateGist = ({ token, gistId, updateAt }: ISyncInfo) => {

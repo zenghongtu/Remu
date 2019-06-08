@@ -5,11 +5,13 @@ import './index.less';
 import { IStarredRepo } from '../../service';
 import { useState, useEffect, ChangeEvent, useRef } from 'react';
 import { FixedSizeList as VList } from 'react-window';
+import { debounce } from '../../../utils';
 
 interface IReposBar<S> {
   repos: S[];
   onSelect: (repo: S) => void;
 }
+
 const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
   const [filteredRepos, setFilteredRepos] = useState<IStarredRepo[]>(repos);
   const [searchFocus, setSearchFocus] = useState<boolean>(false);
@@ -33,9 +35,9 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
     setFilteredRepos(repos);
   }, [repos]);
 
-  const handleResize = () => {
+  const handleResize = debounce(() => {
     updateVListHeight();
-  };
+  }, 200);
 
   const updateVListHeight = () => {
     const height = listWrapRef.current.offsetHeight;
@@ -56,15 +58,20 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
     setCurRepoId(repo.repo.id as number);
   };
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (!value) {
-      setFilteredRepos(repos);
-    }
+  const filterRepos = debounce((value) => {
     const _filteredRepos = repos.filter(({ repo }) => {
       return repo.name.includes(value) || repo.description.includes(value);
     });
     setFilteredRepos(_filteredRepos);
+  }, 200);
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (!value) {
+      setFilteredRepos(repos);
+    } else {
+      filterRepos(value);
+    }
   };
 
   const handleSearchFocus = () => {
@@ -79,7 +86,6 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
     <div className="reposbar-wrap">
       <div className="reposbar-search">
         <Input
-          allowClear
           placeholder="Gaze through your telescope"
           prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
           onChange={handleSearchChange}

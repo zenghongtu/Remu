@@ -14,6 +14,20 @@ export function genUniqueKey(): string {
   );
 }
 
+const DEFAULT_TIMEOUT = 10000; // 10s
+
+export const debounce = (fn: Function, timeout = DEFAULT_TIMEOUT) => {
+  let timer: any;
+  return function(...args) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, timeout);
+  };
+};
+
 export const storagePromise = {
   // sync
   sync: {
