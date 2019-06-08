@@ -184,9 +184,20 @@ const RepoInfo = ({
               {full_name}
             </a>
           </span>
-          <Button size="small" ghost onClick={handleMoreInfoBtnClick}>
-            More Info
-          </Button>
+
+          <span className="info-repo-fn">
+            <Tooltip placement="topLeft" title="Download Zip">
+              <Button
+                shape="circle"
+                icon="download"
+                onClick={handleDownloadZip}
+              />
+            </Tooltip>
+            &nbsp;
+            <Tooltip placement="topLeft" title="Clone with HTTPS">
+              <Button shape="circle" icon="copy" onClick={handleCopyGitUrl} />
+            </Tooltip>
+          </span>
         </h2>
 
         <div className="info-bottom">
@@ -194,6 +205,7 @@ const RepoInfo = ({
             <Select
               // @ts-ignore
               value={selectedTagIds}
+              size="small"
               mode="tags"
               filterOption={(inputValue, { props: { children } }) => {
                 return (children as string).includes(inputValue);
@@ -214,19 +226,9 @@ const RepoInfo = ({
             </Select>
           </span>
           &nbsp; &nbsp;
-          <span>
-            <Tooltip placement="topLeft" title="Download Zip">
-              <Button
-                shape="circle"
-                icon="download"
-                onClick={handleDownloadZip}
-              />
-            </Tooltip>
-            &nbsp;
-            <Tooltip placement="topLeft" title="Clone with HTTPS">
-              <Button shape="circle" icon="copy" onClick={handleCopyGitUrl} />
-            </Tooltip>
-          </span>
+          <Button size="small" ghost onClick={handleMoreInfoBtnClick}>
+            More Info
+          </Button>
         </div>
       </div>
       <div className="info-content">
