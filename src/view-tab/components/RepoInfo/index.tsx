@@ -49,6 +49,7 @@ const RepoInfo = ({
       language,
       html_url,
       clone_url,
+      default_branch,
     },
   } = repo;
 
@@ -139,6 +140,13 @@ const RepoInfo = ({
     message.success('copy success.');
   };
 
+  const handleDownloadZip = () => {
+    const a = document.createElement('a');
+    const url = `${html_url}/archive/${default_branch}.zip`;
+    a.href = url;
+    a.click();
+  };
+
   return (
     // todo fix scroll position
     <div className="info-wrap">
@@ -176,9 +184,9 @@ const RepoInfo = ({
               onSelect={handleSelectTag}
               onDeselect={handleDeselectTag}
               loading={false}
-              maxTagCount={4}
-              maxTagTextLength={4}
-              maxTagPlaceholder={`and ${selectedTagIds.length - 4} tags`}
+              maxTagCount={5}
+              maxTagTextLength={5}
+              maxTagPlaceholder={`and ${selectedTagIds.length - 5} tags...`}
             >
               {tags &&
                 tags.map(({ id, name }) => {
@@ -186,8 +194,16 @@ const RepoInfo = ({
                 })}
             </Select>
           </span>
+          &nbsp; &nbsp;
           <span>
-            <Button shape="circle" icon="download" />
+            <Tooltip placement="topLeft" title="Download Zip">
+              <Button
+                shape="circle"
+                icon="download"
+                onClick={handleDownloadZip}
+              />
+            </Tooltip>
+            &nbsp;
             <Tooltip placement="topLeft" title="Clone with HTTPS">
               <Button shape="circle" icon="copy" onClick={handleCopyGitUrl} />
             </Tooltip>
