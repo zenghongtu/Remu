@@ -5801,6 +5801,11 @@ regex-not@^1.0.0, regex-not@^1.0.2:
     extend-shallow "^3.0.2"
     safe-regex "^1.1.0"
 
+rel-to-abs@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.npm.taobao.org/rel-to-abs/download/rel-to-abs-0.1.0.tgz#49a1aaf70b1aa0992dbb2a3e5b57571f57bb527e"
+  integrity sha1-SaGq9wsaoJktuyo+W1dXH1e7Un4=
+
 relateurl@0.2.x:
   version "0.2.7"
   resolved "https://registry.npm.taobao.org/relateurl/download/relateurl-0.2.7.tgz#54dbf377e51440aca90a4cd274600d3ff2d888a9"

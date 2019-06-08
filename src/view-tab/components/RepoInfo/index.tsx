@@ -18,6 +18,7 @@ import {
   Spin,
 } from 'antd';
 import prettyHtml from 'json-pretty-html';
+import converter from 'rel-to-abs';
 import { genUniqueKey } from '../../../utils';
 
 const { Option } = Select;
@@ -80,16 +81,9 @@ const RepoInfo = ({
     const _site = `https://raw.githubusercontent.com/${repo.full_name}/${
       repo.default_branch
     }`;
-    // current abolute url origin
-    const _origin = location.origin;
-    const _container = document.createElement('div');
-    _container.innerHTML = htmlString;
-    // todo fix other tag (e.g. <a>)
-    _container.querySelectorAll('img').forEach((imgEl) => {
-      // replace with correct url
-      imgEl.src = imgEl.src.replace(_origin, _site);
-    });
-    return _container.innerHTML;
+
+    const converted = converter.convert(htmlString, _site);
+    return converted;
   };
 
   const handleSelectTag = (value: string) => {
@@ -124,7 +118,6 @@ const RepoInfo = ({
       type: 'delete',
       payload: {
         repoId: id,
-        // todo search correct tag
         tag: { id: value, name: '' },
       },
       selectedTagIds,
@@ -243,8 +236,6 @@ const RepoInfo = ({
         ) : content ? (
           <article
             className="markdown"
-            // todo fix relavtive path (e.g. /dist/logo.icon)
-            // todo fix a tag open
             dangerouslySetInnerHTML={{ __html: content }}
           />
         ) : (

@@ -65,7 +65,8 @@
     "less-loader": "^5.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-window": "^1.8.2"
+    "react-window": "^1.8.2",
+    "rel-to-abs": "^0.1.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
