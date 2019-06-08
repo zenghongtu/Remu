@@ -165,7 +165,7 @@ export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
         // todo add request limit
         return Promise.all(requestQueue).then<IStarredRepo[]>((results) => {
           const result = results.reduce(
-            (result, rsp) => result.concat(rsp.data),
+            (result, rsp) => (result.push(...rsp.data), result),
             [],
           );
           return result;
