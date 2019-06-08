@@ -63,6 +63,7 @@
     "json-pretty-html": "^1.1.6",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
+    "nprogress": "^0.2.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-window": "^1.8.2",

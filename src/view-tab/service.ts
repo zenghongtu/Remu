@@ -1,6 +1,9 @@
 import { request, syncStoragePromise } from '../utils';
 import { Modal } from 'antd';
 import { STORAGE_TOKEN, RepoId } from '../typings';
+import NProgress from 'nprogress';
+
+NProgress.configure({ showSpinner: false });
 
 const DEFAULT_TOKEN = process.env.GH_TOKEN;
 
@@ -123,6 +126,8 @@ interface Owner {
   site_admin: boolean;
 }
 
+const PER_PAGE = 2;
+
 export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
   const options = {
     params: {
@@ -136,7 +141,10 @@ export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
     },
   };
 
+  NProgress.start();
+
   let lastPage = 0;
+
   return (
     request
       .get(STARRED_REPOS_URL, options)
@@ -148,7 +156,7 @@ export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
         }
         const links = link.split(',');
         const starredCount = links[1].match(/&page=(\d+)/)[1];
-        lastPage = Math.ceil(starredCount / 100);
+        lastPage = Math.ceil(starredCount / PER_PAGE);
       })
       // get remaining page count
       .then(async (rsp) => {
@@ -158,8 +166,13 @@ export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
         const requestQueue = [];
         for (let i = 1; i <= lastPage; i++) {
           options.params.page = await i;
-          options.params.per_page = 100;
-          requestQueue.push(request.get(STARRED_REPOS_URL, options));
+          options.params.per_page = PER_PAGE;
+          requestQueue.push(
+            request.get(STARRED_REPOS_URL, options).then((rsp) => {
+              NProgress.inc();
+              return rsp;
+            }),
+          );
         }
 
         // todo add request limit
@@ -196,6 +209,9 @@ export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
           console.error(errors);
         }
         return [];
+      })
+      .finally(() => {
+        NProgress.done();
       })
   );
 };

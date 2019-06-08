@@ -26,6 +26,7 @@ import {
 } from '../typings';
 import { getStarredRepos, IStarredRepo } from './service';
 import { localStoragePromise, syncStoragePromise } from '../utils';
+import 'nprogress/nprogress.css';
 import './App.less';
 
 interface IAppProps {
