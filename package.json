@@ -2,7 +2,7 @@
   "name": "Remu",
   "version": "0.1.0",
   "private": true,
-  "description": "A Chrome Extension that lets you organize your GitHub Stars so ease!",
+  "description": "Organizing your GitHub Stars efficiently has never been easier.",
   "scripts": {
     "start": "EX_LOADER=1 webpack --config webpack/webpack.dev.js --watch",
     "dev": "webpack --config webpack/webpack.dev.js",
