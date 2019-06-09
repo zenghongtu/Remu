@@ -37,7 +37,7 @@ const RepoCard = ({ repo, isCurrentRepo }: IRepoCard) => {
     <div className={`repo-card-wrap ${isCurrentRepo ? 'current-repo' : ''}`}>
       <h3 className="repo-card-title">
         <a
-          className="repo-github-link"
+          className="repo-card-github-link"
           href={html_url}
           target="_blank"
           onClick={handleGithubLinkClick}
@@ -45,7 +45,9 @@ const RepoCard = ({ repo, isCurrentRepo }: IRepoCard) => {
           {full_name}
         </a>
       </h3>
-      <div>{description}</div>
+      <div className="repo-card-description" title={description}>
+        {description}
+      </div>
       <div>
         <span className="repo-meta-left">
           <img

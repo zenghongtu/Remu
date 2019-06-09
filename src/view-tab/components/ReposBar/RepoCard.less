@@ -19,12 +19,20 @@
   margin: 0;
 }
 
-.repo-github-link {
+.repo-card-github-link {
   transition: @transition-base;
   text-decoration: none;
   &:hover {
     text-decoration: underline;
   }
+}
+
+.repo-card-description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 
 .ant-list-item {
