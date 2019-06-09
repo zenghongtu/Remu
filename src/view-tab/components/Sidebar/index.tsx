@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Menu, Icon, Button, Select, Input, Tag } from 'antd';
+import { Menu, Icon, Button, Select, Input, Tag, Popover } from 'antd';
 import './index.less';
-import { ILanguages, ITag } from '../../../typings';
+import { ILanguages, ITag, TagId } from '../../../typings';
 import { genUniqueKey, localStoragePromise } from '../../../utils';
 import { useState, useRef } from 'react';
 
@@ -31,6 +31,8 @@ interface ISidebar {
   tagCountMap: ITagCountMap;
   starTaggedStatus: IStarTaggedStatus;
   onAddTag: (tags: ITag[]) => void;
+  onEditTag: (tags: ITag[]) => void;
+  onDelTag: (tags: ITag[]) => void;
   onRefresh: () => void;
   onSelect: (action: IFilterReposAction) => void;
 }
@@ -42,10 +44,14 @@ const Sidebar = ({
   tagCountMap,
   starTaggedStatus,
   onAddTag,
+  onEditTag,
+  onDelTag,
   onRefresh,
   onSelect,
 }: ISidebar) => {
   const [showAddTag, setShowAddTag] = useState<boolean>(false);
+  const [editTagId, setEditTagId] = useState<TagId>('');
+  const [editTagVal, setEditTagVal] = useState<string>('');
   const addTagInputRef = useRef(null);
 
   const handleLanguageSelect = ({ item, key }) => {
@@ -59,6 +65,29 @@ const Sidebar = ({
     onAddTag(newTags);
     addTagInputRef.current.input.input.value = '';
     addTagInputRef.current.focus();
+  };
+
+  const handleEditTag = (tagId: TagId, name: string) => () => {
+    setEditTagId(tagId);
+    setEditTagVal(name);
+  };
+
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value) {
+      setEditTagVal(value);
+    }
+  };
+
+  const handleEditInputPressEnter = async () => {
+    const newTags: ITag[] = tags.map(
+      (tag) => (tag.id === editTagId && (tag.name = editTagVal), tag),
+    );
+
+    await localStoragePromise.set({ tags: newTags });
+    onEditTag(newTags);
+    setEditTagVal('');
+    setEditTagId('');
   };
 
   return (
@@ -128,13 +157,32 @@ const Sidebar = ({
           </div>
           {tags &&
             tags.map(({ id, name }) => {
-              // todo edit tag (rename / delete)
               return (
                 <Menu.Item key={`tag:${id}`}>
-                  {name}
-                  <span className="sidebar-count-tag">
-                    <Tag>{tagCountMap[id] || 0}</Tag>
-                  </span>
+                  {id === editTagId ? (
+                    <Input
+                      value={editTagVal}
+                      onChange={handleEditInputChange}
+                      onPressEnter={handleEditInputPressEnter}
+                    />
+                  ) : (
+                    name
+                  )}
+                  <div className="sidebar-count-tag">
+                    <Popover
+                      content={
+                        <div>
+                          <Button onClick={handleEditTag(id, name)}>
+                            edit
+                          </Button>
+                          <Button type="danger">delete</Button>
+                        </div>
+                      }
+                      trigger="hover"
+                    >
+                      <Tag>{tagCountMap[id] || 0}</Tag>
+                    </Popover>
+                  </div>
                 </Menu.Item>
               );
             })}

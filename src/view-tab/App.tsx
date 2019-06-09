@@ -226,6 +226,10 @@ const App = (props: IAppProps) => {
     }
   };
 
+  const handleEditTag = ({}) => {};
+
+  const handleDelTag = ({}) => {};
+
   const sidebarProps = {
     tags,
     languages,
@@ -236,6 +240,12 @@ const App = (props: IAppProps) => {
       setRefreshCount(refreshCount + 1);
     },
     onAddTag(tags: ITag[]) {
+      setTags(tags);
+    },
+    onEditTag(tags: ITag[]) {
+      setTags(tags);
+    },
+    onDelTag(tags: ITag[]) {
       setTags(tags);
     },
     onSelect(action: IFilterReposAction) {
