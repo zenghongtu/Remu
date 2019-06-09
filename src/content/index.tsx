@@ -3,25 +3,20 @@ import * as ReactDOM from 'react-dom';
 import RepoTags from './RepoTags';
 import { localStoragePromise, syncStoragePromise } from '../utils';
 import { STORAGE_TAGS, STORAGE_REPO, STORAGE_TOKEN } from '../typings';
+import createToken from './createToken';
 import './index.less';
 
 const NEW_TOKEN_URL = 'https://github.com/settings/tokens/new';
-const TOKENS_URL = 'https://github.com/settings/tokens';
 
 document.addEventListener('DOMContentLoaded', () => {
   const href = location.href;
-  if (href.startsWith(TOKENS_URL)) {
+  if (href.startsWith(NEW_TOKEN_URL)) {
     syncStoragePromise.get(STORAGE_TOKEN).then((result) => {
       if (!result[STORAGE_TOKEN]) {
-        if (href === NEW_TOKEN_URL) {
-          // @ts-ignore
-          import('./createToken');
-        } else {
-          // import('./getToken');
-        }
+        createToken();
       } else {
         // tslint:disable-next-line:no-console
-        console.log('have token for Remu, no need to create new token.');
+        console.log('have token for Remu, no need to create a new token.');
       }
     });
     return;
