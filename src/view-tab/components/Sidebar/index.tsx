@@ -49,7 +49,7 @@ const Sidebar = ({
   const addTagInputRef = useRef(null);
 
   const handleLanguageSelect = ({ item, key }) => {
-    const [type, payload] = key.split('-');
+    const [type, payload] = key.split(':');
     onSelect({ type, payload });
   };
 
@@ -64,7 +64,7 @@ const Sidebar = ({
   return (
     <div className="sidebar-wrap">
       <Menu
-        defaultSelectedKeys={[`star-${ALL_STARS}`]}
+        defaultSelectedKeys={[`star:${ALL_STARS}`]}
         defaultOpenKeys={['tags', 'languages']}
         mode="inline"
         onSelect={handleLanguageSelect}
@@ -84,7 +84,7 @@ const Sidebar = ({
         >
           {Object.keys(starTaggedStatus).map((status) => {
             return (
-              <Menu.Item key={`star-${status}`}>
+              <Menu.Item key={`star:${status}`}>
                 {status}
                 <span className="sidebar-count-tag">
                   <Tag>{starTaggedStatus[status]}</Tag>
@@ -130,7 +130,7 @@ const Sidebar = ({
             tags.map(({ id, name }) => {
               // todo edit tag (rename / delete)
               return (
-                <Menu.Item key={`tag-${id}`}>
+                <Menu.Item key={`tag:${id}`}>
                   {name}
                   <span className="sidebar-count-tag">
                     <Tag>{tagCountMap[id] || 0}</Tag>
@@ -151,7 +151,7 @@ const Sidebar = ({
           {languages &&
             languages.map((lang) => {
               return (
-                <Menu.Item key={`language-${lang.name}`}>
+                <Menu.Item key={`language:${lang.name}`}>
                   {lang.name}
 
                   <span className="sidebar-count-tag">
