@@ -176,12 +176,18 @@ const Sidebar = ({
                     <Popover
                       content={
                         <div>
-                          <Button onClick={handleEditTag(id, name)}>
-                            edit
-                          </Button>
-                          <Button type="danger" onClick={handleDelTag(id)}>
-                            delete
-                          </Button>
+                          <Button
+                            onClick={handleEditTag(id, name)}
+                            shape="circle"
+                            icon="edit"
+                          ></Button>
+                          &nbsp; &nbsp;
+                          <Button
+                            type="danger"
+                            onClick={handleDelTag(id)}
+                            shape="circle"
+                            icon="delete"
+                          ></Button>
                         </div>
                       }
                       trigger="hover"
