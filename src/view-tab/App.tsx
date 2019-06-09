@@ -23,6 +23,7 @@ import {
   ITagsAction,
   STORAGE_TOKEN,
   Token,
+  TagId,
 } from '../typings';
 import { getStarredRepos, IStarredRepo } from './service';
 import { localStoragePromise, syncStoragePromise } from '../utils';
@@ -226,9 +227,15 @@ const App = (props: IAppProps) => {
     }
   };
 
-  const handleEditTag = ({}) => {};
-
-  const handleDelTag = ({}) => {};
+  const handleDelTag = (tagId: TagId) => {
+    const newTags = tags.filter((tag) => tag.id !== tagId);
+    const repoWithTagsString = JSON.stringify(repoWithTags);
+    const reg = new RegExp(`,?"${tagId}",?`, 'g');
+    const newRepoWithTagsString = repoWithTagsString.replace(reg, '');
+    const newRepoWithTags = JSON.parse(newRepoWithTagsString);
+    setTags(newTags);
+    setRepoWithTags(newRepoWithTags);
+  };
 
   const sidebarProps = {
     tags,
@@ -245,9 +252,7 @@ const App = (props: IAppProps) => {
     onEditTag(tags: ITag[]) {
       setTags(tags);
     },
-    onDelTag(tags: ITag[]) {
-      setTags(tags);
-    },
+    onDelTag: handleDelTag,
     onSelect(action: IFilterReposAction) {
       handleFilterRepos(action);
     },

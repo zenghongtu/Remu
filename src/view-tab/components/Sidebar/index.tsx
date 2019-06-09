@@ -32,7 +32,7 @@ interface ISidebar {
   starTaggedStatus: IStarTaggedStatus;
   onAddTag: (tags: ITag[]) => void;
   onEditTag: (tags: ITag[]) => void;
-  onDelTag: (tags: ITag[]) => void;
+  onDelTag: (tags: TagId) => void;
   onRefresh: () => void;
   onSelect: (action: IFilterReposAction) => void;
 }
@@ -65,6 +65,10 @@ const Sidebar = ({
     onAddTag(newTags);
     addTagInputRef.current.input.input.value = '';
     addTagInputRef.current.focus();
+  };
+
+  const handleDelTag = (id: TagId) => () => {
+    onDelTag(id);
   };
 
   const handleEditTag = (tagId: TagId, name: string) => () => {
@@ -175,7 +179,9 @@ const Sidebar = ({
                           <Button onClick={handleEditTag(id, name)}>
                             edit
                           </Button>
-                          <Button type="danger">delete</Button>
+                          <Button type="danger" onClick={handleDelTag(id)}>
+                            delete
+                          </Button>
                         </div>
                       }
                       trigger="hover"
