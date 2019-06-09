@@ -126,7 +126,7 @@ interface Owner {
   site_admin: boolean;
 }
 
-const PER_PAGE = 2;
+const PER_PAGE = 100;
 
 export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
   const options = {
