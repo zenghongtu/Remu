@@ -14,7 +14,6 @@ interface IReposBar<S> {
 
 const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
   const [filteredRepos, setFilteredRepos] = useState<IStarredRepo[]>(repos);
-  // const [searchFocus, setSearchFocus] = useState<boolean>(false);
   const [curRepoId, setCurRepoId] = useState<number>(null);
   const [vListHeight, setVListHeight] = useState<number>(0);
   const [filterValue, setFilterValue] = useState<string>('');
@@ -43,7 +42,7 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
   };
 
   const handleReposItemClick = (index: number) => () => {
-    const repo = repos[index];
+    const repo = filteredRepos[index];
     onSelect(repo);
     setCurRepoId(repo.repo.id as number);
   };
