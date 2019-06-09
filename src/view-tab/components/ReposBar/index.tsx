@@ -60,7 +60,10 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
 
   const filterRepos = debounce((value) => {
     const _filteredRepos = repos.filter(({ repo }) => {
-      return repo.name.includes(value) || repo.description.includes(value);
+      return (
+        repo.name.includes(value) ||
+        (repo.description && repo.description.includes(value))
+      );
     });
     setFilteredRepos(_filteredRepos);
   }, 200);
