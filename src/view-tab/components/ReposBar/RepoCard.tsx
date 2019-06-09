@@ -55,8 +55,8 @@ const RepoCard = ({ repo, isCurrentRepo }: IRepoCard) => {
             src={
               language ? `/language-icons/${language.toLowerCase()}.png` : logo
             }
-            alt={language || UNKOWN}
-            title={language || UNKOWN}
+            // alt={language || UNKOWN}
+            // title={language || UNKOWN}
           />
           <span>{language || UNKOWN}</span>
         </span>
