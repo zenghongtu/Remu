@@ -4,7 +4,16 @@ import './index.less';
 import { useState, useEffect, useRef } from 'react';
 import { getUserProfile, IUserProfile } from '../../service';
 import { Token } from '../../../typings';
-import { Menu, Dropdown, Icon, Input, Popover, Button, Tooltip } from 'antd';
+import {
+  Menu,
+  Dropdown,
+  Icon,
+  Input,
+  Popover,
+  Button,
+  Tooltip,
+  Modal,
+} from 'antd';
 import pkg from '../../../../package.json';
 
 const menuList = [
@@ -66,19 +75,67 @@ const Header = ({ token }: IHeader) => {
           placement="bottomRight"
           content={
             <div>
-              <Tooltip placement="topLeft" title={'Give me a star'}>
-                <Button shape="circle" icon="star" />
-              </Tooltip>
-              &nbsp; &nbsp;
-              <Tooltip placement="topLeft" title={'Support me'}>
-                <Button shape="circle" icon="like" />
+              <Tooltip
+                placement="topLeft"
+                title={`Like this? Buy me a coffee!😄`}
+              >
+                <Button
+                  shape="circle"
+                  icon="like"
+                  onClick={() => {
+                    Modal.info({
+                      icon: null,
+                      width: 800,
+                      content: (
+                        <div>
+                          <div className="pay-img-wrap">
+                            <img
+                              className="pay-img"
+                              src="/pay-zfb.jpg"
+                              alt="pay-zfb"
+                            />
+                            <img
+                              className="pay-img"
+                              src="/pay-wx.jpg"
+                              alt="pay-wx"
+                            />
+                            <a
+                              target="_blank"
+                              href="https://www.paypal.me/zenghongtu"
+                            >
+                              <img
+                                className="pay-img"
+                                src="/pay-paypal.jpg"
+                                alt="pay-paypal"
+                              />
+                            </a>
+                          </div>
+                          <br />
+                          <br />
+                          <p
+                            style={{ textAlign: 'center', fontWeight: 'bold' }}
+                          >
+                            Thank you for your support😘. I will try my best to
+                            improve it!😋
+                          </p>
+                        </div>
+                      ),
+                    });
+                  }}
+                />
               </Tooltip>
               &nbsp; &nbsp;
               <Tooltip
                 placement="topLeft"
-                title={'Have a problem, open a issue'}
+                title={`Have problems? Let's open a issue~`}
               >
-                <Button shape="circle" icon="frown" />
+                <Button
+                  shape="circle"
+                  icon="frown"
+                  onClick={() => {
+                    window.open(pkg.bugs.url);
+                  }}
+                />
               </Tooltip>
             </div>
           }

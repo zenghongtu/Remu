@@ -1,3 +1,5 @@
+@import "../../../style/index.less";
+
 .header-inner {
   height: 100%;
   display: flex;
@@ -58,4 +60,16 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   user-select: none;
+}
+
+.pay-img-wrap {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.pay-img {
+  width: 180px;
+  box-shadow: @box-shadow-base;
+  border-radius: @border-radius-base;
 }
