@@ -11,6 +11,7 @@
     "noEmitOnError": false,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "moduleResolution": "node",
     "typeRoots": ["node_modules/@types"]
   }
 }

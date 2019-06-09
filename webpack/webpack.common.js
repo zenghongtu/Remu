@@ -8,6 +8,7 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserJSPlugin = require("terser-webpack-plugin");
 const ExtensionReloader = require("webpack-extension-reloader");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const tsImportPluginFactory = require("ts-import-plugin");
 const Dotenv = require("dotenv-webpack");
 const pkg = require("../package.json");
 
@@ -85,14 +86,18 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.(jsx|tsx|js|ts)$/,
         loader: "ts-loader",
-        exclude: /node_modules/,
         options: {
-          happyPackMode: true,
           transpileOnly: true,
-          experimentalWatchApi: true,
+          getCustomTransformers: () => ({
+            before: [tsImportPluginFactory()],
+          }),
+          compilerOptions: {
+            module: "es2015",
+          },
         },
+        exclude: /node_modules/,
       },
       {
         test: /\.less$/,
