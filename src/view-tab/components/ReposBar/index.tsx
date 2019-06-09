@@ -18,6 +18,7 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
   const [vListHeight, setVListHeight] = useState<number>(0);
   const [filterValue, setFilterValue] = useState<string>('');
   const listWrapRef = useRef(null);
+  const listRef = useRef(null);
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
@@ -31,6 +32,12 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
   useEffect(() => {
     filterValue ? filterRepos(filterValue) : setFilteredRepos(repos);
   }, [repos]);
+
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollTo(0);
+    }
+  }, [filteredRepos]);
 
   const handleResize = debounce(() => {
     updateVListHeight();
@@ -80,14 +87,15 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
         />
       </div>
       <div className="reposbar-list-wrap" ref={listWrapRef}>
-        {filteredRepos ? (
-          <List>
+        <List>
+          {filteredRepos ? (
             <VList
               height={vListHeight}
               itemCount={filteredRepos.length}
               itemSize={150}
               width={400}
               overscanCount={2}
+              ref={listRef}
             >
               {({ index, style }) => {
                 const repo = filteredRepos[index];
@@ -106,12 +114,12 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
                 );
               }}
             </VList>
-          </List>
-        ) : (
-          <div className="reposbar-empty">
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-          </div>
-        )}
+          ) : (
+            <div className="reposbar-empty">
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            </div>
+          )}
+        </List>
       </div>
     </div>
   );
