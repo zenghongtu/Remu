@@ -14,19 +14,19 @@ interface IReposBar<S> {
 
 const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
   const [filteredRepos, setFilteredRepos] = useState<IStarredRepo[]>(repos);
-  const [searchFocus, setSearchFocus] = useState<boolean>(false);
+  // const [searchFocus, setSearchFocus] = useState<boolean>(false);
   const [curRepoId, setCurRepoId] = useState<number>(null);
   const [vListHeight, setVListHeight] = useState<number>(0);
   const searchInputRef = useRef(null);
   const listWrapRef = useRef(null);
 
   useEffect(() => {
-    document.addEventListener('keydown', handleKeydown);
+    // document.addEventListener('keydown', handleKeydown);
     window.addEventListener('resize', handleResize);
     updateVListHeight();
 
     return () => {
-      document.removeEventListener('keydown', handleKeydown);
+      // document.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('resize', handleResize);
     };
   }, []);
@@ -74,13 +74,13 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
     }
   };
 
-  const handleSearchFocus = () => {
-    setSearchFocus(true);
-  };
+  // const handleSearchFocus = () => {
+  //   setSearchFocus(true);
+  // };
 
-  const handleSearchBlur = () => {
-    setSearchFocus(false);
-  };
+  // const handleSearchBlur = () => {
+  //   setSearchFocus(false);
+  // };
 
   return (
     <div className="reposbar-wrap">
@@ -89,11 +89,11 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
           placeholder="Gaze through your telescope"
           prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
           onChange={handleSearchChange}
-          onFocus={handleSearchFocus}
-          onBlur={handleSearchBlur}
+          // onFocus={handleSearchFocus}
+          // onBlur={handleSearchBlur}
           ref={searchInputRef}
         />
-        {!searchFocus && <div className="search-hotkey-icon">g</div>}
+        {/* {!searchFocus && <div className="search-hotkey-icon">g</div>} */}
       </div>
       <div className="reposbar-list-wrap" ref={listWrapRef}>
         {filteredRepos ? (
