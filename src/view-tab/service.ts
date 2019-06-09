@@ -149,15 +149,27 @@ export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
     request
       .get(STARRED_REPOS_URL, options)
       // get all page count
-      .then((response) => {
-        const link = response.headers.link;
-        if (!link) {
-          return response;
-        }
-        const links = link.split(',');
-        const starredCount = links[1].match(/&page=(\d+)/)[1];
-        lastPage = Math.ceil(starredCount / PER_PAGE);
-      })
+      .then(
+        (response) => {
+          const link = response.headers.link;
+          if (!link) {
+            return response;
+          }
+          const links = link.split(',');
+          const starredCount = links[1].match(/&page=(\d+)/)[1];
+          lastPage = Math.ceil(starredCount / PER_PAGE);
+        },
+        (error) => {
+          Modal.error({
+            title: 'Request Error',
+            content: 'Click ok to refresh the page',
+            okText: 'ok',
+            onOk() {
+              location.reload();
+            },
+          });
+        },
+      )
       // get remaining page count
       .then(async (rsp) => {
         if (rsp) {
@@ -193,6 +205,9 @@ export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
         });
       })
       .catch((errors) => {
+        if (!errors) {
+          return;
+        }
         if (errors.response.status === 401) {
           Modal.error({
             title: 'Invalid Token',
@@ -216,7 +231,6 @@ export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
           // tslint:disable-next-line:no-console
           console.error(errors);
         }
-        return [];
       })
       .finally(() => {
         NProgress.done();
