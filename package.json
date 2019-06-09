@@ -2,8 +2,7 @@
   "name": "Remu",
   "version": "0.1.0",
   "private": true,
-  "description": "",
-  "main": "index.js",
+  "description": "A Chrome Extension that lets you organize your github stars so ease!",
   "scripts": {
     "start": "EX_LOADER=1 webpack --config webpack/webpack.dev.js --watch",
     "dev": "webpack --config webpack/webpack.dev.js",
