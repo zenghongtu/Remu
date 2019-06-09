@@ -198,7 +198,6 @@ const RepoInfo = ({
             <Select
               // @ts-ignore
               value={selectedTagIds}
-              size="small"
               mode="tags"
               filterOption={(inputValue, { props: { children } }) => {
                 return (children as string).includes(inputValue);
@@ -218,8 +217,8 @@ const RepoInfo = ({
                 })}
             </Select>
           </span>
-          &nbsp; &nbsp;
-          <Button size="small" ghost onClick={handleMoreInfoBtnClick}>
+          &nbsp;
+          <Button size="small" onClick={handleMoreInfoBtnClick}>
             More Info
           </Button>
         </div>
