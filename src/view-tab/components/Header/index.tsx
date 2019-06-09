@@ -4,7 +4,7 @@ import './index.less';
 import { useState, useEffect, useRef } from 'react';
 import { getUserProfile, IUserProfile } from '../../service';
 import { Token } from '../../../typings';
-import { Menu, Dropdown, Icon, Input } from 'antd';
+import { Menu, Dropdown, Icon, Input, Popover, Button, Tooltip } from 'antd';
 import pkg from '../../../../package.json';
 
 const menuList = [
@@ -25,15 +25,17 @@ const Header = ({ token }: IHeader) => {
   const searchInputRef = useRef(null);
 
   useEffect(() => {
-    getUserProfile({ token }).then(({ data }) => {
-      setUserProfile(data);
-    });
+    if (token) {
+      getUserProfile({ token }).then(({ data }) => {
+        setUserProfile(data);
+      });
+    }
     document.addEventListener('keydown', handleKeydown);
 
     return () => {
       document.removeEventListener('keydown', handleKeydown);
     };
-  }, []);
+  }, [token]);
 
   const handleKeydown = (e: KeyboardEvent) => {
     if (e.keyCode === 191) {
@@ -60,9 +62,31 @@ const Header = ({ token }: IHeader) => {
   return (
     <div className="header-inner">
       <div className="header-left">
-        <a href={pkg.homepage} target="_blank">
-          <img width={50} src={logo} alt="Remu" />
-        </a>
+        <Popover
+          placement="bottomRight"
+          content={
+            <div>
+              <Tooltip placement="topLeft" title={'Give me a star'}>
+                <Button shape="circle" icon="star" />
+              </Tooltip>
+              &nbsp; &nbsp;
+              <Tooltip placement="topLeft" title={'Support me'}>
+                <Button shape="circle" icon="like" />
+              </Tooltip>
+              &nbsp; &nbsp;
+              <Tooltip
+                placement="topLeft"
+                title={'Have a problem, open a issue'}
+              >
+                <Button shape="circle" icon="frown" />
+              </Tooltip>
+            </div>
+          }
+        >
+          <a href={pkg.homepage} target="_blank">
+            <img width={50} src={logo} alt="Remu" />
+          </a>
+        </Popover>
         <div className="header-search-github-wrap">
           <Input
             ref={searchInputRef}
