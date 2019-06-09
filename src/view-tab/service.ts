@@ -1,5 +1,5 @@
 import { request, syncStoragePromise } from '../utils';
-import { Modal } from 'antd';
+import { Modal, message } from 'antd';
 import { STORAGE_TOKEN, RepoId } from '../typings';
 import NProgress from 'nprogress';
 
@@ -168,10 +168,18 @@ export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
           options.params.page = await i;
           options.params.per_page = PER_PAGE;
           requestQueue.push(
-            request.get(STARRED_REPOS_URL, options).then((rsp) => {
-              NProgress.inc();
-              return rsp;
-            }),
+            request
+              .get(STARRED_REPOS_URL, options)
+              .then((rsp) => {
+                NProgress.inc();
+                return rsp;
+              })
+              .catch((error) => {
+                // todo add reRequest
+                message.error(`The data of page ${i} request failed!`);
+                const res = { data: [] };
+                Promise.resolve(res);
+              }),
           );
         }
 
