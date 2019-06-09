@@ -17,22 +17,20 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
   // const [searchFocus, setSearchFocus] = useState<boolean>(false);
   const [curRepoId, setCurRepoId] = useState<number>(null);
   const [vListHeight, setVListHeight] = useState<number>(0);
-  const searchInputRef = useRef(null);
+  const [filterValue, setFilterValue] = useState<string>('');
   const listWrapRef = useRef(null);
 
   useEffect(() => {
-    // document.addEventListener('keydown', handleKeydown);
     window.addEventListener('resize', handleResize);
     updateVListHeight();
 
     return () => {
-      // document.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('resize', handleResize);
     };
   }, []);
 
   useEffect(() => {
-    setFilteredRepos(repos);
+    filterValue ? filterRepos(filterValue) : setFilteredRepos(repos);
   }, [repos]);
 
   const handleResize = debounce(() => {
@@ -42,14 +40,6 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
   const updateVListHeight = () => {
     const height = listWrapRef.current.offsetHeight;
     setVListHeight(height);
-  };
-
-  const handleKeydown = (e: KeyboardEvent) => {
-    if (e.keyCode === 71) {
-      e.preventDefault();
-      e.stopPropagation();
-      searchInputRef.current.focus();
-    }
   };
 
   const handleReposItemClick = (index: number) => () => {
@@ -71,32 +61,24 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (!value) {
+      setFilterValue('');
       setFilteredRepos(repos);
     } else {
+      setFilterValue(value);
       filterRepos(value);
     }
   };
-
-  // const handleSearchFocus = () => {
-  //   setSearchFocus(true);
-  // };
-
-  // const handleSearchBlur = () => {
-  //   setSearchFocus(false);
-  // };
 
   return (
     <div className="reposbar-wrap">
       <div className="reposbar-search">
         <Input
+          allowClear
+          value={filterValue}
           placeholder="Gaze through your telescope"
           prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
           onChange={handleSearchChange}
-          // onFocus={handleSearchFocus}
-          // onBlur={handleSearchBlur}
-          ref={searchInputRef}
         />
-        {/* {!searchFocus && <div className="search-hotkey-icon">g</div>} */}
       </div>
       <div className="reposbar-list-wrap" ref={listWrapRef}>
         {filteredRepos ? (
