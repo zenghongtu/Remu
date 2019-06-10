@@ -21,6 +21,7 @@ import {
   IS_UPDATE_LOCAL,
   STORAGE_SETTINGS,
 } from '../typings';
+import { DEFAULT_SYNCHRONIZING_DELAY } from '../constants';
 
 export const initGist = () => {
   syncStoragePromise.get([STORAGE_TOKEN, STORAGE_GIST_ID]).then((result) => {
@@ -51,7 +52,7 @@ export const initEnv = async () => {
       [STORAGE_TOKEN]: '',
       [STORAGE_GIST_ID]: '',
       [STORAGE_GIST_UPDATE_TIME]: '',
-      [STORAGE_SETTINGS]: { synchronizingDelay: '60' },
+      [STORAGE_SETTINGS]: { synchronizingDelay: DEFAULT_SYNCHRONIZING_DELAY },
     })
     .then<ISyncInfo>((results) => {
       const { token, gistId, updateAt, settings } = results as any;

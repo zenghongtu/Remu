@@ -29,6 +29,7 @@ import {
   IMessageAction,
   IResponseMsg,
 } from '../typings';
+import { DEFAULT_SYNCHRONIZING_DELAY } from '../constants';
 
 const { Option } = Select;
 
@@ -98,7 +99,7 @@ const SettingForm = () => {
   useEffect(() => {
     syncStoragePromise
       .get({
-        [STORAGE_SETTINGS]: { synchronizingDelay: '60' },
+        [STORAGE_SETTINGS]: { synchronizingDelay: DEFAULT_SYNCHRONIZING_DELAY },
         [STORAGE_GIST_ID]: '',
         [STORAGE_TOKEN]: '',
         [STORAGE_GIST_UPDATE_TIME]: '',
@@ -194,7 +195,7 @@ const SettingForm = () => {
             </div>
           </div>
           <div className="form-item">
-            <div className="form-item-label">Synchronization Delay:</div>
+            <div className="form-item-label">Synchronizing Delay:</div>
             <Select
               defaultValue={settings.synchronizingDelay}
               onChange={handleSFSelectChange}
