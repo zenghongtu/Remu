@@ -17,7 +17,7 @@
 
 ---
 
-## What is Remo?
+## What is Remu?
 
 Remu（レム）是雷姆的非日语假名拼音 😋。
 
