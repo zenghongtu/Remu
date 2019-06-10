@@ -230,7 +230,7 @@ const App = (props: IAppProps) => {
   const handleDelTag = async (tagId: TagId) => {
     const newTags = tags.filter((tag) => tag.id !== tagId);
     const repoWithTagsString = JSON.stringify(repoWithTags);
-    const reg = new RegExp(`,?"${tagId}",?`, 'g');
+    const reg = new RegExp(`(,"${tagId}"|"${tagId}",)`, 'g');
     const newRepoWithTagsString = repoWithTagsString.replace(reg, '');
     const newRepoWithTags = JSON.parse(newRepoWithTagsString);
     await localStoragePromise.set({
