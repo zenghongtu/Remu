@@ -21,7 +21,7 @@
 
 Remu（レム）是雷姆的非日语假名拼音 😋。
 
-here, 它是一个 Chrome 浏览器插件，通过标签分类来对 GitHub Stars 进行高效管理，借助 Gists 强大能力实现<sup>1</sup>跨平台的数据同步。👏🏻
+here, 她是一个 Chrome 浏览器插件，通过标签分类来对 GitHub Stars 进行高效管理，借助 Gists 强大能力实现<sup>1</sup>跨平台的数据同步。👏🏻
 
 <sup>1 - Chrome 提供的同步能力（storage.sync）只有 100kb 大小的存储容量，且只能存储 512 项，每项 8kb。如果 repo 数量和标签过多就会有部分数据无法同步，所以我使用 Gists 来进行同步（目前没有容量的限制），顺带还可以查看历史记录。</sup>
 
@@ -30,6 +30,8 @@ here, 它是一个 Chrome 浏览器插件，通过标签分类来对 GitHub Star
 ## Install
 
 <a href="https://chrome.google.com/webstore/detail/remu/bajifjohhghngljcfhkbpcggafpiajdo"><img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_128x128.png" width="48" /></a>
+
+***顺手给我点个 Star 体验一番，相信你会爱上她的***😝
 
 ## Feature
 
