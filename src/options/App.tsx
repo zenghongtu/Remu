@@ -1,0 +1,228 @@
+import * as React from 'react';
+import {
+  Form,
+  Input,
+  Tooltip,
+  Icon,
+  Cascader,
+  Select,
+  Row,
+  Col,
+  Checkbox,
+  Button,
+  Spin,
+  AutoComplete,
+  message,
+  Modal,
+} from 'antd';
+
+import './App.less';
+import { useEffect, useState, useRef } from 'react';
+import { syncStoragePromise, localStoragePromise } from '../utils';
+import {
+  STORAGE_SETTINGS,
+  STORAGE_TOKEN,
+  STORAGE_GIST_UPDATE_TIME,
+  STORAGE_GIST_ID,
+  STORAGE_REPO,
+  STORAGE_TAGS,
+} from '../typings';
+
+const { Option } = Select;
+
+const SFSelectOptions = [
+  { value: '0', label: 'immediate (close delay)' },
+  { value: '60', label: '60 seconds' },
+  { value: '600', label: '10 minutes' },
+  { value: '3600', label: '1 hour' },
+];
+
+interface ISettings {
+  synchronizationDelay: string;
+  token: string;
+  gistId: string;
+  gistUpdateTime: string;
+}
+
+const saveSyncStorage = (key: string, value: any) => {
+  syncStoragePromise
+    .set({
+      [key]: value,
+    })
+    .then(() => {
+      message.success('save Successfully!', 1);
+    })
+    .catch(() => {
+      message.error('save Error! Try to refresh the page.', 1);
+    });
+};
+
+const fileDownload = (content: string, filename: string) => {
+  const eleLink = document.createElement('a');
+  eleLink.download = filename;
+  eleLink.style.display = 'none';
+  const blob = new Blob([content]);
+  eleLink.href = URL.createObjectURL(blob);
+  document.body.appendChild(eleLink);
+  eleLink.click();
+  document.body.removeChild(eleLink);
+};
+
+const SettingForm = () => {
+  const [settings, setSettings] = useState<ISettings>(null);
+  const tokenInputRef = useRef(null);
+  const gistIdInputRef = useRef(null);
+
+  useEffect(() => {
+    syncStoragePromise
+      .get({
+        [STORAGE_SETTINGS]: { synchronizationDelay: '60' },
+        [STORAGE_GIST_ID]: '',
+        [STORAGE_TOKEN]: '',
+        [STORAGE_GIST_UPDATE_TIME]: '',
+      })
+      .then((result) => {
+        const _settings = (result as any)[STORAGE_SETTINGS];
+        const token = (result as any)[STORAGE_GIST_ID];
+        const gistId = (result as any)[STORAGE_TOKEN];
+        const gistUpdateTime = (result as any)[STORAGE_GIST_UPDATE_TIME];
+        const settings = {
+          ..._settings,
+          token,
+          gistId,
+          gistUpdateTime,
+        };
+        setSettings(settings);
+      });
+  }, []);
+
+  const handleUpdateToken = () => {
+    const value = tokenInputRef.current.state.value;
+    if (value) {
+      saveSyncStorage(STORAGE_TOKEN, value);
+    }
+  };
+
+  const handleUpdateGistId = () => {
+    const value = gistIdInputRef.current.state.value;
+    if (value) {
+      saveSyncStorage(STORAGE_GIST_ID, value);
+    }
+  };
+
+  const handleSFSelectChange = (value: string) => {
+    saveSyncStorage(STORAGE_SETTINGS, { synchronizationDelay: value });
+  };
+
+  const handleExportData = () => {
+    localStoragePromise
+      .get({ [STORAGE_REPO]: {}, [STORAGE_TAGS]: [] })
+      .then((result) => {
+        const content = JSON.stringify(result);
+        const filename = `remu-export-data_${+new Date()}.json`;
+        fileDownload(content, filename);
+      });
+  };
+  const handleImportData = () => {};
+
+  const handleClearData = () => {
+    Modal.confirm({
+      icon: 'exclamation-circle',
+      title: 'Make sure you want to clear the All Data!',
+      onOk() {
+        localStoragePromise.clear().then(() => {
+          syncStoragePromise.clear().then(() => {
+            location.reload();
+          });
+        });
+      },
+    });
+  };
+  return (
+    <div className="form-wrap">
+      {settings ? (
+        <div className="form">
+          <div className="form-item">
+            <div className="form-item-label">Synchronization Delay:</div>
+            <Select
+              defaultValue={settings.synchronizationDelay}
+              onChange={handleSFSelectChange}
+            >
+              {SFSelectOptions &&
+                SFSelectOptions.map(({ value, label }) => {
+                  return (
+                    <Option key={value} value={value}>
+                      {label}
+                    </Option>
+                  );
+                })}
+            </Select>
+          </div>
+          <div className="form-item">
+            <div className="form-item-label">
+              <a href="https://github.com/settings/tokens">
+                Github Personal Access Token:
+              </a>
+            </div>
+            <div className="form-item-input">
+              <Input ref={tokenInputRef} defaultValue={settings.token}></Input>
+              &nbsp; &nbsp;
+              <Button type="primary" onClick={handleUpdateToken}>
+                Update
+              </Button>
+            </div>
+          </div>
+          <div className="form-item">
+            <div className="form-item-label">
+              <a href="https://gist.github.com">Gist Id:</a>
+            </div>
+            <div className="form-item-input">
+              <Input
+                ref={gistIdInputRef}
+                defaultValue={settings.gistId}
+              ></Input>
+              &nbsp; &nbsp;
+              <Button type="primary" onClick={handleUpdateGistId}>
+                Update
+              </Button>
+            </div>
+          </div>
+          <div className="form-item">
+            <div className="form-item-label">
+              Export/Import Data (JSON Format):
+            </div>
+            <div>
+              <Button type="primary" onClick={handleExportData}>
+                Export
+              </Button>
+              &nbsp; &nbsp;
+              <Button type="primary" disabled onClick={handleImportData}>
+                Import
+              </Button>
+            </div>
+          </div>
+          <div className="form-item">
+            <div className="form-item-label">Sync Data (Required Gist Id):</div>
+            <div>
+              <Button icon="cloud-upload">Update Gist</Button>
+              &nbsp; &nbsp;
+              <Button icon="cloud-download">Update Local</Button>
+            </div>
+          </div>
+          <div className="form-item">
+            <div className="form-item-label">Clear All Data:</div>
+            <div>
+              <Button type="danger" onClick={handleClearData}>
+                Clear
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <Spin></Spin>
+      )}
+    </div>
+  );
+};
+
+export default SettingForm;
