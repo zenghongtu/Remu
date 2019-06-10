@@ -88,7 +88,14 @@ export const checkSync = async (info) => {
   }
 };
 
+const setBrowseAction = ({ title = '', text = '' }) => {
+  chrome.browserAction.setTitle({ title });
+  chrome.browserAction.setBadgeText({ text });
+  chrome.browserAction.setBadgeBackgroundColor({ color: [0, 0, 0, 0] });
+};
+
 export const updateGist = ({ token, gistId, updateAt }: ISyncInfo) => {
+  setBrowseAction({ title: 'update Gist', text: '...' });
   return localStoragePromise.get([STORAGE_TAGS, STORAGE_REPO]).then((results) => {
     const { tags, repoWithTags } = results as any;
 
@@ -101,8 +108,12 @@ export const updateGist = ({ token, gistId, updateAt }: ISyncInfo) => {
             [STORAGE_GIST_UPDATE_TIME]: data.updated_at,
           })
           .catch((errors) => {
-            // tslint:disable-next-line:no-console
-            console.log('errors: ', errors);
+            chrome.browserAction.setBadgeBackgroundColor({
+              color: [255, 0, 0, 255],
+            });
+          })
+          .finally(() => {
+            setBrowseAction({});
           });
       });
     }
@@ -114,6 +125,7 @@ export const updateGist = ({ token, gistId, updateAt }: ISyncInfo) => {
 export const updateGistDebounce = debounce(updateGist);
 
 export const updateLocal = (data: GistData) => {
+  setBrowseAction({ title: 'update Local', text: '...' });
   const content = data.files[REMU_SYNC_FILENAME].content;
   let _data;
   try {
@@ -132,5 +144,13 @@ export const updateLocal = (data: GistData) => {
     [STORAGE_GIST_UPDATE_TIME]: data.updated_at,
   });
 
-  return Promise.all([setNewTagsAndRepoWithTags, setUpdateAt]);
+  return Promise.all([setNewTagsAndRepoWithTags, setUpdateAt])
+    .catch((errors) => {
+      chrome.browserAction.setBadgeBackgroundColor({
+        color: [255, 0, 0, 255],
+      });
+    })
+    .finally(() => {
+      setBrowseAction({});
+    });
 };
