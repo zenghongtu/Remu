@@ -20,7 +20,7 @@ export const STORAGE_GIST_UPDATE_TIME = 'updateAt';
 export const STORAGE_SETTINGS = 'settings';
 
 export interface ISettings {
-  synchronizationDelay: string;
+  synchronizingDelay: string;
 }
 
 export const IS_UPDATE_LOCAL = 'is_update_local';

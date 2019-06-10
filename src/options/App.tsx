@@ -34,13 +34,18 @@ const { Option } = Select;
 
 const SFSelectOptions = [
   { value: '0', label: 'immediate (close delay)' },
+  { value: '3000', label: '30 seconds' },
   { value: '6000', label: '60 seconds' },
+  { value: '30000', label: '5 minutes' },
   { value: '60000', label: '10 minutes' },
+  { value: '180000', label: '30 minutes' },
   { value: '360000', label: '1 hour' },
+  { value: '720000', label: '2 hours' },
+  { value: '1800000', label: '5 hours' },
 ];
 
 interface ISettings {
-  synchronizationDelay: string;
+  synchronizingDelay: string;
   token: string;
   gistId: string;
   gistUpdateTime: string;
@@ -93,7 +98,7 @@ const SettingForm = () => {
   useEffect(() => {
     syncStoragePromise
       .get({
-        [STORAGE_SETTINGS]: { synchronizationDelay: '60' },
+        [STORAGE_SETTINGS]: { synchronizingDelay: '60' },
         [STORAGE_GIST_ID]: '',
         [STORAGE_TOKEN]: '',
         [STORAGE_GIST_UPDATE_TIME]: '',
@@ -128,7 +133,7 @@ const SettingForm = () => {
   };
 
   const handleSFSelectChange = (value: string) => {
-    saveSyncStorage(STORAGE_SETTINGS, { synchronizationDelay: value });
+    saveSyncStorage(STORAGE_SETTINGS, { synchronizingDelay: value });
   };
 
   const handleExportData = () => {
@@ -191,8 +196,9 @@ const SettingForm = () => {
           <div className="form-item">
             <div className="form-item-label">Synchronization Delay:</div>
             <Select
-              defaultValue={settings.synchronizationDelay}
+              defaultValue={settings.synchronizingDelay}
               onChange={handleSFSelectChange}
+              style={{ width: '50%' }}
             >
               {SFSelectOptions &&
                 SFSelectOptions.map(({ value, label }) => {

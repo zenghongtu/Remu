@@ -51,7 +51,7 @@ export const initEnv = async () => {
       [STORAGE_TOKEN]: '',
       [STORAGE_GIST_ID]: '',
       [STORAGE_GIST_UPDATE_TIME]: '',
-      [STORAGE_SETTINGS]: { synchronizationDelay: '60' },
+      [STORAGE_SETTINGS]: { synchronizingDelay: '60' },
     })
     .then<ISyncInfo>((results) => {
       const { token, gistId, updateAt, settings } = results as any;
@@ -59,7 +59,7 @@ export const initEnv = async () => {
       window.REMU_GIST_ID = gistId;
       window.REMU_TOKEN = token;
       window.REMU_GIST_UPDATE_AT = updateAt;
-      window.REMU_SYNC_DELAY = +settings.synchronizationDelay;
+      window.REMU_SYNC_DELAY = +settings.synchronizingDelay;
       return { token, gistId, updateAt, settings };
     });
 };

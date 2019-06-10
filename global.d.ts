@@ -1,5 +1,7 @@
 interface Window {
   tabId?: number;
+  timeoutId?: number;
+  REMU_SYNC_DELAY?: number;
   REMU_TOKEN?: string;
   REMU_GIST_ID?: string;
   REMU_GIST_UPDATE_AT?: string;
