@@ -19,6 +19,10 @@ export const STORAGE_GIST_ID = 'gistId';
 export const STORAGE_GIST_UPDATE_TIME = 'updateAt';
 export const STORAGE_SETTINGS = 'settings';
 
+export interface ISettings {
+  synchronizationDelay: string;
+}
+
 export const IS_UPDATE_LOCAL = 'is_update_local';
 
 export interface ITagsAction {
@@ -29,4 +33,16 @@ export interface ITagsAction {
 
 export interface IRepoWithTag {
   [repoId: string]: TagId[];
+}
+
+export interface IMessageAction {
+  type: 'updateGist' | 'updateLocal' | 'refresh';
+  payload?: any;
+}
+
+export const ERROR_MSG = 'error';
+export const SUCCESS_MSG = 'success';
+
+export interface IResponseMsg {
+  status: typeof ERROR_MSG | typeof SUCCESS_MSG;
 }

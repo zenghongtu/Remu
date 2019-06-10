@@ -26,15 +26,17 @@ import {
   STORAGE_GIST_ID,
   STORAGE_REPO,
   STORAGE_TAGS,
+  IMessageAction,
+  IResponseMsg,
 } from '../typings';
 
 const { Option } = Select;
 
 const SFSelectOptions = [
   { value: '0', label: 'immediate (close delay)' },
-  { value: '60', label: '60 seconds' },
-  { value: '600', label: '10 minutes' },
-  { value: '3600', label: '1 hour' },
+  { value: '6000', label: '60 seconds' },
+  { value: '60000', label: '10 minutes' },
+  { value: '360000', label: '1 hour' },
 ];
 
 interface ISettings {
@@ -50,10 +52,10 @@ const saveSyncStorage = (key: string, value: any) => {
       [key]: value,
     })
     .then(() => {
-      message.success('save Successfully!', 1);
-    })
-    .catch(() => {
-      message.error('save Error! Try to refresh the page.', 1);
+      const action: IMessageAction = {
+        type: 'refresh',
+      };
+      sendMessage(action);
     });
 };
 
@@ -68,8 +70,23 @@ const fileDownload = (content: string, filename: string) => {
   document.body.removeChild(eleLink);
 };
 
+const sendMessage = (action: IMessageAction) => {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(action, function(response: IResponseMsg) {
+      if (response.status === 'error') {
+        message.error(`${action.type} Error!`, 1);
+        reject(response);
+      } else if (response.status === 'success') {
+        message.success(`${action.type} Successfully!`, 1);
+        resolve(response);
+      }
+    });
+  });
+};
+
 const SettingForm = () => {
   const [settings, setSettings] = useState<ISettings>(null);
+  const [refresh, setRefresh] = useState<number>(0);
   const tokenInputRef = useRef(null);
   const gistIdInputRef = useRef(null);
 
@@ -94,7 +111,7 @@ const SettingForm = () => {
         };
         setSettings(settings);
       });
-  }, []);
+  }, [refresh]);
 
   const handleUpdateToken = () => {
     const value = tokenInputRef.current.state.value;
@@ -138,10 +155,39 @@ const SettingForm = () => {
       },
     });
   };
+
+  const handleUpdateGist = async () => {
+    sendMessage({ type: 'updateGist' }).then(() => {
+      setRefresh(refresh + 1);
+    });
+  };
+
+  const handleUpdateLocal = async () => {
+    sendMessage({ type: 'updateLocal' }).then(() => {
+      setRefresh(refresh + 1);
+    });
+  };
+
   return (
     <div className="form-wrap">
       {settings ? (
         <div className="form">
+          <div className="form-item">
+            <div className="form-item-label">Sync Data (need Gist Id):</div>
+            <i>
+              Gist update time:
+              <b>{settings.gistUpdateTime || 'Unsynchronized'}</b>
+            </i>
+            <div>
+              <Button icon="cloud-upload" onClick={handleUpdateGist}>
+                Update Gist
+              </Button>
+              &nbsp; &nbsp;
+              <Button icon="cloud-download" onClick={handleUpdateLocal}>
+                Update Local
+              </Button>
+            </div>
+          </div>
           <div className="form-item">
             <div className="form-item-label">Synchronization Delay:</div>
             <Select
@@ -199,14 +245,6 @@ const SettingForm = () => {
               <Button type="primary" disabled onClick={handleImportData}>
                 Import
               </Button>
-            </div>
-          </div>
-          <div className="form-item">
-            <div className="form-item-label">Sync Data (Required Gist Id):</div>
-            <div>
-              <Button icon="cloud-upload">Update Gist</Button>
-              &nbsp; &nbsp;
-              <Button icon="cloud-download">Update Local</Button>
             </div>
           </div>
           <div className="form-item">

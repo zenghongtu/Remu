@@ -5,7 +5,12 @@ import {
   GistData,
   REMU_SYNC_FILENAME,
 } from './syncService';
-import { syncStoragePromise, localStoragePromise, debounce } from '../utils';
+import {
+  syncStoragePromise,
+  localStoragePromise,
+  debounce,
+  genUniqueKey,
+} from '../utils';
 import { GistDataRsp } from './syncService';
 import {
   STORAGE_TOKEN,
@@ -14,12 +19,14 @@ import {
   STORAGE_TAGS,
   STORAGE_REPO,
   IS_UPDATE_LOCAL,
+  STORAGE_SETTINGS,
 } from '../typings';
 
 export const initGist = () => {
-  syncStoragePromise.get(STORAGE_TOKEN).then((result) => {
+  syncStoragePromise.get([STORAGE_TOKEN, STORAGE_GIST_ID]).then((result) => {
     const token = (result as any)[STORAGE_TOKEN];
-    if (token) {
+    const gistId = (result as any)[STORAGE_GIST_ID];
+    if (token && !gistId) {
       createGist('init gist', token).then(({ data }: GistDataRsp) => {
         const gistId = data.id;
         const updateTime = data.updated_at;
@@ -38,50 +45,56 @@ export interface ISyncInfo {
   updateAt?: string;
 }
 
-export const refreshSyncInfo = () => {
+export const initEnv = async () => {
   return syncStoragePromise
-    .get([STORAGE_TOKEN, STORAGE_GIST_ID, STORAGE_GIST_UPDATE_TIME])
+    .get({
+      [STORAGE_TOKEN]: '',
+      [STORAGE_GIST_ID]: '',
+      [STORAGE_GIST_UPDATE_TIME]: '',
+      [STORAGE_SETTINGS]: { synchronizationDelay: '60' },
+    })
     .then<ISyncInfo>((results) => {
-      const { token, gistId, updateAt } = results as any;
+      const { token, gistId, updateAt, settings } = results as any;
 
       window.REMU_GIST_ID = gistId;
       window.REMU_TOKEN = token;
       window.REMU_GIST_UPDATE_AT = updateAt;
-      return { token, gistId, updateAt };
+      window.REMU_SYNC_DELAY = +settings.synchronizationDelay;
+      return { token, gistId, updateAt, settings };
     });
 };
 
-export const checkSyncGist = () => {
-  return refreshSyncInfo().then((info) => {
-    const { token, gistId, updateAt } = info;
-    if (token && gistId) {
-      return getGist(gistId, token).then(({ data }) => {
-        const gistUpdateAt = data.updated_at;
-        if (updateAt < gistUpdateAt) {
-          updateLocal(data);
-          // tslint:disable-next-line:no-console
-          console.log('remu: update local');
-        } else if (updateAt > gistUpdateAt) {
-          updateGist(info);
-          // tslint:disable-next-line:no-console
-          console.log('remu: update gist');
-        } else {
-          // tslint:disable-next-line:no-console
-          console.log('remu: up to date');
-        }
-      });
-    }
-  });
+export const checkSync = async (info) => {
+  const { token, gistId, updateAt } = info;
+  if (token && gistId) {
+    return getGist({ gistId, token }).then(({ data }) => {
+      const gistUpdateAt = data.updated_at;
+      if (updateAt < gistUpdateAt) {
+        updateLocal(data);
+        // tslint:disable-next-line:no-console
+        console.log('remu: update local');
+      } else if (updateAt > gistUpdateAt) {
+        updateGist(info);
+        // tslint:disable-next-line:no-console
+        console.log('remu: update gist');
+      } else {
+        // tslint:disable-next-line:no-console
+        console.log('remu: up to date');
+      }
+    });
+  } else {
+    return Promise.reject();
+  }
 };
 
-const _updateGist = ({ token, gistId, updateAt }: ISyncInfo) => {
+export const updateGist = ({ token, gistId, updateAt }: ISyncInfo) => {
   return localStoragePromise.get([STORAGE_TAGS, STORAGE_REPO]).then((results) => {
     const { tags, repoWithTags } = results as any;
 
     if (tags && repoWithTags) {
       const data = { tags, repoWithTags };
       const content = JSON.stringify(data);
-      editGist(content, gistId, token).then(({ data }: GistDataRsp) => {
+      return editGist(content, gistId, token).then(({ data }: GistDataRsp) => {
         syncStoragePromise
           .set({
             [STORAGE_GIST_UPDATE_TIME]: data.updated_at,
@@ -93,26 +106,30 @@ const _updateGist = ({ token, gistId, updateAt }: ISyncInfo) => {
       });
     }
 
-    // todo fix
     return null;
   });
 };
 
-export const updateGist = debounce(_updateGist);
+export const updateGistDebounce = debounce(updateGist);
 
-const updateLocal = (data: GistData) => {
+export const updateLocal = (data: GistData) => {
   const content = data.files[REMU_SYNC_FILENAME].content;
-  const { tags, repoWithTags } = JSON.parse(content);
-
+  let _data;
+  try {
+    _data = JSON.parse(content);
+  } catch (e) {
+    return Promise.reject();
+  }
+  const { tags, repoWithTags } = _data;
   const setNewTagsAndRepoWithTags = localStoragePromise.set({
     [STORAGE_REPO]: repoWithTags,
     [STORAGE_TAGS]: tags,
-    [IS_UPDATE_LOCAL]: true,
+    [IS_UPDATE_LOCAL]: genUniqueKey(),
   });
 
   const setUpdateAt = syncStoragePromise.set({
     [STORAGE_GIST_UPDATE_TIME]: data.updated_at,
   });
-  // todo fix
+
   return Promise.all([setNewTagsAndRepoWithTags, setUpdateAt]);
 };

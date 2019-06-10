@@ -100,10 +100,10 @@ export const createGist = (
   );
 };
 
-export const getGist = (
+export const getGist = ({
   gistId = window.REMU_GIST_ID,
   token = window.REMU_TOKEN,
-): Promise<GistDataRsp> => {
+}): Promise<GistDataRsp> => {
   return request.get(`/gists/${gistId}`, {
     headers: {
       Authorization: 'token ' + token,
