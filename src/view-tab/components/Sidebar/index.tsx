@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { Menu, Icon, Button, Select, Input, Tag, Popover } from 'antd';
 import './index.less';
-import { ILanguages, ITag, TagId } from '../../../typings';
+import {
+  ILanguages,
+  ITag,
+  TagId,
+  IMessageAction,
+  IResponseMsg,
+} from '../../../typings';
 import { genUniqueKey, localStoragePromise } from '../../../utils';
 import { useState, useRef } from 'react';
 
@@ -37,9 +43,20 @@ interface ISidebar {
   onSelect: (action: IFilterReposAction) => void;
 }
 
+const sendMessage = (action: IMessageAction) => {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(action, function(response: IResponseMsg) {
+      if (response.status === 'error') {
+        reject(response);
+      } else if (response.status === 'success') {
+        resolve(response);
+      }
+    });
+  });
+};
+
 const Sidebar = ({
   tags,
-  loading,
   languages,
   tagCountMap,
   starTaggedStatus,
@@ -52,6 +69,7 @@ const Sidebar = ({
   const [showAddTag, setShowAddTag] = useState<boolean>(false);
   const [editTagId, setEditTagId] = useState<TagId>('');
   const [editTagVal, setEditTagVal] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const addTagInputRef = useRef(null);
 
   const handleLanguageSelect = ({ item, key }) => {
@@ -94,6 +112,20 @@ const Sidebar = ({
     setEditTagId('');
   };
 
+  const handleUpdateGist = () => {
+    setLoading(true);
+    sendMessage({ type: 'updateGist' }).then(() => {
+      setLoading(false);
+    });
+  };
+
+  const handleUpdateLocal = async () => {
+    setLoading(true);
+    sendMessage({ type: 'updateLocal' }).then(() => {
+      setLoading(false);
+    });
+  };
+
   return (
     <div className="sidebar-wrap">
       <Menu
@@ -110,7 +142,27 @@ const Sidebar = ({
               &nbsp;&nbsp;&nbsp;
               <span className="sidebar-menu-label">stars</span>
               <span className="sidebar-sync-btn" onClick={onRefresh}>
-                <Icon type="sync" spin={loading} />
+                <Popover
+                  content={
+                    <div>
+                      <Button
+                        shape="circle"
+                        icon="cloud-upload"
+                        onClick={handleUpdateGist}
+                        title="update Gist"
+                      ></Button>
+                      &nbsp; &nbsp;
+                      <Button
+                        shape="circle"
+                        icon="cloud-download"
+                        onClick={handleUpdateLocal}
+                        title="upload Local"
+                      ></Button>
+                    </div>
+                  }
+                >
+                  <Icon type="sync" spin={loading} />
+                </Popover>
               </span>
             </div>
           }
