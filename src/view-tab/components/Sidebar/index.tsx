@@ -96,9 +96,7 @@ const Sidebar = ({
 
   const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value) {
-      setEditTagVal(value);
-    }
+    setEditTagVal(value);
   };
 
   const handleEditInputPressEnter = async () => {
