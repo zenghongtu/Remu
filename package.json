@@ -13,7 +13,10 @@
     "build": "webpack --config webpack/webpack.prod.js",
     "analyzer": "webpack --config webpack/webpack.analyzer.js",
     "lint": "tslint --project .",
-    "lint:fix": "tslint --project . --fix"
+    "lint:fix": "tslint --project . --fix",
+    "patch": "yarn version --patch",
+    "minor": "yarn version --minor",
+    "major": "yarn version --major"
   },
   "repository": {
     "type": "git",
