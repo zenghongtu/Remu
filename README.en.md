@@ -4,6 +4,8 @@
 <a href="https://chrome.google.com/webstore/detail/remu/bajifjohhghngljcfhkbpcggafpiajdo"><img src="./docs/logo.png" width="100"/></a>
 <div align="center">
 <span style="font-size:16px;">Remu</span> - <span style="font-size:14px;font-weight:300;">Managing your GitHub Starred Repository efficiently has never been easier.</span>
+<div><a style="font-size:12px" href="./README.md">[中文 README]</a></div>
+</div>
 </div>
 </p>
 

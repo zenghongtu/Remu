@@ -1,9 +1,8 @@
-[English README](./README.en.md)
-
 <p align="center">
 <a href="https://chrome.google.com/webstore/detail/remu/bajifjohhghngljcfhkbpcggafpiajdo"><img src="./docs/logo.png" width="100"/></a>
 <div align="center">
 <span style="font-size:16px;">Remu</span> - <span style="font-size:14px;font-weight:300;">高效管理你的 GitHub Stars 从未如此轻松。</span>
+<div><a style="font-size:12px" href="./README.en.md">[English README]</a></div>
 </div>
 </p>
 
