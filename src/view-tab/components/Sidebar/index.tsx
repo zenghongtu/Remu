@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { Menu, Icon, Button, Select, Input, Tag, Popover } from 'antd';
+import {
+  Menu,
+  Icon,
+  Button,
+  Select,
+  Input,
+  Tag,
+  Popover,
+  Dropdown,
+} from 'antd';
 import './index.less';
 import {
   ILanguages,
@@ -9,7 +18,7 @@ import {
   IResponseMsg,
 } from '../../../typings';
 import { genUniqueKey, localStoragePromise } from '../../../utils';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 const { SubMenu } = Menu;
 const Search = Input.Search;
@@ -55,6 +64,16 @@ const sendMessage = (action: IMessageAction) => {
   });
 };
 
+const sortMenuItems = [
+  { key: 'add_time', value: 'Add time (Default)' },
+  { key: 'a_z', value: 'Alphabetical (A-Z)' },
+  { key: 'z_a', value: 'Alphabetical (Z-A)' },
+  { key: 'most_stars', value: 'Most Stars' },
+  { key: 'fewest_stars', value: 'Fewest Stars' },
+];
+
+type tagSort = 'add_time' | 'a_z' | 'z_a' | 'most_stars' | 'fewest_stars';
+
 const Sidebar = ({
   tags,
   languages,
@@ -70,7 +89,40 @@ const Sidebar = ({
   const [editTagId, setEditTagId] = useState<TagId>('');
   const [editTagVal, setEditTagVal] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [tagSortBy, setTagSortBy] = useState<tagSort>('add_time');
+  const [sortedTags, setSortedTags] = useState<ITag[]>(tags);
   const addTagInputRef = useRef(null);
+
+  useEffect(() => {
+    let _sortedTags: ITag[];
+    const _tags = [...tags];
+    switch (tagSortBy) {
+      case 'add_time':
+        _sortedTags = _tags;
+        break;
+      case 'a_z':
+        _sortedTags = _tags.sort((a, b) => {
+          return a.name < b.name ? -1 : 1;
+        });
+        break;
+      case 'z_a':
+        _sortedTags = _tags.sort((a, b) => {
+          return a.name < b.name ? 1 : -1;
+        });
+        break;
+      case 'most_stars':
+        _sortedTags = _tags.sort((a, b) => {
+          return tagCountMap[a.id] < tagCountMap[b.id] ? 1 : -1;
+        });
+        break;
+      case 'fewest_stars':
+        _sortedTags = _tags.sort((a, b) => {
+          return tagCountMap[a.id] < tagCountMap[b.id] ? -1 : 1;
+        });
+        break;
+    }
+    setSortedTags(_sortedTags);
+  }, [tags, tagSortBy, tagCountMap]);
 
   const handleLanguageSelect = ({ item, key }) => {
     const [type, payload] = key.split(':');
@@ -122,6 +174,10 @@ const Sidebar = ({
     sendMessage({ type: 'updateLocal' }).then(() => {
       setLoading(false);
     });
+  };
+
+  const handleSortItemClick = (key) => () => {
+    setTagSortBy(key);
   };
 
   return (
@@ -182,6 +238,32 @@ const Sidebar = ({
             <div>
               <Icon type="tags" />
               <span className="sidebar-menu-label">tags</span>
+              <span
+                className="sidebar-menu-sort"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
+                <Dropdown
+                  placement="bottomCenter"
+                  overlay={
+                    <Menu>
+                      {sortMenuItems.map(({ key, value }) => {
+                        return (
+                          <Menu.Item key={key}>
+                            <span onClick={handleSortItemClick(key)}>
+                              {value}
+                            </span>
+                          </Menu.Item>
+                        );
+                      })}
+                    </Menu>
+                  }
+                >
+                  <b>SORT</b>
+                </Dropdown>
+              </span>
             </div>
           }
         >
@@ -209,8 +291,8 @@ const Sidebar = ({
               </span>
             )}
           </div>
-          {tags &&
-            tags.map(({ id, name }) => {
+          {sortedTags &&
+            sortedTags.map(({ id, name }) => {
               return (
                 <Menu.Item key={`tag:${id}`}>
                   {id === editTagId ? (
