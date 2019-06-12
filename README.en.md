@@ -45,7 +45,7 @@ Here, she is a Chrome browser plug-in, which manages GitHub Stars efficiently th
 
 - Set / Edit / Delete Tags
 - unStarred Repo / Download Zip / Clone with HTTPS
-- Google Account Sync Token/GistId, Gist ** Auto Sync ** tag data (default 10 second delay)
+- Google Account Sync Token/GistId, Gist ** Auto Sync ** tag data (default 60 second delay)
 - and many more...
 
 ### Repo
