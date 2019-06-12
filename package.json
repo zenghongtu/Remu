@@ -2,7 +2,7 @@
   "name": "Remu",
   "version": "0.2.3",
   "private": true,
-  "description": "Organizing your GitHub Stars efficiently has never been easier.",
+  "description": "Just for GitHub Star, view stars and organizing starred repository.",
   "scripts": {
     "start": "EX_LOADER=1 webpack --config webpack/webpack.dev.js --watch",
     "dev": "webpack --config webpack/webpack.dev.js",
