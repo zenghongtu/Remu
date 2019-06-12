@@ -8,6 +8,7 @@ NProgress.configure({ showSpinner: false });
 const DEFAULT_TOKEN = process.env.GH_TOKEN;
 
 const STARRED_REPOS_URL = '/user/starred';
+const WATCHED_REPOS_URL = '/user/subscriptions';
 
 export interface IStarredRepo {
   starred_at: string;
@@ -202,6 +203,123 @@ export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
             [],
           );
           return result;
+        });
+      })
+      .catch((errors) => {
+        if (!errors) {
+          return;
+        }
+        if (errors.response.status === 401) {
+          Modal.error({
+            title: 'Invalid Token',
+            content: 'Click ok to refresh the page and enter token.',
+            okText: 'ok',
+            onOk() {
+              syncStoragePromise.clear().then(() => {
+                location.reload();
+              });
+            },
+          });
+        } else {
+          Modal.error({
+            title: 'Request Error',
+            content: 'Click ok to refresh the page',
+            okText: 'ok',
+            onOk() {
+              location.reload();
+            },
+          });
+          // tslint:disable-next-line:no-console
+          console.error(errors);
+        }
+      })
+      .finally(() => {
+        NProgress.done();
+      })
+  );
+};
+
+export const getWatchedRepos = ({ token = DEFAULT_TOKEN }) => {
+  const options = {
+    params: {
+      sort: 'created',
+      per_page: 1,
+      page: 1,
+    },
+    headers: {
+      Authorization: 'token ' + token,
+      Accept: 'application/vnd.github.v3.star+json',
+    },
+  };
+
+  NProgress.start();
+
+  let lastPage = 0;
+
+  return (
+    request
+      .get(WATCHED_REPOS_URL, options)
+      // get all page count
+      .then(
+        (response) => {
+          const link = response.headers.link;
+          if (!link) {
+            return response;
+          }
+          const links = link.split(',');
+          const starredCount = links[1].match(/&page=(\d+)/)[1];
+          lastPage = Math.ceil(starredCount / PER_PAGE);
+        },
+        (error) => {
+          Modal.error({
+            title: 'Request Error',
+            content: 'Click ok to refresh the page',
+            okText: 'ok',
+            onOk() {
+              location.reload();
+            },
+          });
+        },
+      )
+      // get remaining page count
+      .then(async (rsp) => {
+        if (rsp) {
+          return rsp.data;
+        }
+        const requestQueue = [];
+        for (let i = 1; i <= lastPage; i++) {
+          options.params.page = await i;
+          options.params.per_page = PER_PAGE;
+          requestQueue.push(
+            request
+              .get(WATCHED_REPOS_URL, options)
+              .then((rsp) => {
+                NProgress.inc();
+                return rsp;
+              })
+              .catch((error) => {
+                // todo add reRequest
+                message.error(`The data of page ${i} request failed!`);
+                const res = { data: [] };
+                Promise.resolve(res);
+              }),
+          );
+        }
+
+        // todo add request limit
+        return Promise.all(requestQueue).then<IStarredRepo[]>((results) => {
+          const result = results.reduce(
+            (result, rsp) => (
+              result.push(
+                ...rsp.data.map((item) => {
+                  return { starred_at: null, repo: item };
+                }),
+              ),
+              result
+            ),
+            [],
+          );
+          return result.reverse();
         });
       })
       .catch((errors) => {

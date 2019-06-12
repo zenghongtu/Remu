@@ -71,12 +71,14 @@ const RepoCard = ({ repo, isCurrentRepo }: IRepoCard) => {
             &nbsp;
             {forks_count}
           </span>
-          <span>
-            <Icon type="history" />
-            &nbsp;
-            {// todo correct datetime
-            starred_at.slice(0, 10)}
-          </span>
+          {starred_at && (
+            <span>
+              <Icon type="history" />
+              &nbsp;
+              {// todo correct datetime
+              starred_at.slice(0, 10)}
+            </span>
+          )}
         </div>
       </div>
     </div>

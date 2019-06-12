@@ -6,8 +6,11 @@ import ReposBar from './components/ReposBar';
 import RepoInfo from './components/RepoInfo';
 import Sidebar, {
   IStarTaggedStatus,
+  IWatchTaggedStatus,
   ALL_STARS,
   UNTAGGED_STARS,
+  ALL_WATCHS,
+  UNTAGGED_WATCHS,
   UNKOWN,
   ITagCountMap,
   IFilterReposAction,
@@ -25,7 +28,7 @@ import {
   Token,
   TagId,
 } from '../typings';
-import { getStarredRepos, IStarredRepo } from './service';
+import { getStarredRepos, IStarredRepo, getWatchedRepos } from './service';
 import { localStoragePromise, syncStoragePromise } from '../utils';
 import 'nprogress/nprogress.css';
 import './App.less';
@@ -38,6 +41,8 @@ interface IAppProps {
 
 const App = (props: IAppProps) => {
   const [starredRepos, setStarredRepos] = useState<IStarredRepo[]>(null);
+  const [watchedRepos, setWatchedRepos] = useState<IStarredRepo[]>(null);
+  const [allRepos, setAllRepos] = useState<IStarredRepo[]>(null);
   const [repoWithTags, setRepoWithTags] = useState<IRepoWithTag>(
     props.repoWithTags,
   );
@@ -46,6 +51,12 @@ const App = (props: IAppProps) => {
   const [starTaggedStatus, setStarTaggedStatus] = useState<IStarTaggedStatus>({
     [ALL_STARS]: 0,
     [UNTAGGED_STARS]: 0,
+  });
+  const [watchTaggedStatus, setWatchTaggedStatus] = useState<
+    IWatchTaggedStatus
+  >({
+    [ALL_WATCHS]: 0,
+    [UNTAGGED_WATCHS]: 0,
   });
   const [tagCountMap, setTagCountMap] = useState<ITagCountMap>({});
   const [curRepos, setCurRepos] = useState<IStarredRepo[]>(null);
@@ -59,6 +70,7 @@ const App = (props: IAppProps) => {
     setLoading(true);
     const _langMap = {};
     const _repoIds = [];
+    const _watchRepoIds = [];
 
     if (!token) {
       Modal.info({
@@ -86,63 +98,103 @@ const App = (props: IAppProps) => {
       });
       return;
     }
+    Promise.all([getStarredRepos({ token }), getWatchedRepos({ token })]).then(
+      (results) => {
+        const result = results[0];
+        const watchResult = results[1];
+        if (result.length < 1 || watchResult.length < 1) {
+          return;
+        }
+        const obj = {};
+        // 去重
+        const allRepos = [...result, ...watchResult].filter(
+          (item, index, arr) => {
+            return obj.hasOwnProperty(item.repo.id)
+              ? false
+              : (obj[item.repo.id] = true);
+          },
+        );
+        result.forEach((repo) => {
+          const {
+            repo: { language, id },
+          } = repo;
+          _repoIds.push(id.toString());
+        });
+        watchResult.forEach((repo) => {
+          const {
+            repo: { language, id },
+          } = repo;
+          _watchRepoIds.push(id.toString());
+        });
+        allRepos.forEach((repo) => {
+          const {
+            repo: { language },
+          } = repo;
+          const lang = language || UNKOWN;
+          _langMap[lang] ? _langMap[lang]++ : (_langMap[lang] = 1);
+        });
 
-    getStarredRepos({ token }).then((result) => {
-      if (result.length < 1) {
-        return;
-      }
-      result.forEach((repo) => {
-        const {
-          repo: { language, id },
-        } = repo;
-        _repoIds.push(id.toString());
-        const lang = language || UNKOWN;
-        _langMap[lang] ? _langMap[lang]++ : (_langMap[lang] = 1);
-      });
+        const _tagCountMap = {};
+        const _repoIdLen = _repoIds.length;
+        const _starTaggedStatus: IStarTaggedStatus = {
+          [ALL_STARS]: _repoIdLen,
+          [UNTAGGED_STARS]: _repoIdLen,
+        };
 
-      const _tagCountMap = {};
-      const _repoIdLen = _repoIds.length;
-      const _starTaggedStatus: IStarTaggedStatus = {
-        [ALL_STARS]: _repoIdLen,
-        [UNTAGGED_STARS]: _repoIdLen,
-      };
+        const _repoWatchIdLen = _watchRepoIds.length;
+        const _watchTaggedStatus: IWatchTaggedStatus = {
+          [ALL_WATCHS]: _repoWatchIdLen,
+          [UNTAGGED_WATCHS]: _repoWatchIdLen,
+        };
 
-      const _repoWithTags = {};
+        const _repoWithTags = {};
 
-      if (tags.length > 0) {
-        const _repoWithTagIds = Object.keys(repoWithTags);
-        for (const _repoId of _repoWithTagIds) {
-          if (_repoIds.includes(_repoId)) {
-            _starTaggedStatus[UNTAGGED_STARS]--;
-            // filter invalid repo
-            const _curTags = repoWithTags[_repoId];
-            _repoWithTags[_repoId] = _curTags;
+        if (tags.length > 0) {
+          const _repoWithTagIds = Object.keys(repoWithTags);
+          for (const _repoId of _repoWithTagIds) {
+            let hasRepo = false;
+            if (_repoIds.includes(_repoId)) {
+              hasRepo = true;
+              _starTaggedStatus[UNTAGGED_STARS]--;
+            }
+            if (_watchRepoIds.includes(_repoId)) {
+              hasRepo = true;
+              _watchTaggedStatus[UNTAGGED_WATCHS]--;
+            }
+            if (hasRepo) {
+              // filter invalid repo
+              const _curTags = repoWithTags[_repoId];
+              _repoWithTags[_repoId] = _curTags;
 
-            for (const _tagId of _curTags) {
-              _tagCountMap[_tagId]
-                ? _tagCountMap[_tagId]++
-                : (_tagCountMap[_tagId] = 1);
+              for (const _tagId of _curTags) {
+                _tagCountMap[_tagId]
+                  ? _tagCountMap[_tagId]++
+                  : (_tagCountMap[_tagId] = 1);
+              }
             }
           }
         }
-      }
 
-      const _langs = Object.keys(_langMap)
-        .sort((a, b) => {
-          return _langMap[b] - _langMap[a];
-        })
-        .map((lang) => {
-          return { name: lang, count: _langMap[lang] };
-        });
+        const _langs = Object.keys(_langMap)
+          .sort((a, b) => {
+            return _langMap[b] - _langMap[a];
+          })
+          .map((lang) => {
+            return { name: lang, count: _langMap[lang] };
+          });
 
-      setStarredRepos(result);
-      setCurRepos(result);
-      setLanguages(_langs);
-      setTagCountMap(_tagCountMap);
-      setRepoWithTags(_repoWithTags);
-      setStarTaggedStatus(_starTaggedStatus);
-      setLoading(false);
-    });
+        setAllRepos(allRepos);
+        setStarredRepos(result);
+        setWatchedRepos(watchResult);
+        setCurRepos(result);
+        setLanguages(_langs);
+        setTagCountMap(_tagCountMap);
+        setRepoWithTags(_repoWithTags);
+        setStarTaggedStatus(_starTaggedStatus);
+        setWatchTaggedStatus(_watchTaggedStatus);
+        setLoading(false);
+      },
+    );
   }, [refreshCount]);
 
   const handleFilterRepos = ({ type, payload }: IFilterReposAction) => {
@@ -155,13 +207,21 @@ const App = (props: IAppProps) => {
           return !repoWithTags[id.toString()];
         });
       }
+    } else if (type === 'watch') {
+      if (!repoWithTags || payload === ALL_WATCHS) {
+        _repos = watchedRepos;
+      } else {
+        _repos = watchedRepos.filter(({ repo: { id } }) => {
+          return !repoWithTags[id.toString()];
+        });
+      }
     } else if (type === 'tag') {
-      _repos = starredRepos.filter(({ repo: { id } }) => {
+      _repos = allRepos.filter(({ repo: { id } }) => {
         const tags = repoWithTags[id.toString()];
         return tags && tags.includes(payload);
       });
     } else if (type === 'language') {
-      _repos = starredRepos.filter(({ repo }) => {
+      _repos = allRepos.filter(({ repo }) => {
         if (payload === UNKOWN) {
           return !repo.language;
         }
@@ -247,6 +307,7 @@ const App = (props: IAppProps) => {
     tagCountMap,
     starTaggedStatus,
     loading,
+    watchTaggedStatus,
     onRefresh() {
       setRefreshCount(refreshCount + 1);
     },

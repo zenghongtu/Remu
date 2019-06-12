@@ -24,14 +24,18 @@ const { SubMenu } = Menu;
 const Search = Input.Search;
 
 export const ALL_STARS = 'all stars';
+export const ALL_WATCHS = 'all watchs';
 export const UNTAGGED_STARS = 'untagged stars';
+export const UNTAGGED_WATCHS = 'untagged watchs';
 export const UNKOWN = 'Unkown';
 export type statusKey = typeof ALL_STARS | typeof UNTAGGED_STARS;
+export type statusWatchKey = typeof ALL_WATCHS | typeof UNTAGGED_WATCHS;
 
 export type IStarTaggedStatus = { [key in statusKey]: number };
+export type IWatchTaggedStatus = { [key in statusWatchKey]: number };
 
 export interface IFilterReposAction {
-  type: 'star' | 'tag' | 'language';
+  type: 'star' | 'tag' | 'language' | 'watch';
   payload: string;
 }
 
@@ -45,6 +49,7 @@ interface ISidebar {
   languages: ILanguages[];
   tagCountMap: ITagCountMap;
   starTaggedStatus: IStarTaggedStatus;
+  watchTaggedStatus: IWatchTaggedStatus;
   onAddTag: (tags: ITag[]) => void;
   onEditTag: (tags: ITag[]) => void;
   onDelTag: (tags: TagId) => void;
@@ -79,6 +84,7 @@ const Sidebar = ({
   languages,
   tagCountMap,
   starTaggedStatus,
+  watchTaggedStatus,
   onAddTag,
   onEditTag,
   onDelTag,
@@ -227,6 +233,27 @@ const Sidebar = ({
                 {status}
                 <span className="sidebar-count-tag">
                   <Tag>{starTaggedStatus[status]}</Tag>
+                </span>
+              </Menu.Item>
+            );
+          })}
+        </Menu.ItemGroup>
+        <Menu.ItemGroup
+          key="watchs"
+          title={
+            <div>
+              <Icon type="eye" />
+              &nbsp;&nbsp;&nbsp;
+              <span className="sidebar-menu-label">watchs</span>
+            </div>
+          }
+        >
+          {Object.keys(watchTaggedStatus).map((status) => {
+            return (
+              <Menu.Item key={`watch:${status}`}>
+                {status}
+                <span className="sidebar-count-tag">
+                  <Tag>{watchTaggedStatus[status]}</Tag>
                 </span>
               </Menu.Item>
             );
