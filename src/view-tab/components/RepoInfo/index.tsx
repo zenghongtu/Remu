@@ -78,9 +78,7 @@ const RepoInfo = ({
   }, [repo]);
 
   const fixRelativeUrl = (htmlString: string, { repo }: IStarredRepo) => {
-    const _site = `https://raw.githubusercontent.com/${repo.full_name}/${
-      repo.default_branch
-    }`;
+    const _site = `https://raw.githubusercontent.com/${repo.full_name}/${repo.default_branch}`;
 
     const converted = converter.convert(htmlString, _site);
     return converted;
@@ -101,6 +99,10 @@ const RepoInfo = ({
         selectedTagIds,
       };
     } else {
+      // ignore existing tags
+      if (tags.filter((item) => item.name === value).length > 0) {
+        return;
+      }
       const newTag: ITag = { id: genUniqueKey(), name: value };
       action = {
         type: 'create',
