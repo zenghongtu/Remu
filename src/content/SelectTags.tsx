@@ -70,7 +70,12 @@ const SelectTags = ({
           console.error('errors: ', errors);
         });
     } else {
-      // create & add tag
+      // ignore existing tags
+      if (tags.filter((item) => item.name === value).length > 0) {
+        return;
+      }
+
+      // create tag
       const tagId = genUniqueKey();
       const newTag: ITag = { id: tagId, name: value };
 
