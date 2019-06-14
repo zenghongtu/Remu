@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Select } from 'antd';
+import { Select, message } from 'antd';
 import {
   ITag,
   ITagsAction,
@@ -71,7 +71,8 @@ const SelectTags = ({
         });
     } else {
       // ignore existing tags
-      if (tags.filter((item) => item.name === value).length > 0) {
+      if (tags.find((item) => item.name === value)) {
+        message.warn('Duplicate tag!');
         return;
       }
 

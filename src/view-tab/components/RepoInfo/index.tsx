@@ -100,7 +100,8 @@ const RepoInfo = ({
       };
     } else {
       // ignore existing tags
-      if (tags.filter((item) => item.name === value).length > 0) {
+      if (tags.find((item) => item.name === value)) {
+        message.warn('Duplicate tag!');
         return;
       }
       const newTag: ITag = { id: genUniqueKey(), name: value };
