@@ -18,7 +18,7 @@ import {
   Spin,
 } from 'antd';
 import prettyHtml from 'json-pretty-html';
-import converter from 'rel-to-abs';
+import urlConvert from 'url-convert';
 import { genUniqueKey } from '../../../utils';
 
 const { Option } = Select;
@@ -80,7 +80,7 @@ const RepoInfo = ({
   const fixRelativeUrl = (htmlString: string, { repo }: IStarredRepo) => {
     const _site = `https://raw.githubusercontent.com/${repo.full_name}/${repo.default_branch}`;
 
-    const converted = converter.convert(htmlString, _site);
+    const converted = urlConvert({ htmlString, baseUrl: _site });
     return converted;
   };
 
@@ -167,7 +167,11 @@ const RepoInfo = ({
     <div className="info-wrap">
       <div className="info-meta">
         <h2 className="info-top">
-          <span className="info-star-icon" onClick={handleStarIconClick}>
+          <span
+            className="info-star-icon"
+            title="unStarred"
+            onClick={handleStarIconClick}
+          >
             <Icon type="star" theme={starred ? 'filled' : 'outlined'} />
           </span>
           <span className="info-repo-title" title={full_name}>
