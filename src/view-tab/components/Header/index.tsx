@@ -15,6 +15,7 @@ import {
   Modal,
 } from 'antd';
 import pkg from '../../../../package.json';
+import { openOptionsPage } from '../../../utils';
 
 const menuList = [
   { path: '', label: 'Overview' },
@@ -57,13 +58,9 @@ const Header = ({ token }: IHeader) => {
   const handleSearchPressEnter = (e: any) => {
     let url: string;
     if (e.target.title === 'github') {
-      url = `https://github.com/search?q=${
-        e.target.value
-      }&utm_source=remu_browser_extension`;
+      url = `https://github.com/search?q=${e.target.value}&utm_source=remu_browser_extension`;
     } else {
-      url = `https://www.npmjs.com/search?q=${
-        e.target.value
-      }&utm_source=remu_browser_extension`;
+      url = `https://www.npmjs.com/search?q=${e.target.value}&utm_source=remu_browser_extension`;
     }
     window.open(url);
   };
@@ -75,6 +72,16 @@ const Header = ({ token }: IHeader) => {
           placement="bottomRight"
           content={
             <div>
+              <Tooltip placement="topLeft" title={`Option`}>
+                <Button
+                  shape="circle"
+                  icon="setting"
+                  onClick={() => {
+                    openOptionsPage();
+                  }}
+                />
+              </Tooltip>
+              &nbsp; &nbsp;
               <Tooltip
                 placement="topLeft"
                 title={`Like this? Buy me a coffee!😄`}
@@ -188,9 +195,7 @@ const Header = ({ token }: IHeader) => {
                   return (
                     <Menu.Item key={menu.path}>
                       <a
-                        href={`https://github.com/${userProfile.login}/${
-                          menu.path
-                        }`}
+                        href={`https://github.com/${userProfile.login}/${menu.path}`}
                         target="_blank"
                       >
                         {menu.label}

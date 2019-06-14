@@ -256,3 +256,19 @@ export const storagePromise = {
 
 export const localStoragePromise = storagePromise.local;
 export const syncStoragePromise = storagePromise.sync;
+
+export function openOptionsPage() {
+  const options_url = chrome.extension.getURL('options.html');
+  chrome.tabs.query(
+    {
+      url: options_url,
+    },
+    function(tabs) {
+      if (tabs.length) {
+        chrome.tabs.update(tabs[0].id, { active: true });
+      } else {
+        chrome.tabs.create({ url: options_url });
+      }
+    },
+  );
+}
