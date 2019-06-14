@@ -213,7 +213,7 @@ const Header = ({ token }: IHeader) => {
                 </Menu.Item>
               </Menu>
             }
-            trigger={['click']}
+            trigger={['hover']}
           >
             <span>
               <img
