@@ -3,6 +3,12 @@ import logo from '../../assets/logo.png';
 import './index.less';
 import { useState, useEffect, useRef } from 'react';
 import { getUserProfile, IUserProfile } from '../../service';
+import {
+  syncStoragePromise,
+  localStoragePromise,
+  storagePromise,
+} from '../../../utils';
+
 import { Token } from '../../../typings';
 import {
   Menu,
@@ -13,6 +19,8 @@ import {
   Button,
   Tooltip,
   Modal,
+  message,
+  Switch,
 } from 'antd';
 import pkg from '../../../../package.json';
 
@@ -29,11 +37,15 @@ interface IHeader {
 }
 
 const Header = ({ token }: IHeader) => {
+  const [readMeCheck, setReadMeCheck] = useState<boolean>(false);
   const [userProfile, setUserProfile] = useState<IUserProfile>(null);
   const [searchFocus, setSearchFocus] = useState<boolean>(false);
   const searchInputRef = useRef(null);
 
   useEffect(() => {
+    storagePromise.sync.get('getReadMe').then(({ getReadMe }) => {
+      setReadMeCheck(getReadMe);
+    });
     if (token) {
       getUserProfile({ token }).then(({ data }) => {
         setUserProfile(data);
@@ -57,13 +69,9 @@ const Header = ({ token }: IHeader) => {
   const handleSearchPressEnter = (e: any) => {
     let url: string;
     if (e.target.title === 'github') {
-      url = `https://github.com/search?q=${
-        e.target.value
-      }&utm_source=remu_browser_extension`;
+      url = `https://github.com/search?q=${e.target.value}&utm_source=remu_browser_extension`;
     } else {
-      url = `https://www.npmjs.com/search?q=${
-        e.target.value
-      }&utm_source=remu_browser_extension`;
+      url = `https://www.npmjs.com/search?q=${e.target.value}&utm_source=remu_browser_extension`;
     }
     window.open(url);
   };
@@ -188,9 +196,7 @@ const Header = ({ token }: IHeader) => {
                   return (
                     <Menu.Item key={menu.path}>
                       <a
-                        href={`https://github.com/${userProfile.login}/${
-                          menu.path
-                        }`}
+                        href={`https://github.com/${userProfile.login}/${menu.path}`}
                         target="_blank"
                       >
                         {menu.label}
@@ -205,6 +211,50 @@ const Header = ({ token }: IHeader) => {
                   >
                     Gist
                   </a>
+                </Menu.Item>
+                <Menu.Item
+                  key={'setting'}
+                  onClick={() => {
+                    Modal.info({
+                      icon: null,
+                      width: 800,
+                      content: (
+                        <div>
+                          <p className="setting-search">search settings</p>
+                          whether to use readme content to search (Effective
+                          after browser refresh)
+                          <Switch
+                            defaultChecked={readMeCheck}
+                            onClick={(e) => {
+                              syncStoragePromise.set({ getReadMe: e });
+                            }}
+                          />
+                          <p>
+                            <Button
+                              onClick={async () => {
+                                const data = await localStoragePromise.get(
+                                  null,
+                                );
+                                const result = {};
+                                Object.keys(data).filter((key) => {
+                                  if (key.indexOf('_readme-cache') !== 0) {
+                                    result[key] = data[key];
+                                  }
+                                });
+                                await localStoragePromise.clear();
+                                await localStoragePromise.set(result);
+                                message.success('Cache Clearance Successful');
+                              }}
+                            >
+                              wipe cache
+                            </Button>
+                          </p>
+                        </div>
+                      ),
+                    });
+                  }}
+                >
+                  setting
                 </Menu.Item>
               </Menu>
             }

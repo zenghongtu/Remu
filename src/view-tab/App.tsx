@@ -28,7 +28,12 @@ import {
   Token,
   TagId,
 } from '../typings';
-import { getStarredRepos, IStarredRepo, getWatchedRepos } from './service';
+import {
+  getStarredRepos,
+  IStarredRepo,
+  getWatchedRepos,
+  getReadMe,
+} from './service';
 import { localStoragePromise, syncStoragePromise } from '../utils';
 import 'nprogress/nprogress.css';
 import './App.less';
@@ -65,13 +70,13 @@ const App = (props: IAppProps) => {
   const [refreshCount, setRefreshCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const tokenInputRef = useRef(null);
+  const [readMeCheck, setReadMeData] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(true);
     const _langMap = {};
     const _repoIds = [];
     const _watchRepoIds = [];
-
     if (!token) {
       Modal.info({
         icon: null,
@@ -99,7 +104,7 @@ const App = (props: IAppProps) => {
       return;
     }
     Promise.all([getStarredRepos({ token }), getWatchedRepos({ token })]).then(
-      (results) => {
+      async (results) => {
         const result = results[0];
         const watchResult = results[1];
         if (result.length < 1 || watchResult.length < 1) {
@@ -183,6 +188,8 @@ const App = (props: IAppProps) => {
             return { name: lang, count: _langMap[lang] };
           });
 
+        await getReadMe(allRepos);
+        setReadMeData(readMeCheck);
         setAllRepos(allRepos);
         setStarredRepos(result);
         setWatchedRepos(watchResult);
