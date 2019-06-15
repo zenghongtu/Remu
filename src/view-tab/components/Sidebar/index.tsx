@@ -170,14 +170,16 @@ const Sidebar = ({
     setEditTagId('');
   };
 
-  const handleUpdateGist = () => {
+  const handleUpdateGist = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     setLoading(true);
     sendMessage({ type: 'updateGist' }).then(() => {
       setLoading(false);
     });
   };
 
-  const handleUpdateLocal = async () => {
+  const handleUpdateLocal = (e: React.MouseEvent<Button>) => {
+    e.stopPropagation();
     setLoading(true);
     sendMessage({ type: 'updateLocal' }).then(() => {
       setLoading(false);
@@ -223,7 +225,7 @@ const Sidebar = ({
                     </div>
                   }
                 >
-                  <Icon type="sync" spin={loading} />
+                  <Icon type="sync" title="refresh data" spin={loading} />
                 </Popover>
               </span>
             </div>
