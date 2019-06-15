@@ -43,7 +43,7 @@ here, 她是一个 Chrome 浏览器插件，通过标签分类来对 GitHub Star
 
 - 设置/编辑/删除标签
 - 取消 Star / Download Zip / Clone with HTTPS
-- Google 账号同步 Token/GistId, Gist **自动同步**标签数据（默认 60 秒延迟）
+- Google 账号同步 Token/GistId, Gist **自动同步**标签数据（默认 6 秒延迟）
 - 等等...
 
 ### Repo
