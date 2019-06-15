@@ -50,6 +50,7 @@ interface ISidebar {
   tagCountMap: ITagCountMap;
   starTaggedStatus: IStarTaggedStatus;
   watchTaggedStatus: IWatchTaggedStatus;
+  showWatch: boolean;
   onAddTag: (tags: ITag[]) => void;
   onEditTag: (tags: ITag[]) => void;
   onDelTag: (tags: TagId) => void;
@@ -90,6 +91,7 @@ const Sidebar = ({
   onDelTag,
   onRefresh,
   onSelect,
+  showWatch,
 }: ISidebar) => {
   const [showAddTag, setShowAddTag] = useState<boolean>(false);
   const [editTagId, setEditTagId] = useState<TagId>('');
@@ -168,14 +170,16 @@ const Sidebar = ({
     setEditTagId('');
   };
 
-  const handleUpdateGist = () => {
+  const handleUpdateGist = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     setLoading(true);
     sendMessage({ type: 'updateGist' }).then(() => {
       setLoading(false);
     });
   };
 
-  const handleUpdateLocal = async () => {
+  const handleUpdateLocal = (e: React.MouseEvent<Button>) => {
+    e.stopPropagation();
     setLoading(true);
     sendMessage({ type: 'updateLocal' }).then(() => {
       setLoading(false);
@@ -221,7 +225,7 @@ const Sidebar = ({
                     </div>
                   }
                 >
-                  <Icon type="sync" spin={loading} />
+                  <Icon type="sync" title="refresh data" spin={loading} />
                 </Popover>
               </span>
             </div>
@@ -238,27 +242,29 @@ const Sidebar = ({
             );
           })}
         </Menu.ItemGroup>
-        <Menu.ItemGroup
-          key="watchs"
-          title={
-            <div>
-              <Icon type="eye" />
-              &nbsp;&nbsp;&nbsp;
-              <span className="sidebar-menu-label">watchs</span>
-            </div>
-          }
-        >
-          {Object.keys(watchTaggedStatus).map((status) => {
-            return (
-              <Menu.Item key={`watch:${status}`}>
-                {status}
-                <span className="sidebar-count-tag">
-                  <Tag>{watchTaggedStatus[status]}</Tag>
-                </span>
-              </Menu.Item>
-            );
-          })}
-        </Menu.ItemGroup>
+        {showWatch && (
+          <Menu.ItemGroup
+            key="watchs"
+            title={
+              <div>
+                <Icon type="eye" />
+                &nbsp;&nbsp;&nbsp;
+                <span className="sidebar-menu-label">watchs</span>
+              </div>
+            }
+          >
+            {Object.keys(watchTaggedStatus).map((status) => {
+              return (
+                <Menu.Item key={`watch:${status}`}>
+                  {status}
+                  <span className="sidebar-count-tag">
+                    <Tag>{watchTaggedStatus[status]}</Tag>
+                  </span>
+                </Menu.Item>
+              );
+            })}
+          </Menu.ItemGroup>
+        )}
         <SubMenu
           key="tags"
           title={

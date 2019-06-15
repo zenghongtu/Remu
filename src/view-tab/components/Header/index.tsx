@@ -23,6 +23,7 @@ import {
   Switch,
 } from 'antd';
 import pkg from '../../../../package.json';
+import { openOptionsPage } from '../../../utils';
 
 const menuList = [
   { path: '', label: 'Overview' },
@@ -83,6 +84,16 @@ const Header = ({ token }: IHeader) => {
           placement="bottomRight"
           content={
             <div>
+              <Tooltip placement="topLeft" title={`Option`}>
+                <Button
+                  shape="circle"
+                  icon="setting"
+                  onClick={() => {
+                    openOptionsPage();
+                  }}
+                />
+              </Tooltip>
+              &nbsp; &nbsp;
               <Tooltip
                 placement="topLeft"
                 title={`Like this? Buy me a coffee!😄`}
@@ -258,7 +269,7 @@ const Header = ({ token }: IHeader) => {
                 </Menu.Item>
               </Menu>
             }
-            trigger={['click']}
+            trigger={['hover']}
           >
             <span>
               <img
