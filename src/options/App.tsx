@@ -14,6 +14,7 @@ import {
   AutoComplete,
   message,
   Modal,
+  Switch,
 } from 'antd';
 
 import './App.less';
@@ -29,7 +30,7 @@ import {
   IMessageAction,
   IResponseMsg,
 } from '../typings';
-import { DEFAULT_SYNCHRONIZING_DELAY } from '../constants';
+import { DEFAULT_SYNCHRONIZING_DELAY, DEFAULT_SHOW_WATCH } from '../constants';
 
 const { Option } = Select;
 
@@ -47,6 +48,7 @@ const SFSelectOptions = [
 
 interface ISettings {
   synchronizingDelay: string;
+  showWatch: boolean;
   token: string;
   gistId: string;
   gistUpdateTime: string;
@@ -99,7 +101,10 @@ const SettingForm = () => {
   useEffect(() => {
     syncStoragePromise
       .get({
-        [STORAGE_SETTINGS]: { synchronizingDelay: DEFAULT_SYNCHRONIZING_DELAY },
+        [STORAGE_SETTINGS]: {
+          synchronizingDelay: DEFAULT_SYNCHRONIZING_DELAY,
+          showWatch: DEFAULT_SHOW_WATCH,
+        },
         [STORAGE_GIST_ID]: '',
         [STORAGE_TOKEN]: '',
         [STORAGE_GIST_UPDATE_TIME]: '',
@@ -174,6 +179,20 @@ const SettingForm = () => {
     });
   };
 
+  const handleSwitchWatch = async (value) => {
+    syncStoragePromise
+      .set({
+        [STORAGE_SETTINGS]: {
+          ...settings,
+          showWatch: value,
+        },
+      })
+      .then(() => {
+        message.success('Success!', 1);
+        setRefresh(refresh + 1);
+      });
+  };
+
   return (
     <div className="form-wrap">
       {settings ? (
@@ -210,6 +229,10 @@ const SettingForm = () => {
                   );
                 })}
             </Select>
+          </div>
+          <div className="form-item">
+            <div className="form-item-label">Show Watchs(Will be slow):</div>
+            <Switch checked={settings.showWatch} onChange={handleSwitchWatch} />
           </div>
           <div className="form-item">
             <div className="form-item-label">

@@ -37,6 +37,7 @@ interface IAppProps {
   tags: ITag[];
   repoWithTags: IRepoWithTag;
   token: Token;
+  showWatch: boolean;
 }
 
 const App = (props: IAppProps) => {
@@ -98,103 +99,105 @@ const App = (props: IAppProps) => {
       });
       return;
     }
-    Promise.all([getStarredRepos({ token }), getWatchedRepos({ token })]).then(
-      (results) => {
-        const result = results[0];
-        const watchResult = results[1];
-        if (result.length < 1 || watchResult.length < 1) {
-          return;
+    const requestList = [getStarredRepos({ token })];
+    const _showWatch = props.showWatch;
+    if (_showWatch) {
+      requestList.push(getWatchedRepos({ token }));
+    }
+    Promise.all(requestList).then((results) => {
+      const result = results[0];
+      const watchResult = results[1] || [];
+      if (result.length < 1) {
+        return;
+      }
+      const allRepos = [...result];
+      result.forEach((repo) => {
+        const {
+          repo: { language, id },
+        } = repo;
+        _repoIds.push(id.toString());
+      });
+
+      watchResult.forEach((repo) => {
+        const {
+          repo: { language, id },
+        } = repo;
+        const _id = id.toString();
+        _watchRepoIds.push(_id);
+        // not exist to add
+        if (!_repoIds.includes(_id)) {
+          allRepos.push(repo);
         }
-        const obj = {};
-        // 去重
-        const allRepos = [...result, ...watchResult].filter(
-          (item, index, arr) => {
-            return obj.hasOwnProperty(item.repo.id)
-              ? false
-              : (obj[item.repo.id] = true);
-          },
-        );
-        result.forEach((repo) => {
-          const {
-            repo: { language, id },
-          } = repo;
-          _repoIds.push(id.toString());
-        });
-        watchResult.forEach((repo) => {
-          const {
-            repo: { language, id },
-          } = repo;
-          _watchRepoIds.push(id.toString());
-        });
-        allRepos.forEach((repo) => {
-          const {
-            repo: { language },
-          } = repo;
-          const lang = language || UNKOWN;
-          _langMap[lang] ? _langMap[lang]++ : (_langMap[lang] = 1);
-        });
+      });
 
-        const _tagCountMap = {};
-        const _repoIdLen = _repoIds.length;
-        const _starTaggedStatus: IStarTaggedStatus = {
-          [ALL_STARS]: _repoIdLen,
-          [UNTAGGED_STARS]: _repoIdLen,
-        };
+      allRepos.forEach((repo) => {
+        const {
+          repo: { language },
+        } = repo;
+        const lang = language || UNKOWN;
+        _langMap[lang] ? _langMap[lang]++ : (_langMap[lang] = 1);
+      });
 
-        const _repoWatchIdLen = _watchRepoIds.length;
-        const _watchTaggedStatus: IWatchTaggedStatus = {
-          [ALL_WATCHS]: _repoWatchIdLen,
-          [UNTAGGED_WATCHS]: _repoWatchIdLen,
-        };
+      const _tagCountMap = {};
+      const _repoIdLen = _repoIds.length;
+      const _starTaggedStatus: IStarTaggedStatus = {
+        [ALL_STARS]: _repoIdLen,
+        [UNTAGGED_STARS]: _repoIdLen,
+      };
 
-        const _repoWithTags = {};
+      const _repoWatchIdLen = _watchRepoIds.length;
+      const _watchTaggedStatus: IWatchTaggedStatus = {
+        [ALL_WATCHS]: _repoWatchIdLen,
+        [UNTAGGED_WATCHS]: _repoWatchIdLen,
+      };
 
-        if (tags.length > 0) {
-          const _repoWithTagIds = Object.keys(repoWithTags);
-          for (const _repoId of _repoWithTagIds) {
-            let hasRepo = false;
-            if (_repoIds.includes(_repoId)) {
-              hasRepo = true;
-              _starTaggedStatus[UNTAGGED_STARS]--;
-            }
-            if (_watchRepoIds.includes(_repoId)) {
-              hasRepo = true;
-              _watchTaggedStatus[UNTAGGED_WATCHS]--;
-            }
-            if (hasRepo) {
-              // filter invalid repo
-              const _curTags = repoWithTags[_repoId];
-              _repoWithTags[_repoId] = _curTags;
+      const _repoWithTags = {};
 
-              for (const _tagId of _curTags) {
-                _tagCountMap[_tagId]
-                  ? _tagCountMap[_tagId]++
-                  : (_tagCountMap[_tagId] = 1);
-              }
+      if (tags.length > 0) {
+        const _repoWithTagIds = Object.keys(repoWithTags);
+        for (const _repoId of _repoWithTagIds) {
+          let hasRepo = false;
+          if (_repoIds.includes(_repoId)) {
+            hasRepo = true;
+            _starTaggedStatus[UNTAGGED_STARS]--;
+          }
+          if (_showWatch && _watchRepoIds.includes(_repoId)) {
+            hasRepo = true;
+            _watchTaggedStatus[UNTAGGED_WATCHS]--;
+          }
+          if (hasRepo) {
+            // filter invalid repo
+            const _curTags = repoWithTags[_repoId];
+            _repoWithTags[_repoId] = _curTags;
+
+            for (const _tagId of _curTags) {
+              _tagCountMap[_tagId]
+                ? _tagCountMap[_tagId]++
+                : (_tagCountMap[_tagId] = 1);
             }
           }
         }
+      }
 
-        const _langs = Object.keys(_langMap)
-          .sort((a, b) => {
-            return _langMap[b] - _langMap[a];
-          })
-          .map((lang) => {
-            return { name: lang, count: _langMap[lang] };
-          });
+      const _langs = Object.keys(_langMap)
+        .sort((a, b) => {
+          return _langMap[b] - _langMap[a];
+        })
+        .map((lang) => {
+          return { name: lang, count: _langMap[lang] };
+        });
 
-        setAllRepos(allRepos);
-        setStarredRepos(result);
-        setWatchedRepos(watchResult);
-        setCurRepos(result);
-        setLanguages(_langs);
-        setTagCountMap(_tagCountMap);
-        setRepoWithTags(_repoWithTags);
-        setStarTaggedStatus(_starTaggedStatus);
-        setWatchTaggedStatus(_watchTaggedStatus);
-        setLoading(false);
-      },
-    );
+      setAllRepos(allRepos);
+      setStarredRepos(result);
+      setWatchedRepos(watchResult);
+      setCurRepos(result);
+      setLanguages(_langs);
+      setTagCountMap(_tagCountMap);
+      setRepoWithTags(_repoWithTags);
+      setStarTaggedStatus(_starTaggedStatus);
+      setWatchTaggedStatus(_watchTaggedStatus);
+      setLoading(false);
+    });
   }, [refreshCount]);
 
   const handleFilterRepos = ({ type, payload }: IFilterReposAction) => {
@@ -308,6 +311,7 @@ const App = (props: IAppProps) => {
     starTaggedStatus,
     loading,
     watchTaggedStatus,
+    showWatch: props.showWatch,
     onRefresh() {
       setRefreshCount(refreshCount + 1);
     },
