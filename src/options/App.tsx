@@ -36,14 +36,15 @@ const { Option } = Select;
 
 const SFSelectOptions = [
   { value: '0', label: 'immediate (close delay)' },
-  { value: '3000', label: '30 seconds' },
-  { value: '6000', label: '60 seconds' },
-  { value: '30000', label: '5 minutes' },
-  { value: '60000', label: '10 minutes' },
-  { value: '180000', label: '30 minutes' },
-  { value: '360000', label: '1 hour' },
-  { value: '720000', label: '2 hours' },
-  { value: '1800000', label: '5 hours' },
+  { value: '6000', label: '6 seconds' },
+  { value: '30000', label: '30 seconds' },
+  { value: '60000', label: '60 seconds' },
+  { value: '300000', label: '5 minutes' },
+  { value: '600000', label: '10 minutes' },
+  { value: '1800000', label: '30 minutes' },
+  { value: '3600000', label: '1 hour' },
+  { value: '7200000', label: '2 hours' },
+  { value: '18000000', label: '5 hours' },
 ];
 
 interface ISettings {
