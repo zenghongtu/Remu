@@ -223,50 +223,6 @@ const Header = ({ token }: IHeader) => {
                     Gist
                   </a>
                 </Menu.Item>
-                <Menu.Item
-                  key={'setting'}
-                  onClick={() => {
-                    Modal.info({
-                      icon: null,
-                      width: 800,
-                      content: (
-                        <div>
-                          <p className="setting-search">search settings</p>
-                          whether to use readme content to search (Effective
-                          after browser refresh)
-                          <Switch
-                            defaultChecked={readMeCheck}
-                            onClick={(e) => {
-                              syncStoragePromise.set({ getReadMe: e });
-                            }}
-                          />
-                          <p>
-                            <Button
-                              onClick={async () => {
-                                const data = await localStoragePromise.get(
-                                  null,
-                                );
-                                const result = {};
-                                Object.keys(data).filter((key) => {
-                                  if (key.indexOf('_readme-cache') !== 0) {
-                                    result[key] = data[key];
-                                  }
-                                });
-                                await localStoragePromise.clear();
-                                await localStoragePromise.set(result);
-                                message.success('Cache Clearance Successful');
-                              }}
-                            >
-                              wipe cache
-                            </Button>
-                          </p>
-                        </div>
-                      ),
-                    });
-                  }}
-                >
-                  setting
-                </Menu.Item>
               </Menu>
             }
             trigger={['hover']}

@@ -18,9 +18,16 @@ export const STORAGE_TOKEN = 'token';
 export const STORAGE_GIST_ID = 'gistId';
 export const STORAGE_GIST_UPDATE_TIME = 'updateAt';
 export const STORAGE_SETTINGS = 'settings';
+export const STORAGE_README_CACHE = 'readme_cache';
 
 export interface ISettings {
   synchronizingDelay: string;
+  showWatch: boolean;
+  searchReadme: boolean;
+}
+
+export interface IReadmeMap {
+  [RepoId: string]: string;
 }
 
 export const IS_UPDATE_LOCAL = 'is_update_local';

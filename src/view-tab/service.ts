@@ -1,6 +1,11 @@
-import { request, syncStoragePromise, storagePromise } from '../utils';
+import {
+  request,
+  syncStoragePromise,
+  storagePromise,
+  localStoragePromise,
+} from '../utils';
 import { Modal, message } from 'antd';
-import { STORAGE_TOKEN, RepoId } from '../typings';
+import { STORAGE_TOKEN, RepoId, STORAGE_README_CACHE } from '../typings';
 import NProgress from 'nprogress';
 
 NProgress.configure({ showSpinner: false });
@@ -16,7 +21,6 @@ export interface IStarredRepo {
 }
 
 interface Repo {
-  _readmeData: string;
   id: RepoId;
   node_id: string;
   name: string;
@@ -367,6 +371,16 @@ export const getReadmeHTML = ({ full_name, token = DEFAULT_TOKEN }) => {
   });
 };
 
+export const getReadmeRaw = ({ full_name, token = DEFAULT_TOKEN }) => {
+  const ulr = `/repos/${full_name}/readme`;
+  return request.get(ulr, {
+    headers: {
+      Accept: 'application/vnd.github.v3.raw',
+      Authorization: 'token ' + token,
+    },
+  });
+};
+
 export interface IUserProfile {
   login: string;
   id: number;
@@ -443,42 +457,24 @@ export const updateUnStarRepo = ({ full_name, token }) => {
   });
 };
 
-export const getReadMe = async (repos): Promise<boolean> => {
-  const data: any = await storagePromise.sync.get('getReadMe');
-
-  if (!data.getReadMe) {
-    return null;
-  }
-
-  function delHtmlTag(str: string): string {
-    return str.replace(/<[^>]+>/g, '').replace(/\s+/g, '');
-  }
+export const getAllReposReadme = async (
+  repos: IStarredRepo[],
+  token = DEFAULT_TOKEN,
+): Promise<any> => {
+  // todo cache
+  const result = {};
   for (const item of repos) {
-    const { repo } = item;
-    const readmeKey = `_readme-cache${repo.html_url}`;
-    const hasData = await storagePromise.local.get(readmeKey);
-    let result;
-
-    if (JSON.stringify(hasData) === '{}') {
-      try {
-        const data = await request.get(
-          'https://raw.githubusercontent.com/' +
-            repo.owner.login +
-            '/' +
-            repo.name +
-            '/' +
-            repo.default_branch +
-            '/README.md',
-        );
-        result = delHtmlTag(data.data);
-      } catch (e) {
-        result = '_';
-      } finally {
-        await storagePromise.local.set({ [readmeKey]: result });
-      }
-    } else {
-      result = hasData[readmeKey];
+    const {
+      repo: { full_name, id },
+    } = item;
+    let htmlString = '';
+    try {
+      const rsp = await getReadmeRaw({ full_name, token });
+      htmlString = rsp.data;
+    } finally {
+      result[id.toString()] = htmlString;
     }
-    repo._readmeData = result;
   }
+
+  return result;
 };

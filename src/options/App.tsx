@@ -29,6 +29,7 @@ import {
   STORAGE_TAGS,
   IMessageAction,
   IResponseMsg,
+  STORAGE_README_CACHE,
 } from '../typings';
 import { DEFAULT_SYNCHRONIZING_DELAY, DEFAULT_SHOW_WATCH } from '../constants';
 
@@ -47,9 +48,10 @@ const SFSelectOptions = [
   { value: '18000000', label: '5 hours' },
 ];
 
-interface ISettings {
+interface IFormSettings {
   synchronizingDelay: string;
   showWatch: boolean;
+  searchReadme: boolean;
   token: string;
   gistId: string;
   gistUpdateTime: string;
@@ -94,7 +96,7 @@ const sendMessage = (action: IMessageAction) => {
 };
 
 const SettingForm = () => {
-  const [settings, setSettings] = useState<ISettings>(null);
+  const [settings, setSettings] = useState<IFormSettings>(null);
   const [refresh, setRefresh] = useState<number>(0);
   const tokenInputRef = useRef(null);
   const gistIdInputRef = useRef(null);
@@ -194,6 +196,20 @@ const SettingForm = () => {
       });
   };
 
+  const handleSwitchSearchReadme = async (value) => {
+    syncStoragePromise
+      .set({
+        [STORAGE_SETTINGS]: {
+          ...settings,
+          searchReadme: value,
+        },
+      })
+      .then(() => {
+        message.success('Success!', 1);
+        setRefresh(refresh + 1);
+      });
+  };
+
   return (
     <div className="form-wrap">
       {settings ? (
@@ -232,8 +248,34 @@ const SettingForm = () => {
             </Select>
           </div>
           <div className="form-item">
-            <div className="form-item-label">Show Watchs(Will be slow):</div>
+            <div className="form-item-label">
+              Show Watching Repositories(Will be slow):
+            </div>
             <Switch checked={settings.showWatch} onChange={handleSwitchWatch} />
+          </div>
+          <div className="form-item">
+            <div className="form-item-label">
+              <Tooltip title="whether to use readme content to search">
+                Search Settings(Will be slower):
+              </Tooltip>
+            </div>
+            <Switch
+              checked={settings.searchReadme}
+              onChange={handleSwitchSearchReadme}
+            />
+            {/* // todo cache */}
+            {/* <div>
+              <Button
+                onClick={() => {
+                  localStoragePromise.remove(STORAGE_README_CACHE).then(() => {
+                    message.success('Cache Clearance Successful');
+                  });
+                }}
+                type="danger"
+              >
+                wipe cache
+              </Button>
+            </div> */}
           </div>
           <div className="form-item">
             <div className="form-item-label">

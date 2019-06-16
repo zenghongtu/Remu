@@ -27,12 +27,14 @@ import {
   STORAGE_TOKEN,
   Token,
   TagId,
+  ISettings,
+  IReadmeMap,
 } from '../typings';
 import {
   getStarredRepos,
   IStarredRepo,
   getWatchedRepos,
-  getReadMe,
+  getAllReposReadme,
 } from './service';
 import { localStoragePromise, syncStoragePromise } from '../utils';
 import 'nprogress/nprogress.css';
@@ -42,7 +44,7 @@ interface IAppProps {
   tags: ITag[];
   repoWithTags: IRepoWithTag;
   token: Token;
-  showWatch: boolean;
+  settings: ISettings;
 }
 
 const App = (props: IAppProps) => {
@@ -70,6 +72,7 @@ const App = (props: IAppProps) => {
   const [languages, setLanguages] = useState<ILanguages[]>(null);
   const [refreshCount, setRefreshCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const [readmeMap, setReadmeMap] = useState<IReadmeMap>({});
   const tokenInputRef = useRef(null);
 
   useEffect(() => {
@@ -105,8 +108,8 @@ const App = (props: IAppProps) => {
       return;
     }
     const requestList = [getStarredRepos({ token })];
-    const _showWatch = props.showWatch;
-    if (_showWatch) {
+    const { showWatch, searchReadme } = props.settings;
+    if (showWatch) {
       requestList.push(getWatchedRepos({ token }));
     }
     Promise.all(requestList).then(async (results) => {
@@ -166,7 +169,7 @@ const App = (props: IAppProps) => {
             hasRepo = true;
             _starTaggedStatus[UNTAGGED_STARS]--;
           }
-          if (_showWatch && _watchRepoIds.includes(_repoId)) {
+          if (showWatch && _watchRepoIds.includes(_repoId)) {
             hasRepo = true;
             _watchTaggedStatus[UNTAGGED_WATCHS]--;
           }
@@ -191,8 +194,10 @@ const App = (props: IAppProps) => {
         .map((lang) => {
           return { name: lang, count: _langMap[lang] };
         });
-
-      await getReadMe(allRepos);
+      if (searchReadme) {
+        const readmeMap = await getAllReposReadme(allRepos, token);
+        setReadmeMap(readmeMap);
+      }
       setStarredRepos(result);
       setWatchedRepos(watchResult);
       setCurRepos(result);
@@ -317,7 +322,7 @@ const App = (props: IAppProps) => {
     starTaggedStatus,
     loading,
     watchTaggedStatus,
-    showWatch: props.showWatch,
+    showWatch: props.settings.showWatch,
     onRefresh() {
       setRefreshCount(refreshCount + 1);
     },
@@ -343,7 +348,11 @@ const App = (props: IAppProps) => {
           <Sidebar {...sidebarProps} />
         </div>
         <div className="repos-bar">
-          <ReposBar repos={curRepos} onSelect={setCurRepo} />
+          <ReposBar
+            repos={curRepos}
+            onSelect={setCurRepo}
+            readmeMap={readmeMap}
+          />
         </div>
         <div className="repo-info">
           {curRepo ? (

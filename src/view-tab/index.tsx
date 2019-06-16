@@ -8,13 +8,16 @@ import {
   STORAGE_REPO,
   STORAGE_SETTINGS,
 } from '../typings';
-import { DEFAULT_SHOW_WATCH } from '../constants';
+import { DEFAULT_SHOW_WATCH, DEFAULT_SEARCH_README } from '../constants';
 
 const root = document.getElementById('view-tab');
 
 const getSyncData = syncStoragePromise.get({
   [STORAGE_TOKEN]: '',
-  [STORAGE_SETTINGS]: { showWatch: DEFAULT_SHOW_WATCH },
+  [STORAGE_SETTINGS]: {
+    showWatch: DEFAULT_SHOW_WATCH,
+    searchReadme: DEFAULT_SEARCH_README,
+  },
 });
 const getTagsAndRepoWithTags = localStoragePromise.get({
   [STORAGE_TAGS]: [],
@@ -32,7 +35,7 @@ Promise.all([getTagsAndRepoWithTags, getSyncData]).then((results) => {
     tags,
     repoWithTags,
     token,
-    showWatch: settings.showWatch,
+    settings,
   };
 
   ReactDOM.render(<App {...AppProps} />, root);

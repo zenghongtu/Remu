@@ -6,13 +6,15 @@ import { IStarredRepo } from '../../service';
 import { useState, useEffect, ChangeEvent, useRef } from 'react';
 import { FixedSizeList as VList } from 'react-window';
 import { debounce } from '../../../utils';
+import { IReadmeMap } from '../../../typings';
 
 interface IReposBar<S> {
   repos: S[];
+  readmeMap: IReadmeMap;
   onSelect: (repo: S) => void;
 }
 
-const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
+const ReposBar = ({ repos, onSelect, readmeMap }: IReposBar<IStarredRepo>) => {
   const [filteredRepos, setFilteredRepos] = useState<IStarredRepo[]>(repos);
   const [curRepoId, setCurRepoId] = useState<number>(null);
   const [vListHeight, setVListHeight] = useState<number>(0);
@@ -56,10 +58,12 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
 
   const filterRepos = debounce((value) => {
     const _filteredRepos = repos.filter(({ repo }) => {
+      const { name, id, description = '' } = repo;
+      const readme = readmeMap[id.toString()] || '';
       return (
-        repo.name.includes(value) ||
-        (repo.description && repo.description.includes(value)) ||
-        (repo._readmeData && repo._readmeData.includes(value))
+        name.includes(value) ||
+        description.includes(value) ||
+        readme.includes(value)
       );
     });
     setFilteredRepos(_filteredRepos);
