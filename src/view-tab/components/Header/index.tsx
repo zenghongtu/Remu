@@ -38,15 +38,11 @@ interface IHeader {
 }
 
 const Header = ({ token }: IHeader) => {
-  const [readMeCheck, setReadMeCheck] = useState<boolean>(false);
   const [userProfile, setUserProfile] = useState<IUserProfile>(null);
   const [searchFocus, setSearchFocus] = useState<boolean>(false);
   const searchInputRef = useRef(null);
 
   useEffect(() => {
-    storagePromise.sync.get('getReadMe').then(({ getReadMe }) => {
-      setReadMeCheck(getReadMe);
-    });
     if (token) {
       getUserProfile({ token }).then(({ data }) => {
         setUserProfile(data);
