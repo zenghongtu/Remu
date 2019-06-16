@@ -362,8 +362,8 @@ export const getWatchedRepos = ({ token = DEFAULT_TOKEN }) => {
 };
 
 export const getReadmeHTML = ({ full_name, token = DEFAULT_TOKEN }) => {
-  const ulr = `/repos/${full_name}/readme`;
-  return request.get(ulr, {
+  const url = `/repos/${full_name}/readme`;
+  return request.get(url, {
     headers: {
       Accept: 'application/vnd.github.v3.html',
       Authorization: 'token ' + token,
@@ -372,8 +372,8 @@ export const getReadmeHTML = ({ full_name, token = DEFAULT_TOKEN }) => {
 };
 
 export const getReadmeRaw = ({ full_name, token = DEFAULT_TOKEN }) => {
-  const ulr = `/repos/${full_name}/readme`;
-  return request.get(ulr, {
+  const url = `/repos/${full_name}/readme`;
+  return request.get(url, {
     headers: {
       Accept: 'application/vnd.github.v3.raw',
       Authorization: 'token ' + token,
