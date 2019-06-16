@@ -196,6 +196,7 @@ const App = (props: IAppProps) => {
       setStarredRepos(result);
       setWatchedRepos(watchResult);
       setCurRepos(result);
+      setAllRepos(allRepos);
       setLanguages(_langs);
       setTagCountMap(_tagCountMap);
       setRepoWithTags(_repoWithTags);
