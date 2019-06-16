@@ -58,7 +58,8 @@ const ReposBar = ({ repos, onSelect }: IReposBar<IStarredRepo>) => {
     const _filteredRepos = repos.filter(({ repo }) => {
       return (
         repo.name.includes(value) ||
-        (repo.description && repo.description.includes(value))
+        (repo.description && repo.description.includes(value)) ||
+        (repo._readmeData && repo._readmeData.includes(value))
       );
     });
     setFilteredRepos(_filteredRepos);

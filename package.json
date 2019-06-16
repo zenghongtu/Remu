@@ -1,6 +1,6 @@
 {
   "name": "Remu",
-  "version": "0.2.5",
+  "version": "0.2.4",
   "private": true,
   "description": "Just for GitHub Star, view stars and organizing starred repository.",
   "scripts": {
@@ -72,7 +72,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-window": "^1.8.2",
-    "url-convert": "^0.1.1"
+    "rel-to-abs": "^0.1.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

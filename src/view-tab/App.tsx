@@ -28,7 +28,12 @@ import {
   Token,
   TagId,
 } from '../typings';
-import { getStarredRepos, IStarredRepo, getWatchedRepos } from './service';
+import {
+  getStarredRepos,
+  IStarredRepo,
+  getWatchedRepos,
+  getReadMe,
+} from './service';
 import { localStoragePromise, syncStoragePromise } from '../utils';
 import 'nprogress/nprogress.css';
 import './App.less';
@@ -104,7 +109,7 @@ const App = (props: IAppProps) => {
     if (_showWatch) {
       requestList.push(getWatchedRepos({ token }));
     }
-    Promise.all(requestList).then((results) => {
+    Promise.all(requestList).then(async (results) => {
       const result = results[0];
       const watchResult = results[1] || [];
       if (result.length < 1) {
@@ -187,7 +192,7 @@ const App = (props: IAppProps) => {
           return { name: lang, count: _langMap[lang] };
         });
 
-      setAllRepos(allRepos);
+      await getReadMe(allRepos);
       setStarredRepos(result);
       setWatchedRepos(watchResult);
       setCurRepos(result);
