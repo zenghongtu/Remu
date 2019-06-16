@@ -1,4 +1,8 @@
 @import "~antd/es/select/style/index.less";
+@import "~antd/es/button/style/index.less";
+@import "~antd/es/input/style/index.less";
+@import "~antd/es/popover/style/index.less";
+@import "~antd/es/message/style/index.less";
 @import "../style/themes/index.less";
 
 .ant-select > .ant-select-selection {
@@ -10,4 +14,19 @@
     border-radius: 0.25em;
     background-color: #eff3f6;
   }
+}
+
+.-remu-content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.-remu-notes-hotkey-hint {
+  position: absolute;
+  bottom: -4px;
+  right: 4px;
+  font-size: 12px;
+  font-weight: 300;
+  color: @text-color-secondary;
 }

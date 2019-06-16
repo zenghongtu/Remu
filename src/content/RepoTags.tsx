@@ -7,20 +7,29 @@ import {
   TagId,
   RepoId,
   ITagsAction,
+  IRepoWithNote,
+  STORAGE_NOTES,
 } from '../typings';
 import SelectTags, { ISelectTagsProps } from './SelectTags';
 import { useEffect, useState } from 'react';
 import { localStoragePromise } from '../utils';
+import { Popover, Input, Button, message } from 'antd';
+
+const TextArea = Input.TextArea;
 
 export interface IRepoTagsProps {
   repoId: RepoId;
   tags: ITag[];
   repoWithTags: IRepoWithTag;
+  repoWithNotes: IRepoWithNote;
 }
 const RepoTags = (props: IRepoTagsProps) => {
-  const { repoWithTags, repoId } = props;
+  const { repoWithTags, repoWithNotes, repoId } = props;
   const [starred, setStarred] = useState(false);
   const [focusSelect, setFocusSelect] = useState(false);
+  const [notesValue, setNotesValue] = useState<string>(
+    repoWithNotes[repoId] || '',
+  );
 
   const selectTagsProps: ISelectTagsProps = { ...props };
 
@@ -59,9 +68,49 @@ const RepoTags = (props: IRepoTagsProps) => {
     setFocusSelect(true);
     setStarred(!starred);
   };
+  const handleNotesPressEnter = (
+    e: React.KeyboardEvent<HTMLTextAreaElement>,
+  ) => {
+    if (e.ctrlKey) {
+      const value = (e.target as HTMLTextAreaElement).value;
+      const _repoWithNotes = { ...repoWithNotes, [repoId]: value };
+      localStoragePromise.set({ [STORAGE_NOTES]: _repoWithNotes }).then(() => {
+        message.success('Add notes successfully!');
+      });
+    }
+  };
+
+  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setNotesValue(value);
+  };
+
   return (
     <div className="-remu-content">
-      {starred && <SelectTags isFocus={focusSelect} {...selectTagsProps} />}
+      {starred && (
+        <>
+          <Popover
+            placement="bottomLeft"
+            content={
+              <div>
+                <TextArea
+                  rows={4}
+                  value={notesValue}
+                  onChange={handleNotesChange}
+                  onPressEnter={handleNotesPressEnter}
+                />
+                <div className="-remu-notes-hotkey-hint">
+                  Confirm by <b>Ctrl + Enter</b>
+                </div>
+              </div>
+            }
+          >
+            <Button size="small" type="primary" icon="snippets"></Button>
+          </Popover>
+          &nbsp;
+          <SelectTags isFocus={focusSelect} {...selectTagsProps} />
+        </>
+      )}
     </div>
   );
 };

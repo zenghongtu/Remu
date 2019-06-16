@@ -2,7 +2,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import RepoTags from './RepoTags';
 import { localStoragePromise, syncStoragePromise } from '../utils';
-import { STORAGE_TAGS, STORAGE_REPO, STORAGE_TOKEN } from '../typings';
+import {
+  STORAGE_TAGS,
+  STORAGE_REPO,
+  STORAGE_TOKEN,
+  STORAGE_NOTES,
+} from '../typings';
 import createToken from './createToken';
 import './index.less';
 
@@ -33,24 +38,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const isPublic = !!repoTitleEl;
 
     if (isPublic) {
-      localStoragePromise.get([STORAGE_TAGS, STORAGE_REPO]).then((results) => {
-        const { tags = [], repoWithTags = {} } = results as any;
+      localStoragePromise
+        .get([STORAGE_TAGS, STORAGE_REPO, STORAGE_NOTES])
+        .then((results) => {
+          const {
+            tags = [],
+            repoWithTags = {},
+            repoWithNotes = {},
+          } = results as any;
 
-        const repoId = document
-          .querySelector('meta[name="octolytics-dimension-repository_id"]')
-          .getAttribute('content');
+          const repoId = document
+            .querySelector('meta[name="octolytics-dimension-repository_id"]')
+            .getAttribute('content');
 
-        const root = document.createElement('div');
-        root.id = '-remu-root';
-        repoTitleEl.appendChild(root);
+          const root = document.createElement('div');
+          root.id = '-remu-root';
+          repoTitleEl.appendChild(root);
 
-        const RepoTagsProps = {
-          tags,
-          repoWithTags,
-          repoId,
-        };
-        ReactDOM.render(<RepoTags {...RepoTagsProps} />, root);
-      });
+          const RepoTagsProps = {
+            tags,
+            repoWithTags,
+            repoWithNotes,
+            repoId,
+          };
+          ReactDOM.render(<RepoTags {...RepoTagsProps} />, root);
+        });
     }
   }
 });
