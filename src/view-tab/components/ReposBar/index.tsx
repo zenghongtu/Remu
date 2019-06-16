@@ -42,6 +42,9 @@ const ReposBar = ({
   const [curRepoId, setCurRepoId] = useState<number>(null);
   const [vListHeight, setVListHeight] = useState<number>(0);
   const [filterValue, setFilterValue] = useState<string>('');
+  if (searchReadme) {
+    defaultFilterBy.push('readme');
+  }
   const [filterBy, setFilterBy] = useState<string[]>(defaultFilterBy);
   const [isFilterByTags, setFilterByTags] = useState<boolean>(false);
   const listWrapRef = useRef(null);
@@ -81,20 +84,29 @@ const ReposBar = ({
     setCurRepoId(repo.repo.id as number);
   };
 
-  const filterRepos = debounce((value) => {
+  const filterRepos = debounce((value: string, filterByList = filterBy) => {
     const _filteredRepos = repos.filter(({ repo }) => {
-      const { name, id, description = '' } = repo;
-      const readme = readmeMap[id.toString()] || '';
-      return (
-        name.includes(value) ||
-        description.includes(value) ||
-        readme.includes(value)
-      );
+      return filterByList.some((item) => {
+        if (item === 'readme') {
+          const readme = readmeMap[repo.id.toString()];
+          if (readme) {
+            return readme.includes(value);
+          } else {
+            return false;
+          }
+        }
+        const v = repo[item];
+        return v && v.includes(value);
+      });
     });
     setFilteredRepos(_filteredRepos);
   }, 200);
 
   const filterByTags = (filterTags: TagId[]) => {
+    if (filterTags.length < 1) {
+      setFilteredRepos(repos);
+      return;
+    }
     const _filteredRepos = repos.filter(({ repo: { id } }) => {
       const _repoTags = repoWithTags[id.toString()];
       if (!_repoTags) {
@@ -121,8 +133,11 @@ const ReposBar = ({
     if (name === 'tags') {
       if (value) {
         // todo add selected tag by Sidebar
+        setFilterValue('');
+        setFilteredRepos(repos);
         setFilterByTags(true);
       } else {
+        setFilteredRepos(repos);
         setFilterByTags(false);
       }
     } else {
@@ -133,6 +148,11 @@ const ReposBar = ({
         _filterBy = filterBy.filter((item) => item !== name);
       }
       setFilterBy(_filterBy);
+      if (filterValue) {
+        filterRepos(filterValue, _filterBy);
+      } else {
+        setFilteredRepos(repos);
+      }
     }
   };
 
@@ -177,7 +197,16 @@ const ReposBar = ({
               </div>
               <div className="reposbar-switch">
                 Readme:
-                <Switch size="small" checked={searchReadme} disabled></Switch>
+                <Switch
+                  size="small"
+                  checked={
+                    searchReadme &&
+                    !isFilterByTags &&
+                    filterBy.includes('readme')
+                  }
+                  onChange={handleSwitchChange('readme')}
+                  disabled={!searchReadme}
+                ></Switch>
               </div>
             </div>
           }
@@ -197,7 +226,7 @@ const ReposBar = ({
           <Select
             mode="multiple"
             style={{ width: '100%' }}
-            placeholder="Please select"
+            placeholder="Select tags"
             onChange={handleSelectTags}
             filterOption={(inputValue, { props: { children } }) => {
               return (children as string).includes(inputValue);
