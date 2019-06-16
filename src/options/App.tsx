@@ -249,14 +249,14 @@ const SettingForm = () => {
           </div>
           <div className="form-item">
             <div className="form-item-label">
-              Show Watching Repositories(Will be slow):
+              Show Watching Repositories(<b>Will be slow</b>):
             </div>
             <Switch checked={settings.showWatch} onChange={handleSwitchWatch} />
           </div>
           <div className="form-item">
             <div className="form-item-label">
               <Tooltip title="whether to use readme content to search">
-                Search Settings(Will be slower):
+                Search Readme(<b>Will be slower</b>):
               </Tooltip>
             </div>
             <Switch
