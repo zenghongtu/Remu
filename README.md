@@ -8,17 +8,15 @@
 ---
 
 <div align="center">
-  Made with:
-  <img src="https://cdn4.iconfinder.com/data/icons/logos-3/600/React.js_logo-512.png" height=20 />
-  &
-  <img src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" height=20 />
+ <div><a style="font-size:12px" href="./README.en.md">[English README]</a></div>
   <div>
     <a href="https://github.com/zenghongtu/Remu/releases"><img src="https://camo.githubusercontent.com/d0ccf63e875fba0eb2d61287382ade6ae59ed1ad/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f72656c656173652f7a656e67686f6e6774752f4d6f622e7376673f7374796c653d666c61742d737175617265" alt="Current Release" data-canonical-src="https://img.shields.io/github/release/zenghongtu/Mob.svg?style=flat-square" style="max-width:100%;"></a>
 <a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/3bb863d4a8a6ddd0c2c4b4c67dab6bb58dee9b07/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6c6963656e73652f7a656e67686f6e6774752f4d6f622e7376673f7374796c653d666c61742d737175617265"><img src="https://camo.githubusercontent.com/3bb863d4a8a6ddd0c2c4b4c67dab6bb58dee9b07/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6c6963656e73652f7a656e67686f6e6774752f4d6f622e7376673f7374796c653d666c61742d737175617265" alt="License" data-canonical-src="https://img.shields.io/github/license/zenghongtu/Mob.svg?style=flat-square" style="max-width:100%;"></a>
- <div><a style="font-size:12px" href="./README.en.md">[English README]</a></div>
-
   </div>
- 
+   Made with:
+  <img src="https://cdn4.iconfinder.com/data/icons/logos-3/600/React.js_logo-512.png" height=20 />
+  &
+  <img src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" height=20 />
 </div>
 
 ---
@@ -42,6 +40,7 @@ here, 她是一个 Chrome 浏览器插件，通过标签分类来对 GitHub Star
 ## Feature
 
 - 显示 star 仓库 / watching 仓库 (默认关闭)
+- 添加 Notes
 - 仓库设置/编辑/删除标签
 - 取消 Star / Download Zip / Clone with HTTPS
 - Google 账号同步 Token/GistId, Gist **自动同步**标签数据（默认 6 秒延迟）
@@ -64,6 +63,16 @@ here, 她是一个 Chrome 浏览器插件，通过标签分类来对 GitHub Star
 - [ ] 搜索提示
 - [ ] 标签定制颜色
 - [ ] 支持国内浏览器？
+
+## Screenshot
+
+### Settings
+
+<img src="./docs/settings.png" width="890" />
+
+### Token Scopes
+
+<img src="./docs/token-scope.png" width="890" />
 
 ## Development
 
