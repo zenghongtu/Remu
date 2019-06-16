@@ -463,18 +463,24 @@ export const getAllReposReadme = async (
 ): Promise<any> => {
   // todo cache
   const result = {};
+  NProgress.start();
+  const len = repos.length;
+  let i = 0;
   for (const item of repos) {
     const {
       repo: { full_name, id },
     } = item;
     let htmlString = '';
     try {
+      // todo use Promise all
       const rsp = await getReadmeRaw({ full_name, token });
       htmlString = rsp.data;
     } finally {
+      NProgress.set(++i / len);
       result[id.toString()] = htmlString;
     }
   }
+  NProgress.done();
 
   return result;
 };
