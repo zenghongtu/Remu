@@ -1,6 +1,6 @@
 {
   "name": "Remu",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "private": true,
   "description": "Just for GitHub Star, view stars and organizing starred repository.",
   "scripts": {
