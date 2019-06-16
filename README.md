@@ -41,7 +41,8 @@ here, 她是一个 Chrome 浏览器插件，通过标签分类来对 GitHub Star
 
 ## Feature
 
-- 设置/编辑/删除标签
+- 显示 star 仓库 / watching 仓库 (默认关闭)
+- 仓库设置/编辑/删除标签
 - 取消 Star / Download Zip / Clone with HTTPS
 - Google 账号同步 Token/GistId, Gist **自动同步**标签数据（默认 6 秒延迟）
 - 等等...

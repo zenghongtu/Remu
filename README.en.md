@@ -42,6 +42,7 @@ Here, she is a Chrome browser plug-in, which manages GitHub Stars efficiently th
 
 ## Feature
 
+- show starred repositories / watching repositories (default close)
 - Set / Edit / Delete Tags
 - unStarred Repo / Download Zip / Clone with HTTPS
 - Google Account Sync Token/GistId, Gist ** Auto Sync ** tag data (default 6 second delay)
