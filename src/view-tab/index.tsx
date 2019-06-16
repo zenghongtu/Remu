@@ -7,6 +7,7 @@ import {
   STORAGE_TAGS,
   STORAGE_REPO,
   STORAGE_SETTINGS,
+  STORAGE_NOTES,
 } from '../typings';
 import { DEFAULT_SHOW_WATCH, DEFAULT_SEARCH_README } from '../constants';
 
@@ -22,11 +23,12 @@ const getSyncData = syncStoragePromise.get({
 const getTagsAndRepoWithTags = localStoragePromise.get({
   [STORAGE_TAGS]: [],
   [STORAGE_REPO]: {},
+  [STORAGE_NOTES]: {},
 });
 
 Promise.all([getTagsAndRepoWithTags, getSyncData]).then((results) => {
-  const [tagsAndRepoWithTagsRes, syncData] = results;
-  const { tags, repoWithTags } = tagsAndRepoWithTagsRes as any;
+  const [repoRes, syncData] = results;
+  const { tags, repoWithTags, repoWithNotes } = repoRes as any;
 
   const token = (syncData as any)[STORAGE_TOKEN];
   const settings = (syncData as any)[STORAGE_SETTINGS];
@@ -34,6 +36,7 @@ Promise.all([getTagsAndRepoWithTags, getSyncData]).then((results) => {
   const AppProps = {
     tags,
     repoWithTags,
+    repoWithNotes,
     token,
     settings,
   };

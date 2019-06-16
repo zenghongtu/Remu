@@ -20,6 +20,7 @@ import {
   STORAGE_REPO,
   IS_UPDATE_LOCAL,
   STORAGE_SETTINGS,
+  STORAGE_NOTES,
 } from '../typings';
 import { DEFAULT_SYNCHRONIZING_DELAY } from '../constants';
 
@@ -96,30 +97,34 @@ const setBrowseAction = ({ title = '', text = '' }) => {
 
 export const updateGist = ({ token, gistId, updateAt }: ISyncInfo) => {
   setBrowseAction({ title: 'update Gist', text: '...' });
-  return localStoragePromise.get([STORAGE_TAGS, STORAGE_REPO]).then((results) => {
-    const { tags, repoWithTags } = results as any;
+  return localStoragePromise
+    .get([STORAGE_TAGS, STORAGE_REPO, STORAGE_NOTES])
+    .then((results) => {
+      const { tags, repoWithTags, repoWithNotes } = results as any;
 
-    if (tags && repoWithTags) {
-      const data = { tags, repoWithTags };
-      const content = JSON.stringify(data);
-      return editGist(content, gistId, token).then(({ data }: GistDataRsp) => {
-        syncStoragePromise
-          .set({
-            [STORAGE_GIST_UPDATE_TIME]: data.updated_at,
-          })
-          .catch((errors) => {
-            chrome.browserAction.setBadgeBackgroundColor({
-              color: [255, 0, 0, 255],
-            });
-          })
-          .finally(() => {
-            setBrowseAction({});
-          });
-      });
-    }
+      if (tags && repoWithTags) {
+        const data = { tags, repoWithTags, repoWithNotes };
+        const content = JSON.stringify(data);
+        return editGist(content, gistId, token).then(
+          ({ data }: GistDataRsp) => {
+            syncStoragePromise
+              .set({
+                [STORAGE_GIST_UPDATE_TIME]: data.updated_at,
+              })
+              .catch((errors) => {
+                chrome.browserAction.setBadgeBackgroundColor({
+                  color: [255, 0, 0, 255],
+                });
+              })
+              .finally(() => {
+                setBrowseAction({});
+              });
+          },
+        );
+      }
 
-    return null;
-  });
+      return null;
+    });
 };
 
 export const updateGistDebounce = debounce(updateGist);
@@ -133,9 +138,10 @@ export const updateLocal = (data: GistData) => {
   } catch (e) {
     return Promise.reject();
   }
-  const { tags, repoWithTags } = _data;
+  const { tags, repoWithTags, repoWithNotes } = _data;
   const setNewTagsAndRepoWithTags = localStoragePromise.set({
     [STORAGE_REPO]: repoWithTags,
+    [STORAGE_NOTES]: repoWithNotes,
     [STORAGE_TAGS]: tags,
     [IS_UPDATE_LOCAL]: genUniqueKey(),
   });

@@ -14,6 +14,7 @@ export interface ITag {
 
 export const STORAGE_TAGS = 'tags';
 export const STORAGE_REPO = 'repoWithTags';
+export const STORAGE_NOTES = 'repoWithNotes';
 export const STORAGE_TOKEN = 'token';
 export const STORAGE_GIST_ID = 'gistId';
 export const STORAGE_GIST_UPDATE_TIME = 'updateAt';
@@ -40,6 +41,10 @@ export interface ITagsAction {
 
 export interface IRepoWithTag {
   [repoId: string]: TagId[];
+}
+
+export interface IRepoWithNote {
+  [repoId: string]: string;
 }
 
 export interface IMessageAction {

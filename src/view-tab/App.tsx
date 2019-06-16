@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Modal, Input, Empty } from 'antd';
+import { Modal, Input, Empty, message } from 'antd';
 import Header from './components/Header';
 import ReposBar from './components/ReposBar';
 import RepoInfo from './components/RepoInfo';
@@ -29,6 +29,8 @@ import {
   TagId,
   ISettings,
   IReadmeMap,
+  IRepoWithNote,
+  STORAGE_NOTES,
 } from '../typings';
 import {
   getStarredRepos,
@@ -43,6 +45,7 @@ import './App.less';
 interface IAppProps {
   tags: ITag[];
   repoWithTags: IRepoWithTag;
+  repoWithNotes: IRepoWithNote;
   token: Token;
   settings: ISettings;
 }
@@ -53,6 +56,9 @@ const App = (props: IAppProps) => {
   const [allRepos, setAllRepos] = useState<IStarredRepo[]>(null);
   const [repoWithTags, setRepoWithTags] = useState<IRepoWithTag>(
     props.repoWithTags,
+  );
+  const [repoWithNotes, setRepoWithNotes] = useState<IRepoWithNote>(
+    props.repoWithNotes,
   );
   const [token, setToken] = useState<Token>(props.token);
   const [tags, setTags] = useState<ITag[]>(props.tags);
@@ -315,6 +321,14 @@ const App = (props: IAppProps) => {
     setRepoWithTags(newRepoWithTags);
   };
 
+  const handleUpdateNotes = (id: RepoId, value: string) => {
+    const _repoWithNotes = { ...repoWithNotes, [id.toString()]: value };
+    localStoragePromise.set({ [STORAGE_NOTES]: _repoWithNotes }).then(() => {
+      message.success('Add notes successfully!');
+      setRepoWithNotes(_repoWithNotes);
+    });
+  };
+
   const sidebarProps = {
     tags,
     languages,
@@ -365,6 +379,8 @@ const App = (props: IAppProps) => {
               tags={tags}
               selectedTagIds={repoWithTags[curRepo.repo.id]}
               onTagsChange={handleChangeTagsWithRepo}
+              notes={repoWithNotes[curRepo.repo.id]}
+              onNotesChange={handleUpdateNotes}
             />
           ) : (
             <div className="repo-no-selected">

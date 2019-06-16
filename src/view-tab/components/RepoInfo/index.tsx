@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ITag, TagId, ITagsAction, Token } from '../../../typings';
+import { ITag, TagId, ITagsAction, Token, RepoId } from '../../../typings';
 import { useState, useEffect } from 'react';
 import { getReadmeHTML, IStarredRepo, updateUnStarRepo } from '../../service';
 import 'github-markdown-css';
@@ -16,18 +16,22 @@ import {
   Tooltip,
   Modal,
   Spin,
+  Input,
 } from 'antd';
 import prettyHtml from 'json-pretty-html';
 import urlConvert from 'url-convert';
 import { genUniqueKey } from '../../../utils';
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 interface IRepoInfo {
   token: Token;
   repo: IStarredRepo;
   tags: ITag[];
+  notes: string;
   selectedTagIds: TagId[];
+  onNotesChange: (repoId: RepoId, value: string) => void;
   onTagsChange: (action: ITagsAction) => void;
 }
 
@@ -37,12 +41,15 @@ const RepoInfo = ({
   token,
   repo,
   tags,
+  notes,
+  onNotesChange,
   onTagsChange,
   selectedTagIds = [],
 }: IRepoInfo) => {
   const [content, setContent] = useState(null);
   const [starred, setStarred] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
+  const [notesValue, setNotesValue] = useState<string>('');
 
   const {
     starred_at,
@@ -75,6 +82,7 @@ const RepoInfo = ({
     } else {
       setStarred(false);
     }
+    setNotesValue(notes);
   }, [repo]);
 
   const fixRelativeUrl = (htmlString: string, { repo }: IStarredRepo) => {
@@ -163,6 +171,20 @@ const RepoInfo = ({
     });
   };
 
+  const handleNotesPressEnter = (
+    e: React.KeyboardEvent<HTMLTextAreaElement>,
+  ) => {
+    if (e.ctrlKey) {
+      const value = (e.target as HTMLTextAreaElement).value;
+      onNotesChange(id, value);
+    }
+  };
+
+  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setNotesValue(value);
+  };
+
   return (
     // todo fix scroll position
     <div className="info-wrap">
@@ -225,8 +247,28 @@ const RepoInfo = ({
             </Select>
           </span>
           &nbsp;
+          <Popover
+            placement="bottomLeft"
+            trigger="click"
+            content={
+              <div>
+                <TextArea
+                  rows={4}
+                  value={notesValue}
+                  onChange={handleNotesChange}
+                  onPressEnter={handleNotesPressEnter}
+                />
+                <div className="notes-hotkey-hint">Confirm by Ctrl + Enter</div>
+              </div>
+            }
+          >
+            <Button type="primary" size="small">
+              Notes
+            </Button>
+          </Popover>
+          &nbsp;
           <Button size="small" onClick={handleMoreInfoBtnClick}>
-            More Info
+            More
           </Button>
         </div>
       </div>
