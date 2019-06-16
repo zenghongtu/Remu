@@ -1,24 +1,49 @@
 import * as React from 'react';
-import { List, Input, Icon, Empty } from 'antd';
+import {
+  List,
+  Input,
+  Icon,
+  Empty,
+  Popover,
+  Button,
+  Switch,
+  Select,
+} from 'antd';
 import RepoCard from './RepoCard';
 import './index.less';
 import { IStarredRepo } from '../../service';
 import { useState, useEffect, ChangeEvent, useRef } from 'react';
 import { FixedSizeList as VList } from 'react-window';
 import { debounce } from '../../../utils';
-import { IReadmeMap } from '../../../typings';
+import { IReadmeMap, ITag, TagId, IRepoWithTag } from '../../../typings';
+
+const Option = Select.Option;
 
 interface IReposBar<S> {
+  tags: ITag[];
   repos: S[];
   readmeMap: IReadmeMap;
+  repoWithTags: IRepoWithTag;
+  searchReadme: boolean;
   onSelect: (repo: S) => void;
 }
 
-const ReposBar = ({ repos, onSelect, readmeMap }: IReposBar<IStarredRepo>) => {
+const defaultFilterBy = ['name', 'description'];
+
+const ReposBar = ({
+  tags,
+  repos,
+  onSelect,
+  readmeMap,
+  repoWithTags,
+  searchReadme,
+}: IReposBar<IStarredRepo>) => {
   const [filteredRepos, setFilteredRepos] = useState<IStarredRepo[]>(repos);
   const [curRepoId, setCurRepoId] = useState<number>(null);
   const [vListHeight, setVListHeight] = useState<number>(0);
   const [filterValue, setFilterValue] = useState<string>('');
+  const [filterBy, setFilterBy] = useState<string[]>(defaultFilterBy);
+  const [isFilterByTags, setFilterByTags] = useState<boolean>(false);
   const listWrapRef = useRef(null);
   const listRef = useRef(null);
 
@@ -69,6 +94,18 @@ const ReposBar = ({ repos, onSelect, readmeMap }: IReposBar<IStarredRepo>) => {
     setFilteredRepos(_filteredRepos);
   }, 200);
 
+  const filterByTags = (filterTags: TagId[]) => {
+    const _filteredRepos = repos.filter(({ repo: { id } }) => {
+      const _repoTags = repoWithTags[id.toString()];
+      if (!_repoTags) {
+        return false;
+      }
+      return filterTags.every((tag) => _repoTags.includes(tag));
+    });
+
+    setFilteredRepos(_filteredRepos);
+  };
+
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (!value) {
@@ -80,16 +117,97 @@ const ReposBar = ({ repos, onSelect, readmeMap }: IReposBar<IStarredRepo>) => {
     }
   };
 
+  const handleSwitchChange = (name: string) => (value: boolean) => {
+    if (name === 'tags') {
+      if (value) {
+        // todo add selected tag by Sidebar
+        setFilterByTags(true);
+      } else {
+        setFilterByTags(false);
+      }
+    } else {
+      let _filterBy: string[];
+      if (value) {
+        _filterBy = [...filterBy, name];
+      } else {
+        _filterBy = filterBy.filter((item) => item !== name);
+      }
+      setFilterBy(_filterBy);
+    }
+  };
+
+  const handleSelectTags = (value: TagId[]) => {
+    filterByTags(value);
+  };
+
   return (
     <div className="reposbar-wrap">
       <div className="reposbar-search">
-        <Input
-          allowClear
-          value={filterValue}
-          placeholder="Gaze through your telescope"
-          prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
-          onChange={handleSearchChange}
-        />
+        <Popover
+          title={
+            <div className="reposbar-switch">
+              Tags:
+              <Switch
+                size="small"
+                onChange={handleSwitchChange('tags')}
+              ></Switch>
+            </div>
+          }
+          content={
+            <div>
+              <div className="reposbar-switch">
+                Name:
+                <Switch
+                  size="small"
+                  defaultChecked
+                  checked={!isFilterByTags && filterBy.includes('name')}
+                  disabled={isFilterByTags}
+                  onChange={handleSwitchChange('name')}
+                ></Switch>
+              </div>
+              <div className="reposbar-switch">
+                Description:
+                <Switch
+                  size="small"
+                  defaultChecked
+                  checked={!isFilterByTags && filterBy.includes('description')}
+                  disabled={isFilterByTags}
+                  onChange={handleSwitchChange('description')}
+                ></Switch>
+              </div>
+              <div className="reposbar-switch">
+                Readme:
+                <Switch size="small" checked={searchReadme} disabled></Switch>
+              </div>
+            </div>
+          }
+        >
+          <Button type="primary">Filter by</Button>
+        </Popover>
+        &nbsp;
+        {!isFilterByTags ? (
+          <Input
+            allowClear
+            value={filterValue}
+            placeholder="Gaze through your telescope"
+            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
+            onChange={handleSearchChange}
+          />
+        ) : (
+          <Select
+            mode="multiple"
+            style={{ width: '100%' }}
+            placeholder="Please select"
+            onChange={handleSelectTags}
+            filterOption={(inputValue, { props: { children } }) => {
+              return (children as string).includes(inputValue);
+            }}
+          >
+            {tags.map(({ id, name }) => {
+              return <Option key={id}>{name}</Option>;
+            })}
+          </Select>
+        )}
       </div>
       <div className="reposbar-list-wrap" ref={listWrapRef}>
         <List>

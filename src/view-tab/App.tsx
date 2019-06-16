@@ -349,9 +349,12 @@ const App = (props: IAppProps) => {
         </div>
         <div className="repos-bar">
           <ReposBar
+            tags={tags}
             repos={curRepos}
             onSelect={setCurRepo}
             readmeMap={readmeMap}
+            repoWithTags={repoWithTags}
+            searchReadme={props.settings.searchReadme}
           />
         </div>
         <div className="repo-info">
