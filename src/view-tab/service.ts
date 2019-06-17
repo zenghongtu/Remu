@@ -475,6 +475,9 @@ export const getAllReposReadme = async (
       // todo use Promise all
       const rsp = await getReadmeRaw({ full_name, token });
       htmlString = rsp.data;
+    } catch (e) {
+      // tslint:disable-next-line:no-console
+      console.error('e: ', e);
     } finally {
       NProgress.set(++i / len);
       result[id.toString()] = htmlString;
