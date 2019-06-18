@@ -210,6 +210,19 @@ const SettingForm = () => {
       });
   };
 
+  const handleClearReadmeCache = async () => {
+      const data = await localStoragePromise.get(null);
+      const result = {};
+      Object.keys(data).filter((key) => {
+          if (key.indexOf('_readme_') !== 0) {
+              result[key] = data[key];
+          }
+      });
+      await localStoragePromise.clear();
+      await localStoragePromise.set(result);
+      message.success('Cache Clearance Successful');
+  };
+
   return (
     <div className="form-wrap">
       {settings ? (
@@ -260,11 +273,17 @@ const SettingForm = () => {
               </Tooltip>
             </div>
             <Switch
-              checked={settings.searchReadme}
-              onChange={handleSwitchSearchReadme}
+                checked={settings.searchReadme} onChange={handleSwitchSearchReadme}
             />
-            {/* // todo cache */}
-            {/* <div>
+            <Button
+                type="primary"
+                className="form-item-clearCache"
+                onClick={handleClearReadmeCache}
+            >
+              wipe cache
+            </Button>
+              {/* // todo cache */}
+              {/* <div>
               <Button
                 onClick={() => {
                   localStoragePromise.remove(STORAGE_README_CACHE).then(() => {
