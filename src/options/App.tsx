@@ -114,8 +114,8 @@ const SettingForm = () => {
       })
       .then((result) => {
         const _settings = (result as any)[STORAGE_SETTINGS];
-        const token = (result as any)[STORAGE_GIST_ID];
-        const gistId = (result as any)[STORAGE_TOKEN];
+        const gistId = (result as any)[STORAGE_GIST_ID];
+        const token = (result as any)[STORAGE_TOKEN];
         const gistUpdateTime = (result as any)[STORAGE_GIST_UPDATE_TIME];
         const settings = {
           ..._settings,
