@@ -86,6 +86,7 @@ const ReposBar = ({
 
   const filterRepos = debounce((value: string, filterByList = filterBy) => {
     const _filteredRepos = repos.filter(({ repo }) => {
+      value = value.toLowerCase();
       return filterByList.some((item) => {
         if (item === 'readme') {
           const readme = readmeMap[repo.id.toString()];
@@ -96,7 +97,7 @@ const ReposBar = ({
           }
         }
         const v = repo[item];
-        return v && v.includes(value);
+        return v && v.toLowerCase().includes(value);
       });
     });
     setFilteredRepos(_filteredRepos);

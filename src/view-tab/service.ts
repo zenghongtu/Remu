@@ -458,7 +458,7 @@ export const updateUnStarRepo = ({ full_name, token }) => {
 };
 
 const delHtmlTag = (str: string): string => {
-    return str.replace(/<[^>]+>/g, '').replace(/\s+/g, '');
+    return str.replace(/<[^>]+>/g, '').replace(/\s+/g, '').toLowerCase();
 };
 
 export const getAllReposReadme = async (
