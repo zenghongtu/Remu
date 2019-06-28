@@ -1,7 +1,26 @@
 import Axios from 'axios';
-
+import {Modal} from 'antd';
 const baseURL = 'https://api.github.com';
 export const request = Axios.create({ baseURL });
+
+request.interceptors.response.use(function (response) {
+    return response;
+}, function(error) {
+    const {status} = error.response;
+    if (status === 401) {
+        Modal.confirm({
+            title: 'Request Error',
+            content: 'Your access is limited, please check token or gistId',
+            cancelText: 'cancel',
+            okText: 'Go Option Page',
+            onOk() {
+                openOptionsPage();
+            },
+        });
+    } else {
+        return Promise.reject(error);
+    }
+});
 
 export function genUniqueKey(): string {
   return (
