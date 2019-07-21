@@ -82,9 +82,9 @@ async function getStarHistory(repo, token) {
     // we have every starredEvent: we can use them to generate 15 (sampleNum) precise points
     const starredEvents = resArray.reduce((acc, r) => acc.concat(r.data), []);
 
-    const firstStarredAt = new Date(starredEvents[0].starred_at);
+    const firstStarredAt = +new Date(starredEvents[0].starred_at);
     const daysSinceRepoCreatedAt =
-      Math.round(new Date() - firstStarredAt) / (1000 * 60 * 60 * 24);
+      Math.round(+new Date() - firstStarredAt) / (1000 * 60 * 60 * 24);
 
     const dates = Array.from(new Array(50)).map((_, i) => {
       const firstStarredAtCopy = new Date(firstStarredAt);

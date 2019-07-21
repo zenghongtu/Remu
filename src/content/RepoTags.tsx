@@ -140,12 +140,15 @@ const RepoTags = (props: IRepoTagsProps) => {
       setStarHistory(starHistory);
     } catch (e) {
       message.error(e.message);
+      // tslint:disable-next-line:no-console
       console.log(e);
     }
   };
 
   return (
     <div className="-remu-content">
+      {/*
+                    // @ts-ignore */}
       <Popover
         placement="bottomLeft"
         trigger={'click'}
@@ -160,6 +163,8 @@ const RepoTags = (props: IRepoTagsProps) => {
             ) : (
               <span>
                 <h4>Star History </h4>
+                {/*
+                    // @ts-ignore */}
                 loading <dot>...</dot>
               </span>
             )}
