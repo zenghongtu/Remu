@@ -17,7 +17,7 @@
 }
 
 .-remu-content {
-  min-width: 160px;
+  min-width: 200px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -30,4 +30,28 @@
   font-size: 12px;
   font-weight: 300;
   color: @text-color-secondary;
+}
+
+dot {
+  display: inline-block;
+  height: 1em;
+  line-height: 1;
+  text-align: left;
+  vertical-align: -0.25em;
+  overflow: hidden;
+}
+dot::before {
+  display: block;
+  content: "...\A..\A.";
+  white-space: pre-wrap; /* 也可以是white-space: pre */
+  animation: dot 3s infinite step-start both;
+}
+
+@keyframes dot {
+  33% {
+    transform: translateY(-2em);
+  }
+  66% {
+    transform: translateY(-1em);
+  }
 }

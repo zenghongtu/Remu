@@ -15,9 +15,11 @@ const NEW_TOKEN_URL = 'https://github.com/settings/tokens/new';
 
 document.addEventListener('DOMContentLoaded', () => {
   const href = location.href;
+  let token = '';
   if (href.startsWith(NEW_TOKEN_URL)) {
     syncStoragePromise.get(STORAGE_TOKEN).then((result) => {
-      if (!result[STORAGE_TOKEN]) {
+      token = result[STORAGE_TOKEN];
+      if (!token) {
         createToken();
       } else {
         // tslint:disable-next-line:no-console
@@ -50,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
           const repoId = document
             .querySelector('meta[name="octolytics-dimension-repository_id"]')
             .getAttribute('content');
+          const repoNwo = document
+            .querySelector('meta[name="octolytics-dimension-repository_nwo"]')
+            .getAttribute('content');
 
           const root = document.createElement('div');
           root.id = '-remu-root';
@@ -57,9 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
           const RepoTagsProps = {
             tags,
+            token,
             repoWithTags,
             repoWithNotes,
             repoId,
+            repoNwo,
           };
           ReactDOM.render(<RepoTags {...RepoTagsProps} />, root);
         });

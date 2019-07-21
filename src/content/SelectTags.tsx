@@ -158,7 +158,7 @@ const SelectTags = ({
         return (children as string).includes(inputValue);
       }}
       style={{ width: '100%' }}
-      placeholder="Add tags"
+      placeholder="Add tags..."
       onSelect={handleSelectTag}
       onDeselect={handleDeselectTag}
       ref={selectRef}

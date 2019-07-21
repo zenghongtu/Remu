@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as echarts from 'echarts';
 import {
   ITag,
   STORAGE_TAGS,
@@ -9,27 +10,32 @@ import {
   ITagsAction,
   IRepoWithNote,
   STORAGE_NOTES,
+  Token,
 } from '../typings';
 import SelectTags, { ISelectTagsProps } from './SelectTags';
 import { useEffect, useState } from 'react';
 import { localStoragePromise } from '../utils';
-import { Popover, Input, Button, message } from 'antd';
+import { Popover, Input, Button, message, Icon } from 'antd';
+import getStarHistory from './getStarHistory';
 
 const TextArea = Input.TextArea;
 
 export interface IRepoTagsProps {
   repoId: RepoId;
+  token: Token;
+  repoNwo: string;
   tags: ITag[];
   repoWithTags: IRepoWithTag;
   repoWithNotes: IRepoWithNote;
 }
 const RepoTags = (props: IRepoTagsProps) => {
-  const { repoWithTags, repoWithNotes, repoId } = props;
+  const { repoWithTags, repoWithNotes, repoId, repoNwo, token } = props;
   const [starred, setStarred] = useState(false);
   const [focusSelect, setFocusSelect] = useState(false);
   const [notesValue, setNotesValue] = useState<string>(
     repoWithNotes[repoId] || '',
   );
+  const [starHistory, setStarHistory] = useState(null);
 
   const selectTagsProps: ISelectTagsProps = { ...props };
 
@@ -44,6 +50,45 @@ const RepoTags = (props: IRepoTagsProps) => {
     };
     // fix starred effect
   }, [starred]);
+
+  useEffect(() => {
+    if (!starHistory) {
+      return;
+    }
+
+    const xData = [];
+    const yData = [];
+    starHistory.forEach((item) => {
+      xData.push(item.date);
+      yData.push(item.starNum);
+    });
+    const option = {
+      title: {
+        text: 'Star Hisotry',
+      },
+      tooltip: {},
+      legend: {
+        data: [repoNwo],
+      },
+      xAxis: {
+        data: xData,
+      },
+      yAxis: { type: 'value' },
+      series: [
+        {
+          name: repoNwo,
+          data: yData,
+          type: 'line',
+        },
+      ],
+    };
+
+    setTimeout(() => {
+      const el = document.getElementById('-remu-main');
+      const myChart = echarts.init(el);
+      myChart.setOption(option);
+    });
+  }, [starHistory]);
 
   const handleStaringClick = (e) => {
     if (starred) {
@@ -85,14 +130,53 @@ const RepoTags = (props: IRepoTagsProps) => {
     setNotesValue(value);
   };
 
+  const handleClickStarHistoryBtn = async () => {
+    if (starHistory) {
+      return;
+    }
+
+    try {
+      const starHistory = await getStarHistory(repoNwo, token);
+      setStarHistory(starHistory);
+    } catch (e) {
+      message.error(e.message);
+      console.log(e);
+    }
+  };
+
   return (
     <div className="-remu-content">
+      <Popover
+        placement="bottomLeft"
+        trigger={'click'}
+        onClick={handleClickStarHistoryBtn}
+        content={
+          <div>
+            {starHistory ? (
+              <div
+                id="-remu-main"
+                style={{ width: '600px', height: '400px' }}
+              ></div>
+            ) : (
+              <span>
+                <h4>Star History </h4>
+                loading <dot>...</dot>
+              </span>
+            )}
+          </div>
+        }
+      >
+        <Button shape="round" type="primary" icon="history"></Button>
+      </Popover>
+      &nbsp;
       {starred && (
         <>
           <Popover
             placement="bottomLeft"
+            trigger={'click'}
             content={
               <div>
+                <h4>Notes</h4>
                 <TextArea
                   rows={4}
                   value={notesValue}
@@ -105,7 +189,7 @@ const RepoTags = (props: IRepoTagsProps) => {
               </div>
             }
           >
-            <Button size="small" type="primary" icon="snippets"></Button>
+            <Button shape="round" type="primary" icon="snippets"></Button>
           </Popover>
           &nbsp;
           <SelectTags isFocus={focusSelect} {...selectTagsProps} />
