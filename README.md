@@ -68,7 +68,7 @@ here, 她是一个 Chrome 浏览器插件，通过标签分类来对 GitHub Star
 
 ### Star History
 
-![](images/2019-07-22-09-50-21.png)
+![](images/2019-07-23-00-17-28.png)
 
 ### Settings
 
