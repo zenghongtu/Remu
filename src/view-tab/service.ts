@@ -214,7 +214,7 @@ export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
         if (!errors) {
           return;
         }
-        if (errors.response.status === 401) {
+        if (errors.response && errors.response.status === 401) {
           Modal.error({
             title: 'Invalid Token',
             content: 'Click ok to refresh the page and enter token.',
@@ -331,7 +331,7 @@ export const getWatchedRepos = ({ token = DEFAULT_TOKEN }) => {
         if (!errors) {
           return;
         }
-        if (errors.response.status === 401) {
+        if (errors.response && errors.response.status === 401) {
           Modal.error({
             title: 'Invalid Token',
             content: 'Click ok to refresh the page and enter token.',
@@ -450,7 +450,7 @@ const STAR_URL = '/user/starred';
 // };
 
 export const updateUnStarRepo = ({ full_name, token }) => {
-  return request.delete<null>(`${STAR_URL}/${full_name}`, {
+  return request.delete(`${STAR_URL}/${full_name}`, {
     headers: {
       Authorization: 'token ' + token,
     },
@@ -458,68 +458,74 @@ export const updateUnStarRepo = ({ full_name, token }) => {
 };
 
 const delHtmlTag = (str: string): string => {
-    return str.replace(/<[^>]+>/g, '').replace(/\s+/g, '').toLowerCase();
+  return str
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, '')
+    .toLowerCase();
 };
 
 export const getAllReposReadme = async (
-    repos: IStarredRepo[],
-    token = DEFAULT_TOKEN,
+  repos: IStarredRepo[],
+  token = DEFAULT_TOKEN,
 ): Promise<any> => {
-    // todo cache
-    const result = {};
-    NProgress.start();
-    // const len = repos.length;
-    // todo use NProgress
-    const httpMap = repos.map(async (item, index) => {
-        const {
-            repo: {full_name, id},
-        } = item;
-        const key = `_readme_${id.toString()}`;
-        const hasData = await storagePromise.local.get(key);
-        let htmlString = '';
-        if (JSON.stringify(hasData) === '{}') {
-            try {
-                // todo use Promise all
-                const rsp = await getReadmeRaw({full_name, token});
-                htmlString = delHtmlTag(rsp.data);
-            } catch (e) {
-                htmlString = '_';
-            } finally {
-                await storagePromise.local.set({[key]: {data: htmlString, time: new Date().valueOf()}});
-            }
-        } else {
-            htmlString = await hasData[key].data;
-        }
-        result[id.toString()] = htmlString;
-    });
+  // todo cache
+  const result = {};
+  NProgress.start();
+  // const len = repos.length;
+  // todo use NProgress
+  const httpMap = repos.map(async (item, index) => {
+    const {
+      repo: { full_name, id },
+    } = item;
+    const key = `_readme_${id.toString()}`;
+    const hasData = await storagePromise.local.get(key);
+    let htmlString = '';
+    if (JSON.stringify(hasData) === '{}') {
+      try {
+        // todo use Promise all
+        const rsp = await getReadmeRaw({ full_name, token });
+        htmlString = delHtmlTag(rsp.data);
+      } catch (e) {
+        htmlString = '_';
+      } finally {
+        await storagePromise.local.set({
+          [key]: { data: htmlString, time: new Date().valueOf() },
+        });
+      }
+    } else {
+      htmlString = await hasData[key].data;
+    }
+    result[id.toString()] = htmlString;
+  });
 
-    await Promise.all(httpMap);
-    NProgress.done();
-    checkReposReadme(repos, token);
-    return result;
+  await Promise.all(httpMap);
+  NProgress.done();
+  checkReposReadme(repos, token);
+  return result;
 };
 
-
-const checkReposReadme = async (repos: IStarredRepo[], token = DEFAULT_TOKEN):
-    Promise<any> => {
-
-    // Recommend requests one by one to avoid blocking other interface operation requests
-    for (const item of repos) {
-        const {
-            repo: {full_name, id},
-        } = item;
-        let htmlString = '';
-        const key = `_readme_${id.toString()}`;
-        const hasData = await storagePromise.local.get(key);
-        const {time} = hasData[key];
-        const nowTime = new Date().valueOf();
-        if (nowTime > time + 60 * 60 * 1000) {
-            try {
-                const rsp = await getReadmeRaw({full_name, token});
-                htmlString = delHtmlTag(rsp.data);
-            } catch (e) {
-            }
-            await storagePromise.local.set({[key]: {data: htmlString, time: nowTime}});
-        }
+const checkReposReadme = async (
+  repos: IStarredRepo[],
+  token = DEFAULT_TOKEN,
+): Promise<any> => {
+  // Recommend requests one by one to avoid blocking other interface operation requests
+  for (const item of repos) {
+    const {
+      repo: { full_name, id },
+    } = item;
+    let htmlString = '';
+    const key = `_readme_${id.toString()}`;
+    const hasData = await storagePromise.local.get(key);
+    const { time } = hasData[key];
+    const nowTime = new Date().valueOf();
+    if (nowTime > time + 60 * 60 * 1000) {
+      try {
+        const rsp = await getReadmeRaw({ full_name, token });
+        htmlString = delHtmlTag(rsp.data);
+      } catch (e) {}
+      await storagePromise.local.set({
+        [key]: { data: htmlString, time: nowTime },
+      });
     }
+  }
 };

@@ -1,26 +1,86 @@
 import Axios from 'axios';
-import {Modal} from 'antd';
-const baseURL = 'https://api.github.com';
-export const request = Axios.create({ baseURL });
+import { Modal, notification, message } from 'antd';
+import { setupCache, setup } from 'axios-cache-adapter';
+import localforage from 'localforage';
 
-request.interceptors.response.use(function (response) {
-    return response;
-}, function(error) {
-    const {status} = error.response;
-    if (status === 401) {
-        Modal.confirm({
-            title: 'Request Error',
-            content: 'Your access is limited, please check token or gistId',
-            cancelText: 'cancel',
-            okText: 'Go Option Page',
-            onOk() {
-                openOptionsPage();
-            },
-        });
-    } else {
-        return Promise.reject(error);
-    }
+const baseURL = 'https://api.github.com';
+
+const forageStore = localforage.createInstance({
+  // List of drivers used
+  driver: [localforage.INDEXEDDB, localforage.LOCALSTORAGE],
+  // Prefix all storage keys to prevent conflicts
+  name: 'remu-cache',
 });
+
+export const request = setup({
+  baseURL,
+  cache: {
+    maxAge: 60 * 60 * 1000,
+    exclude: { query: false },
+    store: forageStore,
+    invalidate: async (config, request) => {
+      if (request.clearCacheEntry) {
+        // @ts-ignore
+        await config.store.removeItem(config.uuid);
+      }
+    },
+  },
+});
+
+let isShowModal = false;
+// let isShowNotification = false
+
+request.interceptors.response.use(
+  function(response) {
+    // TODO
+    // if(response.request.fromCache){
+    //   if(isShowNotification){
+    //     return response
+    //   }
+    //   notification.open({
+    //     duration:2,
+    //     message: 'Current data from the local cache',
+    //     // description: 'It will be stored for 1 hour, you can click here to clear the cache',
+    //     onClose: ()=>{
+    //       isShowNotification = false
+    //     },
+    //     onClick: async ()=>{
+    //       forageStore.clear().then(()=>{
+    //         message.success('Clear successfully!')
+    //         notification.destroy()
+    //         isShowNotification = false
+    //       });
+    //     }
+    //   });
+    //   isShowNotification = true
+    // }
+    return response;
+  },
+  function(error) {
+    const { status } = error.response;
+    if (status === 401) {
+      if (isShowModal) {
+        return;
+      }
+      Modal.confirm({
+        title: 'Request Error',
+        content: 'Your access is limited, please check token or gistId',
+        cancelText: 'cancel',
+        okText: 'Go Option Page',
+        onOk() {
+          openOptionsPage();
+          isShowModal = false;
+        },
+        onCancel() {
+          isShowModal = false;
+        },
+      });
+      isShowModal = true;
+    } else {
+      return Promise.reject(error);
+    }
+  },
+);
 
 export function genUniqueKey(): string {
   return (
