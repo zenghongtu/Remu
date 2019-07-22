@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/browser';
 import { createGist, getGist } from './syncService';
 import { localStoragePromise, syncStoragePromise } from '../utils';
 import {
@@ -21,6 +22,11 @@ import {
   initEnv,
 } from './utils';
 
+if (process.env.NODE_ENV !== 'development') {
+  Sentry.init({
+    dsn: 'https://238e73db89cb46929d35b7f1b7c6b181@sentry.io/1510135',
+  });
+}
 // record tab id
 window.tabId = null;
 

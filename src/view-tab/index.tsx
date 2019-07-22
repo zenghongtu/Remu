@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/browser';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import App from './App';
@@ -10,6 +11,12 @@ import {
   STORAGE_NOTES,
 } from '../typings';
 import { DEFAULT_SHOW_WATCH, DEFAULT_SEARCH_README } from '../constants';
+
+if (process.env.NODE_ENV !== 'development') {
+  Sentry.init({
+    dsn: 'https://238e73db89cb46929d35b7f1b7c6b181@sentry.io/1510135',
+  });
+}
 
 const root = document.getElementById('view-tab');
 
