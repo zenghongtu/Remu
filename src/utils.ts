@@ -24,6 +24,13 @@ export const request = setup({
         await config.store.removeItem(config.uuid);
       }
     },
+    readOnError: (error, request) => {
+      return (
+        !error.response ||
+        (error.response.status >= 500 && error.response.status < 600)
+      );
+    },
+    clearOnStale: false,
   },
 });
 

@@ -219,6 +219,7 @@ const Sidebar = ({
                       <Button
                         shape="circle"
                         icon="cloud-download"
+                        // @ts-ignore
                         onClick={handleUpdateLocal}
                         title="upload Local"
                       ></Button>

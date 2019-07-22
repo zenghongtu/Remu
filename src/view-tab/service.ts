@@ -183,11 +183,13 @@ export const getStarredRepos = ({ token = DEFAULT_TOKEN }) => {
         }
         const requestQueue = [];
         for (let i = 1; i <= lastPage; i++) {
-          options.params.page = await i;
-          options.params.per_page = PER_PAGE;
+          const _options = {
+            ...options,
+            params: { page: i, per_page: PER_PAGE },
+          };
           requestQueue.push(
             request
-              .get(STARRED_REPOS_URL, options)
+              .get(STARRED_REPOS_URL, _options)
               .then((rsp) => {
                 NProgress.inc();
                 return rsp;
@@ -293,11 +295,13 @@ export const getWatchedRepos = ({ token = DEFAULT_TOKEN }) => {
         }
         const requestQueue = [];
         for (let i = 1; i <= lastPage; i++) {
-          options.params.page = await i;
-          options.params.per_page = PER_PAGE;
+          const _options = {
+            ...options,
+            params: { page: i, per_page: PER_PAGE },
+          };
           requestQueue.push(
             request
-              .get(WATCHED_REPOS_URL, options)
+              .get(WATCHED_REPOS_URL, _options)
               .then((rsp) => {
                 NProgress.inc();
                 return rsp;
