@@ -67,6 +67,11 @@ Here, she is a Chrome browser plug-in, which manages GitHub Stars efficiently th
 
 ## Screenshot
 
+### Star History
+
+![](images/2019-07-22-09-50-21.png)
+
+
 ### Settings
 
 <img src="./docs/settings.png" width="890" />
