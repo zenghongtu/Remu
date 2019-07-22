@@ -171,7 +171,7 @@ const RepoTags = (props: IRepoTagsProps) => {
           </div>
         }
       >
-        <Button shape="round" type="primary" icon="history"></Button>
+        <Button icon="history"></Button>
       </Popover>
       &nbsp;
       {starred && (
@@ -194,7 +194,7 @@ const RepoTags = (props: IRepoTagsProps) => {
               </div>
             }
           >
-            <Button shape="round" type="primary" icon="snippets"></Button>
+            <Button icon="snippets"></Button>
           </Popover>
           &nbsp;
           <SelectTags isFocus={focusSelect} {...selectTagsProps} />

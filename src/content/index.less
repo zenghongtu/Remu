@@ -17,10 +17,10 @@
 }
 
 .-remu-content {
-  min-width: 200px;
+  min-width: 180px;
   display: flex;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-end;
 }
 
 .-remu-notes-hotkey-hint {
@@ -54,4 +54,27 @@ dot::before {
   66% {
     transform: translateY(-1em);
   }
+}
+
+.ant-btn {
+  color: #586069;
+  border-color: rgba(27, 31, 35, 0.2);
+}
+.ant-btn:hover,
+.ant-btn:focus {
+  color: #24292e;
+  border-color: rgba(27, 31, 35, 0.2);
+}
+
+.anticon {
+  margin-top: 4px;
+  color: #586069;
+
+  &:hover {
+    color: #24292e;
+  }
+}
+
+.ant-select-selection {
+  outline: none;
 }

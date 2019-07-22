@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const isLogin = !!userId;
 
   if (isLogin) {
-    const repoTitleEl = document.querySelector('.public');
+    const repoTitleEl = document.querySelector('.hx_reponav');
     const isPublic = !!repoTitleEl;
 
     if (isPublic) {
