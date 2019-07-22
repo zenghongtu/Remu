@@ -162,6 +162,9 @@ const SelectTags = ({
       onSelect={handleSelectTag}
       onDeselect={handleDeselectTag}
       ref={selectRef}
+      maxTagCount={1}
+      maxTagTextLength={6}
+      maxTagPlaceholder={`${selectedTagIds.length - 1} tags`}
     >
       {tags &&
         tags.map(({ id, name }) => {

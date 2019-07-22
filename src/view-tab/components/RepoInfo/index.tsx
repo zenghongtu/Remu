@@ -236,9 +236,9 @@ const RepoInfo = ({
               onSelect={handleSelectTag}
               onDeselect={handleDeselectTag}
               loading={loading}
-              maxTagCount={4}
-              maxTagTextLength={5}
-              maxTagPlaceholder={`other ${selectedTagIds.length - 5} tags...`}
+              maxTagCount={3}
+              maxTagTextLength={4}
+              maxTagPlaceholder={`other ${selectedTagIds.length - 3} tags`}
             >
               {tags &&
                 tags.map(({ id, name }) => {
