@@ -5,7 +5,7 @@ import localforage from 'localforage';
 
 const baseURL = 'https://api.github.com';
 
-const forageStore = localforage.createInstance({
+export const forageStore = localforage.createInstance({
   // List of drivers used
   driver: [localforage.INDEXEDDB, localforage.LOCALSTORAGE],
   // Prefix all storage keys to prevent conflicts

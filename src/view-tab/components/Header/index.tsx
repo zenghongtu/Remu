@@ -7,6 +7,7 @@ import {
   syncStoragePromise,
   localStoragePromise,
   storagePromise,
+  forageStore,
 } from '../../../utils';
 
 import { Token } from '../../../typings';
@@ -193,7 +194,6 @@ const Header = ({ token }: IHeader) => {
           />
         </div>
       </div>
-
       {userProfile ? (
         <div className="profile">
           <Dropdown
@@ -239,6 +239,23 @@ const Header = ({ token }: IHeader) => {
           <Icon type="loading" />
         </div>
       )}
+      &nbsp;
+      <Tooltip
+        placement="bottomRight"
+        title="Request will be cache for 1 hour and you can click to clear"
+      >
+        <Button
+          size="small"
+          type="primary"
+          shape="circle"
+          icon="delete"
+          onClick={() => {
+            forageStore.clear().then(() => {
+              message.success('Clear successfully!');
+            });
+          }}
+        />
+      </Tooltip>
     </div>
   );
 };
