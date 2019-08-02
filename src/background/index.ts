@@ -27,8 +27,6 @@ if (process.env.NODE_ENV !== 'development') {
     dsn: 'https://238e73db89cb46929d35b7f1b7c6b181@sentry.io/1510135',
   });
 }
-// record tab id
-window.tabId = null;
 
 window.REMU_GIST_ID = '';
 window.REMU_TOKEN = '';
@@ -36,21 +34,14 @@ window.REMU_GIST_UPDATE_AT = '';
 
 chrome.browserAction.onClicked.addListener(function() {
   const index = chrome.extension.getURL('view-tab.html');
-
-  if (window.tabId) {
-    chrome.tabs.update(window.tabId, { selected: true });
-  } else {
-    chrome.tabs.create({ url: index }, function(tab) {
-      window.tabId = tab.id;
-    });
-  }
-});
-
-// remove tab
-chrome.tabs.onRemoved.addListener(function(tabId) {
-  if (tabId === window.tabId) {
-    window.tabId = null;
-  }
+  chrome.tabs.query({ url: index }, function(tabs) {
+    if (tabs.length) {
+      chrome.tabs.update(tabs[0].id, { active: true });
+      chrome.windows.update(tabs[0].windowId, { focused: true });
+    } else {
+      chrome.tabs.create({ url: index });
+    }
+  });
 });
 
 chrome.storage.onChanged.addListener(function(changes, areaName) {
