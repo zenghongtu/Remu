@@ -13,20 +13,19 @@ import './index.less';
 
 const NEW_TOKEN_URL = 'https://github.com/settings/tokens/new';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const href = location.href;
-  let token = '';
+  const result = await syncStoragePromise.get(STORAGE_TOKEN);
+  const token = result[STORAGE_TOKEN];
+  // tslint:disable-next-line:no-console
+  console.log('Remu: use github token');
   if (href.startsWith(NEW_TOKEN_URL)) {
-    syncStoragePromise.get(STORAGE_TOKEN).then((result) => {
-      token = result[STORAGE_TOKEN];
-      if (!token) {
-        createToken();
-      } else {
-        // tslint:disable-next-line:no-console
-        console.log('have token for Remu, no need to create a new token.');
-      }
-    });
-    return;
+    if (!token) {
+      createToken();
+    } else {
+      // tslint:disable-next-line:no-console
+      console.log('Remu: have token for Remu, no need to create a new token.');
+    }
   }
 
   const userId = document

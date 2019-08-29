@@ -18,9 +18,7 @@ async function getStarHistory(repo, token) {
   const axiosGit = axios.create({
     headers: {
       Accept: 'application/vnd.github.v3.star+json',
-    },
-    params: {
-      access_token: token,
+      Authorization: `token ${token}`,
     },
   });
 
@@ -57,7 +55,8 @@ async function getStarHistory(repo, token) {
       (pageIndex) => `${initUrl}?page=${pageIndex}`,
     );
 
-    console.log('pageIndexes', pageIndexes);
+    // tslint:disable-next-line:no-console
+    console.log('Remu: pageIndexes', pageIndexes);
     return { firstPage: initRes, sampleUrls, pageIndexes };
   }
 
