@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Modal, Input, Empty, message } from 'antd';
+import { Modal, Input, Empty, message, Checkbox } from 'antd';
 import Header from './components/Header';
 import ReposBar from './components/ReposBar';
 import RepoInfo from './components/RepoInfo';
@@ -90,13 +90,66 @@ const App = (props: IAppProps) => {
     if (!token) {
       Modal.info({
         icon: null,
-        title: ' Github Personal Access Token',
+        title: 'Enter Github Access Token',
         content: (
           <div>
-            <a target="_blank" href="https://github.com/settings/tokens/new">
-              One-click generation token
-            </a>
             <Input required placeholder="Enter Token" ref={tokenInputRef} />
+            <div className="new_token_link">
+              <a
+                target="_blank"
+                href="https://github.com/settings/tokens/new?scopes=repo,notifications,user,gist&description=Remu%20Extension"
+              >
+                Get a new token{' '}
+              </a>
+              (it will save locally)
+            </div>
+            <div className="m">
+              <details className="mt-3">
+                <summary>Why is a GitHub token needed?</summary>
+                <p className="note">
+                  Remu uses the{' '}
+                  <a
+                    href="https://developer.github.com/v3/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    GitHub API
+                  </a>
+                  to retrieve repository metadata. By default, it makes
+                  unauthenticated requests to the GitHub API. However, there are
+                  two situations when requests must be authenticated:
+                </p>
+                <p className="note ml-5">
+                  <ul>
+                    <li>You access a private repository</li>
+                    <li>
+                      You exceed{' '}
+                      <a
+                        href="https://developer.github.com/v3/#rate-limiting"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        the rate limit for unauthenticated requests
+                      </a>
+                    </li>
+                  </ul>
+                </p>
+                <p className="note">
+                  When that happens, Remu needs an GitHub access token in order
+                  to continue to work.
+                </p>
+              </details>
+            </div>
+            <div>
+              Confirm means that you agree to the{' '}
+              <a
+                href="https://github.com/zenghongtu/Remu/blob/master/privacy-policy.md"
+                target="_black"
+              >
+                Remu privacy plicy
+              </a>
+              .
+            </div>
           </div>
         ),
         okText: 'Confirm',

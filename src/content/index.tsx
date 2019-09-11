@@ -8,7 +8,7 @@ import {
   STORAGE_TOKEN,
   STORAGE_NOTES,
 } from '../typings';
-import createToken from './createToken';
+// import createToken from './createToken';
 import './index.less';
 
 const NEW_TOKEN_URL = 'https://github.com/settings/tokens/new';
@@ -21,7 +21,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('Remu: use github token');
   if (href.startsWith(NEW_TOKEN_URL)) {
     if (!token) {
-      createToken();
+      // use create by url now
+      // createToken();
     } else {
       // tslint:disable-next-line:no-console
       console.log('Remu: have token for Remu, no need to create a new token.');

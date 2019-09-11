@@ -4,9 +4,7 @@
     "no-shadowed-variable": false,
     "interface-name": false,
     "object-literal-sort-keys": false,
-    "max-line-length": {
-      "options": [120]
-    },
+    "max-line-length": false,
     "new-parens": true,
     "no-arg": true,
     "no-bitwise": true,
