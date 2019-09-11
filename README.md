@@ -74,10 +74,6 @@ here, 她是一个 Chrome 浏览器插件，通过标签分类来对 GitHub Star
 
 <img src="./docs/settings.png" width="890" />
 
-### Token Scopes
-
-<img src="./docs/token-scope.png" width="890" />
-
 ## Development
 
 ```shell
@@ -86,7 +82,12 @@ yarn run start
 
 ## Community
 
-<img src="./docs/weixin-group.png" width="400" />
+null
+
+## Other
+
+因为Google商店的政策问题，现在添加了隐私协议，在使用前需要同意。
+**Token 只会存储到本地，不会上传！**
 
 ## License
 
