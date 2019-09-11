@@ -90,7 +90,7 @@ const App = (props: IAppProps) => {
     if (!token) {
       Modal.info({
         icon: null,
-        title: 'Enter Github Access Token',
+        title: 'Enter Github Access Token (save locally)',
         content: (
           <div>
             <Input required placeholder="Enter Token" ref={tokenInputRef} />
@@ -101,7 +101,6 @@ const App = (props: IAppProps) => {
               >
                 Get a new token{' '}
               </a>
-              (it will save locally)
             </div>
             <div className="m">
               <details className="mt-3">
@@ -114,7 +113,7 @@ const App = (props: IAppProps) => {
                     rel="noopener noreferrer"
                   >
                     GitHub API
-                  </a>
+                  </a>{' '}
                   to retrieve repository metadata. By default, it makes
                   unauthenticated requests to the GitHub API. However, there are
                   two situations when requests must be authenticated:
