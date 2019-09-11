@@ -240,18 +240,15 @@ const Header = ({ token }: IHeader) => {
         </div>
       )}
       &nbsp;
-      <Tooltip
-        placement="bottomRight"
-        title="Request will be cache for 1 hour and you can click to clear"
-      >
+      <Tooltip placement="bottomRight" title="clear cache and reload">
         <Button
           size="small"
-          type="primary"
+          type="dashed"
           shape="circle"
-          icon="delete"
+          icon="reload"
           onClick={() => {
             forageStore.clear().then(() => {
-              message.success('Clear successfully!');
+              location.reload();
             });
           }}
         />
