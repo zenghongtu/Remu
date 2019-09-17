@@ -7,16 +7,25 @@ import {
   STORAGE_REPO,
   STORAGE_TOKEN,
   STORAGE_NOTES,
+  STORAGE_SETTINGS,
 } from '../typings';
 // import createToken from './createToken';
 import './index.less';
+import { DEFAULT_CASE_SENSITIVITY } from '../constants';
 
 const NEW_TOKEN_URL = 'https://github.com/settings/tokens/new';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const href = location.href;
-  const result = await syncStoragePromise.get(STORAGE_TOKEN);
+  const result = await syncStoragePromise.get({
+    [STORAGE_TOKEN]: '',
+    [STORAGE_SETTINGS]: {
+      caseSensitivity: DEFAULT_CASE_SENSITIVITY,
+    },
+  });
+
   const token = result[STORAGE_TOKEN];
+  const caseSensitivity = result[STORAGE_SETTINGS].caseSensitivity;
   // tslint:disable-next-line:no-console
   console.log('Remu: use github token');
   if (href.startsWith(NEW_TOKEN_URL)) {
@@ -63,6 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           const RepoTagsProps = {
             tags,
             token,
+            caseSensitivity,
             repoWithTags,
             repoWithNotes,
             repoId,

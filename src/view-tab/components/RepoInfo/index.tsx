@@ -30,6 +30,7 @@ interface IRepoInfo {
   repo: IStarredRepo;
   tags: ITag[];
   notes: string;
+  caseSensitivity: boolean;
   selectedTagIds: TagId[];
   onNotesChange: (repoId: RepoId, value: string) => void;
   onTagsChange: (action: ITagsAction) => void;
@@ -41,6 +42,7 @@ const RepoInfo = ({
   token,
   repo,
   tags,
+  caseSensitivity,
   notes,
   onNotesChange,
   onTagsChange,
@@ -107,7 +109,11 @@ const RepoInfo = ({
         selectedTagIds,
       };
     } else {
-      const findItem = tags.find((item) => item.name === value);
+      const findItem = tags.find((item) => {
+        return caseSensitivity
+          ? item.name === value
+          : item.name.toLowerCase() === value.toLowerCase();
+      });
       // selected existing tag
       if (findItem) {
         handleSelectTag(findItem.id);

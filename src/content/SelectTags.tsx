@@ -15,6 +15,7 @@ const { Option } = Select;
 
 export interface ISelectTagsProps {
   repoId: RepoId;
+  caseSensitivity: boolean;
   tags: ITag[];
   repoWithTags: IRepoWithTag;
   isFocus?: boolean;
@@ -25,6 +26,7 @@ const SelectTags = ({
   repoId,
   tags: initTags,
   repoWithTags,
+  caseSensitivity,
   onTagsChange,
   isFocus = false,
 }: ISelectTagsProps) => {
@@ -70,7 +72,12 @@ const SelectTags = ({
           console.error('errors: ', errors);
         });
     } else {
-      const findItem = tags.find((item) => item.name === value);
+      const findItem = tags.find((item) => {
+        return caseSensitivity
+          ? item.name === value
+          : item.name.toLowerCase() === value.toLowerCase();
+      });
+
       // selected existing tag
       if (findItem) {
         handleSelectTag(findItem.id);

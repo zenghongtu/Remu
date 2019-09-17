@@ -30,8 +30,13 @@ import {
   IMessageAction,
   IResponseMsg,
   STORAGE_README_CACHE,
+  STORAGE_CASE_SENSITIVITY,
 } from '../typings';
-import { DEFAULT_SYNCHRONIZING_DELAY, DEFAULT_SHOW_WATCH } from '../constants';
+import {
+  DEFAULT_SYNCHRONIZING_DELAY,
+  DEFAULT_SHOW_WATCH,
+  DEFAULT_CASE_SENSITIVITY,
+} from '../constants';
 
 const { Option } = Select;
 
@@ -55,6 +60,7 @@ interface IFormSettings {
   token: string;
   gistId: string;
   gistUpdateTime: string;
+  caseSensitivity: boolean;
 }
 
 const saveSyncStorage = (key: string, value: any) => {
@@ -107,6 +113,7 @@ const SettingForm = () => {
         [STORAGE_SETTINGS]: {
           synchronizingDelay: DEFAULT_SYNCHRONIZING_DELAY,
           showWatch: DEFAULT_SHOW_WATCH,
+          caseSensitivity: DEFAULT_CASE_SENSITIVITY,
         },
         [STORAGE_GIST_ID]: '',
         [STORAGE_TOKEN]: '',
@@ -209,18 +216,31 @@ const SettingForm = () => {
         setRefresh(refresh + 1);
       });
   };
+  const handleSwitchCaseSensitivity = async (value) => {
+    syncStoragePromise
+      .set({
+        [STORAGE_SETTINGS]: {
+          ...settings,
+          caseSensitivity: value,
+        },
+      })
+      .then(() => {
+        message.success('Success!', 1);
+        setRefresh(refresh + 1);
+      });
+  };
 
   const handleClearReadmeCache = async () => {
-      const data = await localStoragePromise.get(null);
-      const result = {};
-      Object.keys(data).filter((key) => {
-          if (key.indexOf('_readme_') !== 0) {
-              result[key] = data[key];
-          }
-      });
-      await localStoragePromise.clear();
-      await localStoragePromise.set(result);
-      message.success('Cache Clearance Successful');
+    const data = await localStoragePromise.get(null);
+    const result = {};
+    Object.keys(data).filter((key) => {
+      if (key.indexOf('_readme_') !== 0) {
+        result[key] = data[key];
+      }
+    });
+    await localStoragePromise.clear();
+    await localStoragePromise.set(result);
+    message.success('Cache Clearance Successful');
   };
 
   return (
@@ -267,23 +287,31 @@ const SettingForm = () => {
             <Switch checked={settings.showWatch} onChange={handleSwitchWatch} />
           </div>
           <div className="form-item">
+            <div className="form-item-label">Case Sensivivity:</div>
+            <Switch
+              checked={settings.caseSensitivity}
+              onChange={handleSwitchCaseSensitivity}
+            />
+          </div>
+          <div className="form-item">
             <div className="form-item-label">
               <Tooltip title="whether to use readme content to search">
                 Search Readme(<b>Will be slower</b>):
               </Tooltip>
             </div>
             <Switch
-                checked={settings.searchReadme} onChange={handleSwitchSearchReadme}
+              checked={settings.searchReadme}
+              onChange={handleSwitchSearchReadme}
             />
             <Button
-                type="primary"
-                className="form-item-clearCache"
-                onClick={handleClearReadmeCache}
+              type="primary"
+              className="form-item-clearCache"
+              onClick={handleClearReadmeCache}
             >
               wipe cache
             </Button>
-              {/* // todo cache */}
-              {/* <div>
+            {/* // todo cache */}
+            {/* <div>
               <Button
                 onClick={() => {
                   localStoragePromise.remove(STORAGE_README_CACHE).then(() => {

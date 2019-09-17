@@ -25,6 +25,7 @@ export interface IRepoTagsProps {
   token: Token;
   repoNwo: string;
   tags: ITag[];
+  caseSensitivity: boolean;
   repoWithTags: IRepoWithTag;
   repoWithNotes: IRepoWithNote;
 }

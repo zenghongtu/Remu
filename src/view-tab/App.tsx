@@ -427,6 +427,7 @@ const App = (props: IAppProps) => {
           {curRepo ? (
             <RepoInfo
               token={token}
+              caseSensitivity={props.settings.caseSensitivity}
               repo={curRepo}
               tags={tags}
               selectedTagIds={repoWithTags[curRepo.repo.id]}
