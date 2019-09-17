@@ -70,9 +70,10 @@ const SelectTags = ({
           console.error('errors: ', errors);
         });
     } else {
-      // ignore existing tags
-      if (tags.find((item) => item.name === value)) {
-        message.warn('Duplicate tag!');
+      const findItem = tags.find((item) => item.name === value);
+      // selected existing tag
+      if (findItem) {
+        handleSelectTag(findItem.id);
         return;
       }
 
