@@ -36,13 +36,15 @@ const handleReponav = (parentEl: Element) => {
   const dropdownMenu = dropdown.querySelector('.dropdown-menu');
   const navItems = parentEl.querySelectorAll('a.reponav-item');
 
-  const needMoveItems = [...navItems]
-    .slice(-2)
-    // @ts-ignore
-    .map((item) => ((item.classList = 'rgh-reponav-more dropdown-item'), item));
-  needMoveItems.forEach((item) => {
-    dropdownMenu.appendChild(item);
-  });
+  if (navItems.length > 6) {
+    const needMoveItems = [...navItems]
+      .slice(-2)
+      // @ts-ignore
+      .map((item) => ((item.classList = 'rgh-reponav-more dropdown-item'), item));
+    needMoveItems.forEach((item) => {
+      dropdownMenu.appendChild(item);
+    });
+  }
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
