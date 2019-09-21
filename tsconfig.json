@@ -7,7 +7,7 @@
     "jsx": "react",
     "rootDir": "./",
     "outDir": "dist/js",
-    "lib": ["es2015", "dom"],
+    "lib": ["es2015", "dom", "dom.iterable"],
     "noEmitOnError": false,
     "resolveJsonModule": true,
     "esModuleInterop": true,

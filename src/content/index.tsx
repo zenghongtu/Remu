@@ -15,6 +15,36 @@ import { DEFAULT_CASE_SENSITIVITY } from '../constants';
 
 const NEW_TOKEN_URL = 'https://github.com/settings/tokens/new';
 
+const handleReponav = (parentEl: Element) => {
+  let dropdown = parentEl.querySelector('.reponav-dropdown');
+
+  if (!dropdown) {
+    const reponavHTML = `
+  <details class="reponav-dropdown details-overlay details-reset">
+  <summary class="btn-link reponav-item" aria-haspopup="menu" role="button"
+    >More <span class="dropdown-caret"></span>
+  </summary>
+  <details-menu class="dropdown-menu dropdown-menu-se" role="menu">
+
+  </details-menu>
+</details>
+`;
+    parentEl.innerHTML += reponavHTML;
+  }
+
+  dropdown = parentEl.querySelector('.reponav-dropdown');
+  const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+  const navItems = parentEl.querySelectorAll('a.reponav-item');
+
+  const needMoveItems = [...navItems]
+    .slice(-2)
+    // @ts-ignore
+    .map((item) => ((item.classList = 'rgh-reponav-more dropdown-item'), item));
+  needMoveItems.forEach((item) => {
+    dropdownMenu.appendChild(item);
+  });
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
   const href = location.href;
   const result = await syncStoragePromise.get({
@@ -23,7 +53,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       caseSensitivity: DEFAULT_CASE_SENSITIVITY,
     },
   });
+  const repoTitleEl = document.querySelector('.hx_reponav');
 
+  handleReponav(repoTitleEl);
   const token = result[STORAGE_TOKEN];
   const caseSensitivity = result[STORAGE_SETTINGS].caseSensitivity;
   // tslint:disable-next-line:no-console
@@ -45,7 +77,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const isLogin = !!userId;
 
   if (isLogin) {
-    const repoTitleEl = document.querySelector('.hx_reponav');
     const isPublic = !!repoTitleEl;
 
     if (isPublic) {
