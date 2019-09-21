@@ -112,6 +112,7 @@ const Sidebar = ({
   useEffect(() => {
     let _sortedTags: ITag[];
     const _tags = [...tags];
+    // TODO fix case
     switch (tagSortBy) {
       case 'add_time':
         _sortedTags = _tags;
@@ -301,7 +302,10 @@ const Sidebar = ({
                       {sortMenuItems.map(({ key, value }) => {
                         return (
                           <Menu.Item key={key}>
-                            <span onClick={handleSortItemClick(key)}>
+                            <span
+                              onClick={handleSortItemClick(key)}
+                              className={key === tagSortBy ? `active-sort` : ''}
+                            >
                               {value}
                             </span>
                           </Menu.Item>
