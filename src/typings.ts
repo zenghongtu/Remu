@@ -21,12 +21,16 @@ export const STORAGE_GIST_UPDATE_TIME = 'updateAt';
 export const STORAGE_CASE_SENSITIVITY = 'caseSensitivity';
 export const STORAGE_SETTINGS = 'settings';
 export const STORAGE_README_CACHE = 'readme_cache';
+export const STORAGE_TAG_SORT = 'tag_sort';
+
+export type tagSort = 'add_time' | 'a_z' | 'z_a' | 'most_stars' | 'fewest_stars';
 
 export interface ISettings {
   synchronizingDelay: string;
   showWatch: boolean;
   searchReadme: boolean;
   caseSensitivity: boolean;
+  tagSortBy: tagSort;
 }
 
 export interface IReadmeMap {

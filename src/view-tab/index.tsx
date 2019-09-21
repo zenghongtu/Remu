@@ -9,8 +9,13 @@ import {
   STORAGE_REPO,
   STORAGE_SETTINGS,
   STORAGE_NOTES,
+  STORAGE_TAG_SORT,
 } from '../typings';
-import { DEFAULT_SHOW_WATCH, DEFAULT_SEARCH_README } from '../constants';
+import {
+  DEFAULT_SHOW_WATCH,
+  DEFAULT_SEARCH_README,
+  DEFAULT_TAG_SORT,
+} from '../constants';
 
 if (process.env.NODE_ENV !== 'development') {
   Sentry.init({
@@ -25,6 +30,7 @@ const getSyncData = syncStoragePromise.get({
   [STORAGE_SETTINGS]: {
     showWatch: DEFAULT_SHOW_WATCH,
     searchReadme: DEFAULT_SEARCH_README,
+    [STORAGE_TAG_SORT]: DEFAULT_TAG_SORT,
   },
 });
 const getTagsAndRepoWithTags = localStoragePromise.get({

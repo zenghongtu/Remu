@@ -16,8 +16,16 @@ import {
   TagId,
   IMessageAction,
   IResponseMsg,
+  tagSort,
+  STORAGE_TOKEN,
+  STORAGE_TAG_SORT,
+  STORAGE_SETTINGS,
 } from '../../../typings';
-import { genUniqueKey, localStoragePromise } from '../../../utils';
+import {
+  genUniqueKey,
+  localStoragePromise,
+  syncStoragePromise,
+} from '../../../utils';
 import { useState, useRef, useEffect } from 'react';
 
 const { SubMenu } = Menu;
@@ -46,6 +54,7 @@ export interface ITagCountMap {
 interface ISidebar {
   tags: ITag[];
   loading: boolean;
+  tagSortBy: tagSort;
   languages: ILanguages[];
   tagCountMap: ITagCountMap;
   starTaggedStatus: IStarTaggedStatus;
@@ -78,12 +87,11 @@ const sortMenuItems = [
   { key: 'fewest_stars', value: 'Fewest Stars' },
 ];
 
-type tagSort = 'add_time' | 'a_z' | 'z_a' | 'most_stars' | 'fewest_stars';
-
 const Sidebar = ({
   tags,
   languages,
   tagCountMap,
+  tagSortBy: currTagSortBy,
   starTaggedStatus,
   watchTaggedStatus,
   onAddTag,
@@ -97,7 +105,7 @@ const Sidebar = ({
   const [editTagId, setEditTagId] = useState<TagId>('');
   const [editTagVal, setEditTagVal] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-  const [tagSortBy, setTagSortBy] = useState<tagSort>('add_time');
+  const [tagSortBy, setTagSortBy] = useState<tagSort>(currTagSortBy);
   const [sortedTags, setSortedTags] = useState<ITag[]>(tags);
   const addTagInputRef = useRef(null);
 
@@ -187,7 +195,14 @@ const Sidebar = ({
   };
 
   const handleSortItemClick = (key) => () => {
-    setTagSortBy(key);
+    syncStoragePromise.get([STORAGE_SETTINGS]).then((result) => {
+      const settings = result[STORAGE_SETTINGS];
+      syncStoragePromise
+        .set({ [STORAGE_SETTINGS]: { ...settings, [STORAGE_TAG_SORT]: key } })
+        .then(() => {
+          setTagSortBy(key);
+        });
+    });
   };
 
   return (

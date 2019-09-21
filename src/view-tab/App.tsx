@@ -31,6 +31,7 @@ import {
   IReadmeMap,
   IRepoWithNote,
   STORAGE_NOTES,
+  STORAGE_TAG_SORT,
 } from '../typings';
 import {
   getStarredRepos,
@@ -388,6 +389,7 @@ const App = (props: IAppProps) => {
     starTaggedStatus,
     loading,
     watchTaggedStatus,
+    tagSortBy: props.settings[STORAGE_TAG_SORT],
     showWatch: props.settings.showWatch,
     onRefresh() {
       setRefreshCount(refreshCount + 1);
