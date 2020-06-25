@@ -15,38 +15,6 @@ import { DEFAULT_CASE_SENSITIVITY } from '../constants';
 
 const NEW_TOKEN_URL = 'https://github.com/settings/tokens/new';
 
-const handleReponav = (parentEl: Element) => {
-  let dropdown = parentEl.querySelector('.reponav-dropdown');
-
-  if (!dropdown) {
-    const reponavHTML = `
-  <details class="reponav-dropdown details-overlay details-reset">
-  <summary class="btn-link reponav-item" aria-haspopup="menu" role="button"
-    >More <span class="dropdown-caret"></span>
-  </summary>
-  <details-menu class="dropdown-menu dropdown-menu-se" role="menu">
-
-  </details-menu>
-</details>
-`;
-    parentEl.innerHTML += reponavHTML;
-  }
-
-  dropdown = parentEl.querySelector('.reponav-dropdown');
-  const dropdownMenu = dropdown.querySelector('.dropdown-menu');
-  const navItems = parentEl.querySelectorAll('a.reponav-item');
-
-  if (navItems.length > 6) {
-    const needMoveItems = [...navItems]
-      .slice(-2)
-      // @ts-ignore
-      .map((item) => ((item.classList = 'rgh-reponav-more dropdown-item'), item));
-    needMoveItems.forEach((item) => {
-      dropdownMenu.appendChild(item);
-    });
-  }
-};
-
 document.addEventListener('DOMContentLoaded', async () => {
   const href = location.href;
   const result = await syncStoragePromise.get({
@@ -55,9 +23,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       caseSensitivity: DEFAULT_CASE_SENSITIVITY,
     },
   });
-  const repoTitleEl = document.querySelector('.hx_reponav');
+  const repoTitleEl = document.querySelector('.UnderlineNav-body');
 
-  handleReponav(repoTitleEl);
   const token = result[STORAGE_TOKEN];
   const caseSensitivity = result[STORAGE_SETTINGS].caseSensitivity;
   // tslint:disable-next-line:no-console
@@ -98,8 +65,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             .querySelector('meta[name="octolytics-dimension-repository_nwo"]')
             .getAttribute('content');
 
-          const root = document.createElement('div');
-          root.id = '-remu-root';
+          const root = document.createElement('li');
+          root.className = 'd-flex';
+          root.innerHTML = '<div id="-remu-root"></div>';
           repoTitleEl.appendChild(root);
 
           const RepoTagsProps = {
