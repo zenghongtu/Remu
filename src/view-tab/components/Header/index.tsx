@@ -28,8 +28,8 @@ import { openOptionsPage } from '../../../utils';
 
 const menuList = [
   { path: '', label: 'Overview' },
-  { path: 'followers', label: 'Followers' },
-  { path: 'following', label: 'Following' },
+  { path: '?tab=followers', label: 'Followers' },
+  { path: '?tab=following', label: 'Following' },
   { path: '?tab=repositories', label: 'Repositories' },
   { path: '?tab=projects', label: 'Projects' },
 ];
