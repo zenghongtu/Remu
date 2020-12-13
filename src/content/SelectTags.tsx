@@ -165,8 +165,8 @@ const SelectTags = ({
       filterOption={(inputValue, { props: { children } }) => {
         return (children as string).includes(inputValue);
       }}
-      style={{ width: '100%' }}
-      placeholder="Add tags..."
+      style={{ width: '240px', borderRadius: '6px', height: '32px' }}
+      placeholder="Add Tags..."
       onSelect={handleSelectTag}
       onDeselect={handleDeselectTag}
       ref={selectRef}

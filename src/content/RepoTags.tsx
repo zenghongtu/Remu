@@ -65,7 +65,7 @@ const RepoTags = (props: IRepoTagsProps) => {
     });
     const option = {
       title: {
-        text: 'Star Hisotry',
+        text: 'Star History',
       },
       tooltip: {},
       legend: {
@@ -172,7 +172,21 @@ const RepoTags = (props: IRepoTagsProps) => {
           </div>
         }
       >
-        <Button icon="history"></Button>
+        <Button
+          style={{
+            color: '#1b1f23',
+            border: 'none',
+            background: 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <Icon
+            type="history"
+            style={{ color: '#959da5', fontSize: '16px', marginTop: '-1px' }}
+          />
+          Star History
+        </Button>
       </Popover>
       &nbsp;
       {starred && (
@@ -184,7 +198,9 @@ const RepoTags = (props: IRepoTagsProps) => {
               <div>
                 <h4>Notes</h4>
                 <TextArea
-                  rows={4}
+                  style={{ marginTop: '10px', marginBottom: '15px' }}
+                  rows={6}
+                  cols={32}
                   value={notesValue}
                   onChange={handleNotesChange}
                   onPressEnter={handleNotesPressEnter}
@@ -195,7 +211,25 @@ const RepoTags = (props: IRepoTagsProps) => {
               </div>
             }
           >
-            <Button icon="snippets"></Button>
+            <Button
+              style={{
+                color: '#1b1f23',
+                border: 'none',
+                background: 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <Icon
+                type="book"
+                style={{
+                  color: '#959da5',
+                  fontSize: '15px',
+                  marginTop: '-1px',
+                }}
+              />
+              Notes
+            </Button>
           </Popover>
           &nbsp;
           <SelectTags isFocus={focusSelect} {...selectTagsProps} />
