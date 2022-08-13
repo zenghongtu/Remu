@@ -5,6 +5,15 @@
 </div>
 </p>
 
+⚠️⚠️ 项目不再维护 | PROJECT NO LONGER MAINTAINS ⚠️⚠️
+
+
+[使用GitHub Lists](https://docs.github.com/cn/get-started/exploring-projects-on-github/saving-repositories-with-stars#organizing-starred-repositories-with-lists
+)  
+
+[Use GitHub Lists](https://docs.github.com/en/get-started/exploring-projects-on-github/saving-repositories-with-stars#organizing-starred-repositories-with-lists
+)
+
 ---
 
 <div align="center">
